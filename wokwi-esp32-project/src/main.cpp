@@ -9,6 +9,7 @@
 #include <Adafruit_SSD1306.h>
 #include "DHT.h"
 #include "config.h"
+#include "logo_bitmap.h"
 #include <HTTPClient.h>
 #include <TinyGPSPlus.h>
 #include <ESP32Servo.h>
@@ -38,15 +39,19 @@ float missionArrivalRadiusM = 2.0;
 long latestFrontCm = 400, latestLeftCm = 400, latestRightCm = 400;
 unsigned long lastNavSensorAt = 0;
 
-// OLED Display setup (I2C: SDA=21, SCL=18)
+// OLED Display setup — JMD0.96D-1 0.96" 128x64 (SSD1306, I2C: SDA=21, SCL=18)
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT 64
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
+bool oledOk = false;
 
 unsigned long lastSensorMillis = 0;
 unsigned long lastWifiCheckMillis = 0;
+unsigned long lastDisplayMillis = 0;
 const unsigned long SENSOR_INTERVAL = 5000;
 const unsigned long WIFI_CHECK_INTERVAL = 5000;
+const unsigned long DISPLAY_INTERVAL = 1000;
+bool captureInProgress = false;
 
 volatile bool socketConnected = false;
 
@@ -71,6 +76,128 @@ void loadAutonomousMission(JsonObject data);
 void navigateMission();
 void captureBothSides(int scanPoint);
 void sendMissionUpdate(const char *type, const char *state, const String &message = "");
+void playBootAnimation();
+void showBootStage(const char *caption, int progressPct);
+void updateStatusDisplay(bool force = false);
+
+// ---------------------------------------------------------------------------
+// OLED UI — logo boot animation + live status screen
+// ---------------------------------------------------------------------------
+
+// Logo reveal + brand line. Runs once right after the OLED is initialized.
+void playBootAnimation() {
+    if (!oledOk) return;
+    const int logoX = (SCREEN_WIDTH - LOGO_BIG_W) / 2;
+    const int logoY = 2;
+
+    // Phase 1: the logo "grows" upwards from the soil line, like a sprout.
+    for (int reveal = 4; reveal <= LOGO_BIG_H; reveal += 4) {
+        display.clearDisplay();
+        display.drawFastHLine(0, logoY + LOGO_BIG_H + 1, SCREEN_WIDTH, SSD1306_WHITE);
+        display.drawBitmap(logoX, logoY + (LOGO_BIG_H - reveal), LOGO_BIG,
+                           LOGO_BIG_W, LOGO_BIG_H, SSD1306_WHITE);
+        // Hide everything above the reveal window so it rises from the ground.
+        display.fillRect(0, 0, SCREEN_WIDTH, logoY + (LOGO_BIG_H - reveal), SSD1306_BLACK);
+        display.display();
+        delay(45);
+    }
+
+    // Phase 2: radar-style pulse rings around the fully grown logo.
+    for (int r = 26; r <= 62; r += 9) {
+        display.clearDisplay();
+        display.drawBitmap(logoX, logoY, LOGO_BIG, LOGO_BIG_W, LOGO_BIG_H, SSD1306_WHITE);
+        display.drawCircle(SCREEN_WIDTH / 2, logoY + LOGO_BIG_H / 2, r, SSD1306_WHITE);
+        display.display();
+        delay(70);
+    }
+
+    // Phase 3: brand line typed out under the logo.
+    const char *brand = "CropHealth Robot";
+    display.clearDisplay();
+    display.drawBitmap(logoX, logoY, LOGO_BIG, LOGO_BIG_W, LOGO_BIG_H, SSD1306_WHITE);
+    display.setTextSize(1);
+    display.setTextColor(SSD1306_WHITE);
+    for (size_t i = 1; i <= strlen(brand); i++) {
+        display.fillRect(0, 54, SCREEN_WIDTH, 10, SSD1306_BLACK);
+        display.setCursor((SCREEN_WIDTH - (int)strlen(brand) * 6) / 2, 55);
+        for (size_t c = 0; c < i; c++) display.print(brand[c]);
+        display.display();
+        delay(28);
+    }
+    delay(350);
+}
+
+// Boot progress screen: small logo + current stage + progress bar.
+void showBootStage(const char *caption, int progressPct) {
+    if (!oledOk) return;
+    display.clearDisplay();
+    display.drawBitmap(0, 0, LOGO_SMALL, LOGO_SMALL_W, LOGO_SMALL_H, SSD1306_WHITE);
+    display.setTextSize(1);
+    display.setTextColor(SSD1306_WHITE);
+    display.setCursor(20, 0);
+    display.print("CropHealth Robot");
+    display.setCursor(20, 9);
+    display.print(DEVICE_ID);
+    display.drawFastHLine(0, 19, SCREEN_WIDTH, SSD1306_WHITE);
+    display.setCursor(0, 28);
+    display.print(caption);
+    display.drawRect(0, 46, SCREEN_WIDTH, 10, SSD1306_WHITE);
+    int fillW = constrain(progressPct, 0, 100) * (SCREEN_WIDTH - 4) / 100;
+    display.fillRect(2, 48, fillW, 6, SSD1306_WHITE);
+    display.setCursor(0, 57);
+    display.printf("%d%%", constrain(progressPct, 0, 100));
+    display.display();
+}
+
+// Live status screen: replaces the old, never-updated "Initializing..." text.
+// Shows WiFi / WebSocket / GPS state and the current drive mode at 1 Hz.
+void updateStatusDisplay(bool force) {
+    if (!oledOk) return;
+    if (!force && millis() - lastDisplayMillis < DISPLAY_INTERVAL) return;
+    lastDisplayMillis = millis();
+
+    bool wifiUp = WiFi.status() == WL_CONNECTED;
+    bool gpsFix = gps.location.isValid() && currentLatitude != 0 && currentLongitude != 0;
+
+    display.clearDisplay();
+    display.setTextSize(1);
+    display.setTextColor(SSD1306_WHITE);
+
+    // Header: logo + device id + heartbeat tick.
+    display.drawBitmap(0, 0, LOGO_SMALL, LOGO_SMALL_W, LOGO_SMALL_H, SSD1306_WHITE);
+    display.setCursor(20, 0);
+    display.print("CropHealth Robot");
+    display.setCursor(20, 9);
+    display.print(DEVICE_ID);
+    if ((millis() / 1000) % 2 == 0) display.fillCircle(124, 3, 2, SSD1306_WHITE);
+    display.drawFastHLine(0, 19, SCREEN_WIDTH, SSD1306_WHITE);
+
+    // WiFi row.
+    display.setCursor(0, 23);
+    if (wifiUp) display.printf("WiFi OK %s", WiFi.localIP().toString().c_str());
+    else display.print("WiFi CONNECTING...");
+
+    // WebSocket row.
+    display.setCursor(0, 33);
+    display.printf("WS   %s", socketConnected ? "CONNECTED" : "OFFLINE");
+
+    // GPS row.
+    display.setCursor(0, 43);
+    if (gpsFix) display.printf("GPS  FIX (%d sat)", (int)(gps.satellites.isValid() ? gps.satellites.value() : 0));
+    else display.print("GPS  NO FIX");
+
+    // Mode / activity row.
+    display.setCursor(0, 53);
+    if (captureInProgress) display.print("CAPTURING PHOTO...");
+    else if (autonomousActive && !autonomousPaused)
+        display.printf("AUTO WP %d/%d", currentWaypointIndex + 1, missionWaypointCount);
+    else if (autonomousActive && autonomousPaused) display.print("AUTO PAUSED");
+    else {
+        display.print("MANUAL");
+        if (currentBlockName.length() > 0) display.printf(" %s", currentBlockName.c_str());
+    }
+    display.display();
+}
 
 void socketIOEvent(socketIOmessageType_t type, uint8_t *payload, size_t length) {
     switch (type) {
@@ -127,7 +254,19 @@ void socketIOEvent(socketIOmessageType_t type, uint8_t *payload, size_t length) 
                         if (missionWaypointCount > 0) autonomousActive = true;
                         sendMissionUpdate("mission_progress", "running", "Resumed by operator");
                     } else if (strcmp(action, "cap_photo") == 0 || strcmp(action, "camera_capture_burst") == 0) {
-                        captureBothSides(currentWaypointIndex);
+                        if (autonomousActive && !autonomousPaused) {
+                            // Autonomous patrol: scan both rows at the current waypoint.
+                            captureBothSides(currentWaypointIndex);
+                        } else {
+                            // MANUAL mode: operator wants a photo right now.
+                            // No GPS fix or mapped crop block is required — the
+                            // server resolves (or skips) the block on its side.
+                            Serial.println("[DEBUG] [CAM] Manual capture requested by operator.");
+                            controlMotors("STOP");
+                            cameraServo.write(90);
+                            delay(300);
+                            captureAndUploadImage("manual", -1);
+                        }
                     } else if (strcmp(action, "drive") == 0) {
                         autonomousPaused = true; // manual command always overrides autonomous drive
                         String direction = String((const char *)(data["direction"] | "stop"));
@@ -182,27 +321,29 @@ void setup() {
 
     Serial.println("[DEBUG] [INIT] All GPIO pins initialized.");
 
-    // Initialize I2C & OLED (SDA=21, SCL=18)
+    // Initialize I2C & OLED — JMD0.96D-1 (SSD1306 @ 0x3C, SDA=21, SCL=18)
     Wire.begin(21, 18);
     if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
         Serial.println("[DEBUG] [OLED] ❌ Allocation failed!");
     } else {
+        oledOk = true;
         Serial.println("[DEBUG] [OLED] ✔️ Initialized successfully.");
-        display.clearDisplay();
-        display.setTextSize(1);
-        display.setTextColor(SSD1306_WHITE);
-        display.setCursor(0,0);
-        display.print("Agri Robot Initializing...");
-        display.display();
+        playBootAnimation();
+        showBootStage("Hardware ready", 25);
     }
 
     dht.begin();
     Serial.println("[DEBUG] [DHT] DHT22 sensor initialized.");
 
+    showBootStage("Connecting WiFi...", 40);
     connectWiFi();
+    showBootStage("WiFi connected", 70);
     initServerAddress(); // Initialize central server URL structure
+    showBootStage("Linking server...", 85);
     startSocketIO();
+    showBootStage("Boot complete", 100);
     Serial.println("[DEBUG] [INIT] Setup sequence completed.\n");
+    updateStatusDisplay(true); // switch to the live status screen immediately
 }
 
 void loop() {
@@ -238,6 +379,8 @@ void loop() {
             WiFi.reconnect();
         }
     }
+
+    updateStatusDisplay(); // keep the OLED status screen live (1 Hz)
 }
 
 // Select the remote server or the original gateway-IP fallback.
@@ -562,6 +705,11 @@ void connectWiFi() {
         delay(500);
         Serial.print(".");
         attempts++;
+        if (oledOk && attempts % 2 == 0) {
+            char caption[48];
+            snprintf(caption, sizeof(caption), "WiFi: %.20s %.*s", WIFI_SSID, (attempts / 2) % 4, "...");
+            showBootStage(caption, 40 + min(attempts / 2, 25));
+        }
         if (attempts >= 60) {
             Serial.println("\n[DEBUG] [WiFi] ⚠️ Connection timeout! Retrying...");
             WiFi.disconnect(true);
@@ -594,10 +742,14 @@ void startSocketIO() {
 }
 
 void captureAndUploadImage(const String &side, int scanPoint) {
+    // Manual captures must always work, even without GPS/field-map context.
+    // The server resolves the crop block from the mission, GPS or the recent
+    // trail — and simply stores the photo if no mapped block applies.
     if (currentPlant.length() == 0 || currentBlockId.length() == 0) {
-        Serial.println("[DEBUG] [CAM] Capture blocked: robot is not inside a mapped crop block.");
-        return;
+        Serial.println("[DEBUG] [CAM] No mapped crop block context; capturing anyway (server resolves/stores).");
     }
+    captureInProgress = true;
+    updateStatusDisplay(true);
     // Remove any stale camera bytes before starting a new frame.
     while (Serial.available() > 0) Serial.read();
 
@@ -639,8 +791,10 @@ void captureAndUploadImage(const String &side, int scanPoint) {
                         tail += "Content-Disposition: form-data; name=\"" + name + "\"\r\n\r\n";
                         tail += value + "\r\n";
                     };
-                    addField("plant", currentPlant);
-                    addField("blockId", currentBlockId);
+                    // Context fields are optional: the server maps GPS -> block
+                    // itself and accepts unmapped manual captures.
+                    if (currentPlant.length() > 0) addField("plant", currentPlant);
+                    if (currentBlockId.length() > 0) addField("blockId", currentBlockId);
                     addField("latitude", String(currentLatitude, 7));
                     addField("longitude", String(currentLongitude, 7));
                     addField("deviceId", DEVICE_ID);
@@ -680,4 +834,6 @@ void captureAndUploadImage(const String &side, int scanPoint) {
     } else {
         Serial.println("[DEBUG] [CAM] ❌ Timeout: No response from ESP32-CAM on TX0/RX0!");
     }
+    captureInProgress = false;
+    updateStatusDisplay(true);
 }

@@ -26,7 +26,7 @@ Install these libraries using Library Manager:
 - **Adafruit Unified Sensor**
 - **TinyGPSPlus** by Mikal Hart
 
-The controller parses GPS fixes and receives the current field-block context from the server. Image uploads use the mapped block's `plant` and `blockId`; `potato` is no longer hardcoded. Capturing is blocked while the robot is outside a mapped block.
+The controller parses GPS fixes and receives the current field-block context from the server. Image uploads use the mapped block's `plant` and `blockId`; `potato` is no longer hardcoded. Autonomous scans still use mission/block context, but a **manual `cap_photo` is never blocked**: it works without GPS or a mapped block, and the server resolves (or simply stores) the photo. `logo_bitmap.h` must remain in the same Arduino sketch folder/tab together with `config.h` — it holds the CropHealth logo used by the OLED boot animation and live status screen.
 
 `WiFi`, `Wire`, `SPI`, `SD`, and `HTTPClient` come with the ESP32 board package.
 
