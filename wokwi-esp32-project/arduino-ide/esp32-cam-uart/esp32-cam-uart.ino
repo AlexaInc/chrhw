@@ -70,12 +70,21 @@ static bool initCamera() {
 }
 
 static void sendPhoto() {
-  if (!cameraReady) return;
+  if (!cameraReady) cameraReady = initCamera(); // retry: boot brownouts often clear
+  if (!cameraReady) {
+    // Answer instead of staying silent, so the controller reports a precise
+    // "camera init failed" fault instead of a blind UART timeout.
+    Serial.print("<IMG:0>");
+    Serial.flush();
+    return;
+  }
 
   camera_fb_t *frame = esp_camera_fb_get();
   if (!frame || !frame->buf || frame->len == 0) {
     if (frame) esp_camera_fb_return(frame);
-    return; // Do not send debug text: UART is the binary camera channel.
+    Serial.print("<IMG:0>"); // no frame available — report, don't go silent
+    Serial.flush();
+    return;
   }
 
   // Protocol expected by the ESP32 DevKit controller:

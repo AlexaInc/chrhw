@@ -52,6 +52,7 @@ const unsigned long SENSOR_INTERVAL = 5000;
 const unsigned long WIFI_CHECK_INTERVAL = 5000;
 const unsigned long DISPLAY_INTERVAL = 1000;
 bool captureInProgress = false;
+unsigned long camFaultUntil = 0; // OLED shows CAM ERROR until this time
 
 volatile bool socketConnected = false;
 
@@ -79,6 +80,7 @@ void sendMissionUpdate(const char *type, const char *state, const String &messag
 void playBootAnimation();
 void showBootStage(const char *caption, int progressPct);
 void updateStatusDisplay(bool force = false);
+void sendCameraFault(const String &reason);
 
 // ---------------------------------------------------------------------------
 // OLED UI — logo boot animation + live status screen
@@ -189,6 +191,7 @@ void updateStatusDisplay(bool force) {
     // Mode / activity row.
     display.setCursor(0, 53);
     if (captureInProgress) display.print("CAPTURING PHOTO...");
+    else if (millis() < camFaultUntil) display.print("CAM ERROR! CHECK CAM");
     else if (autonomousActive && !autonomousPaused)
         display.printf("AUTO WP %d/%d", currentWaypointIndex + 1, missionWaypointCount);
     else if (autonomousActive && autonomousPaused) display.print("AUTO PAUSED");
@@ -750,18 +753,34 @@ void captureAndUploadImage(const String &side, int scanPoint) {
     }
     captureInProgress = true;
     updateStatusDisplay(true);
-    // Remove any stale camera bytes before starting a new frame.
-    while (Serial.available() > 0) Serial.read();
 
-    // Send a standalone 'C'. The real ESP32-CAM sketch and Wokwi custom chip
-    // both treat a standalone C (after a newline/idle gap) as the shutter command.
-    Serial.print('C');
-    Serial.flush();
+    // Trigger the CAM — up to 3 attempts. Both the real ESP32-CAM sketch and
+    // the Wokwi chip accept a standalone 'C' at start-of-line OR after >=20ms
+    // of UART silence, so a forced 25ms idle gap before the bare 'C' makes the
+    // trigger reliable even if a previous debug line was corrupted on the wire.
+    bool headerFound = false;
+    Serial.setTimeout(3000); // per-attempt wait for the "<IMG:" header
+    for (int attempt = 1; attempt <= 3 && !headerFound; attempt++) {
+        while (Serial.available() > 0) Serial.read(); // drop stale bytes
+        Serial.flush();
+        delay(25); // guarantee the CAM sees an idle gap before the 'C'
+        Serial.print('C');
+        Serial.flush();
+        headerFound = Serial.find("<IMG:");
+        if (!headerFound) {
+            Serial.printf("[DEBUG] [CAM] No frame header (attempt %d/3), retrying...\n", attempt);
+        }
+    }
+    Serial.setTimeout(8000); // restore the long timeout for the JPEG body
 
-    // Wait and read the incoming byte header from CAM
-    if (Serial.find("<IMG:")) {
+    if (headerFound) {
         int imgSize = Serial.parseInt();
-        if (Serial.read() == '>') {
+        if (imgSize <= 0) {
+            // The CAM answered but has no frame: esp_camera_init failed or the
+            // sensor returned an empty buffer — almost always power or ribbon.
+            Serial.println("[DEBUG] [CAM] ❌ CAM answered <IMG:0>: camera not ready (init failed / power / ribbon).");
+            sendCameraFault("ESP32-CAM answered but has no frame: camera init failed - check the 5V supply and the camera ribbon cable.");
+        } else if (Serial.read() == '>') {
             uint8_t* imgBuffer = (uint8_t*) malloc(imgSize);
             if (imgBuffer != NULL) {
                 
@@ -827,13 +846,37 @@ void captureAndUploadImage(const String &side, int scanPoint) {
                     http.end();
                 } else {
                     Serial.println("[DEBUG] [CAM] ❌ Error: Partial image received over serial.");
+                    sendCameraFault("Partial image received from the ESP32-CAM: UART link unstable - check wiring/GND and keep the USB serial monitor disconnected.");
                 }
                 free(imgBuffer);
+            } else {
+                Serial.println("[DEBUG] [CAM] ❌ Out of memory for the incoming frame.");
+                sendCameraFault("Controller ran out of RAM for the incoming camera frame.");
             }
         }
     } else {
-        Serial.println("[DEBUG] [CAM] ❌ Timeout: No response from ESP32-CAM on TX0/RX0!");
+        Serial.println("[DEBUG] [CAM] ❌ Timeout: No response from ESP32-CAM on TX0/RX0 after 3 attempts!");
+        Serial.println("[DEBUG] [CAM]    Checklist: CAM on stable 5V + common GND, CAM U0T->DevKit RX0 and CAM U0R->DevKit TX0, GPIO0 NOT grounded (that holds the CAM in flash mode), both sides 921600 baud, and no USB serial monitor open on the same pins while capturing.");
+        sendCameraFault("No response from ESP32-CAM on the UART link after 3 attempts - check 5V power, TX0/RX0 cross-wiring, GPIO0 not grounded, and disconnect the USB serial monitor.");
     }
     captureInProgress = false;
     updateStatusDisplay(true);
+}
+
+// Report a camera failure to the operator: 15 s CAM ERROR banner on the OLED
+// and a camera_fault message the server turns into a dashboard alert.
+void sendCameraFault(const String &reason) {
+    camFaultUntil = millis() + 15000;
+    if (!socketConnected) return;
+    DynamicJsonDocument doc(512);
+    JsonArray event = doc.to<JsonArray>();
+    event.add("message.upsert");
+    JsonObject envelope = event.createNestedObject();
+    envelope["Type"] = "camera_fault";
+    JsonObject message = envelope.createNestedObject("Message");
+    message["reason"] = reason;
+    message["deviceId"] = DEVICE_ID;
+    String output;
+    serializeJson(doc, output);
+    socketIO.sendEVENT(output);
 }

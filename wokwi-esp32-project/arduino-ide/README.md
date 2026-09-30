@@ -84,3 +84,20 @@ In the DevKit sketch's `config.h`:
 ```
 
 With both lines defined, REST uses HTTPS and Socket.IO uses WSS on port 443. Comment out/delete **both** lines to use the original gateway fallback at gateway IP port 8000.
+
+## Camera "Timeout: No response from ESP32-CAM on TX0/RX0" checklist
+
+The DevKit triggers the CAM with a standalone `C` on UART0 and expects
+`<IMG:size>` + JPEG back. The firmware now retries 3 times (25 ms idle gap
+before each `C`), and the CAM answers `<IMG:0>` when its camera failed to
+initialize. If you still get a timeout, it is a hardware/link problem:
+
+1. **Power**: the ESP32-CAM needs a stable **5V** supply (300 mA+ spikes) and a
+   **common GND** with the DevKit. Brownouts = silent CAM.
+2. **Wiring (crossed)**: CAM `U0T (GPIO1)` → DevKit `RX0 (GPIO3)`, CAM
+   `U0R (GPIO3)` → DevKit `TX0 (GPIO1)`.
+3. **GPIO0 must NOT be grounded** on the CAM at runtime — grounded GPIO0 keeps
+   it in flash mode and the sketch never runs.
+4. **Disconnect the USB serial monitor** while capturing: UART0 is shared with
+   the USB bridge, and an open monitor/board can corrupt the CAM's reply bytes.
+5. Both sketches use **921600 baud** — keep them matched.
