@@ -1,0 +1,30 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "PlatformIO: Build ESP32 firmware",
+      "type": "shell",
+      "command": "pio",
+      "args": ["run"],
+      "windows": {
+        "command": "${env:USERPROFILE}\\.platformio\\penv\\Scripts\\platformio.exe"
+      },
+      "group": { "kind": "build", "isDefault": true },
+      "problemMatcher": "$platformio"
+    },
+    {
+      "label": "Full build (Windows)",
+      "type": "shell",
+      "command": "powershell",
+      "args": ["-ExecutionPolicy", "Bypass", "-File", ".\\scripts\\build-all.ps1"],
+      "problemMatcher": []
+    },
+    {
+      "label": "Full build (Linux/macOS)",
+      "type": "shell",
+      "command": "bash",
+      "args": ["./scripts/build-all.sh"],
+      "problemMatcher": []
+    }
+  ]
+}

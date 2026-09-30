@@ -1,0 +1,11 @@
+{
+  "name": "gps- neo 6m",
+  "author": "Hansaka rasanjana",
+  "pins": [
+    "VCC",
+    "GND",
+    "RX",
+    "TX"
+  ],
+  "controls": []
+}

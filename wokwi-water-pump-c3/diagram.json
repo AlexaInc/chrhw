@@ -1,0 +1,115 @@
+{
+  "version": 1,
+  "author": "AlexaInc",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "board-esp32-c3-devkitm-1", "id": "c3", "top": 20, "left": -10, "attrs": {} },
+    {
+      "type": "wokwi-relay-module",
+      "id": "relay",
+      "top": -120,
+      "left": 190,
+      "attrs": { "transistor": "npn" }
+    },
+    { "type": "wokwi-potentiometer", "id": "soil", "top": 180, "left": -170, "attrs": {} },
+    {
+      "type": "wokwi-led",
+      "id": "pump",
+      "top": -105,
+      "left": 430,
+      "attrs": { "color": "blue", "label": "WATER PUMP LOAD" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r1",
+      "top": -96,
+      "left": 365,
+      "rotate": 90,
+      "attrs": { "value": "220" }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "status",
+      "top": 150,
+      "left": 195.8,
+      "attrs": { "color": "green", "label": "PUMP STATUS" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r2",
+      "top": 164,
+      "left": 130,
+      "rotate": 90,
+      "attrs": { "value": "220" }
+    },
+    { "type": "wokwi-vcc", "id": "motorVcc", "top": -180, "left": 278, "attrs": {} },
+    { "type": "wokwi-gnd", "id": "motorGnd", "top": 5, "left": 465, "attrs": {} },
+    { "type": "wokwi-gnd", "id": "statusGnd", "top": 259.2, "left": 181.8, "attrs": {} },
+    {
+      "type": "wokwi-text",
+      "id": "psuText",
+      "top": -220,
+      "left": 260,
+      "attrs": { "text": "OLD ROUTER ADAPTER: 12V DC -> RELAY COM -> PUMP" }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "soilText",
+      "top": 270,
+      "left": -180,
+      "attrs": { "text": "Soil Moisture Simulation" }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "relayNote",
+      "top": -145,
+      "left": 350,
+      "attrs": { "text": "JQC3F-05VDC-C module: active-LOW default; verify your module" }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "pumpSafety",
+      "top": -250,
+      "left": 340,
+      "attrs": { "text": "12V adapter current must meet pump rating; add fuse on +12V" }
+    },
+    {
+      "type": "chip-buck5v",
+      "id": "logicBuck",
+      "top": 40,
+      "left": -390,
+      "attrs": { "outputVoltage": "5" }
+    },
+    { "type": "wokwi-junction", "id": "j1", "top": 129.6, "left": -110.4, "attrs": {} },
+    { "type": "wokwi-junction", "id": "j2", "top": 110.4, "left": -81.6, "attrs": {} }
+  ],
+  "connections": [
+    [ "c3:4", "relay:IN", "green", [] ],
+    [ "c3:3", "r2:1", "green", [] ],
+    [ "r2:2", "status:A", "green", [ "v41.2", "h60.65" ] ],
+    [ "status:C", "statusGnd:GND", "black", [ "v33.4", "h25.2" ] ],
+    [ "motorVcc:VCC", "relay:COM", "red", [ "h48.4", "v61.96" ] ],
+    [ "relay:NO", "r1:1", "red", [ "h51.2", "v-40" ] ],
+    [ "r1:2", "pump:A", "red", [ "v32.4", "h60.65" ] ],
+    [ "pump:C", "motorGnd:GND", "black", [ "v24.6", "h30.2" ] ],
+    [ "soil:SIG", "c3:0", "green", [ "v20.3", "h111.8", "v-152.5" ] ],
+    [ "soil:VCC", "c3:3V3.1", "red", [ "v10.7", "h92.2", "v-210.1" ] ],
+    [ "c3:TX", "$serialMonitor:RX", "", [] ],
+    [ "c3:RX", "$serialMonitor:TX", "", [] ],
+    [ "motorVcc:VCC", "logicBuck:VIN+", "red", [ "h-518", "v142.36", "h-182.4", "v58.18" ] ],
+    [
+      "motorGnd:GND",
+      "logicBuck:VIN-",
+      "black",
+      [ "h-33.6", "v340.6", "h-638.4", "v-249.6", "h-206.4", "v-37.82" ]
+    ],
+    [ "c3:5V.1", "j1:J", "red", [ "h-99.38", "v-20.3" ] ],
+    [ "j1:J", "logicBuck:5V", "red", [ "v0" ] ],
+    [ "relay:VCC", "j1:J", "red", [ "h0" ] ],
+    [ "logicBuck:GND", "j2:J", "black", [ "h0" ] ],
+    [ "j2:J", "c3:GND.3", "black", [ "v0" ] ],
+    [ "j2:J", "soil:GND", "black", [ "v192", "h-67.2" ] ],
+    [ "j2:J", "relay:GND", "black", [ "v0" ] ]
+  ],
+  "dependencies": {}
+}

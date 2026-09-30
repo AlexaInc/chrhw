@@ -1,0 +1,8 @@
+{
+  "name": "Li-ion Cell 3.7V",
+  "author": "AlexaInc",
+  "pins": ["POS", "NEG"],
+  "controls": [
+    {"id":"voltage","label":"Cell voltage (V)","type":"range","min":3.0,"max":4.2,"step":0.1}
+  ]
+}

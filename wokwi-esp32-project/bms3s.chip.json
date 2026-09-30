@@ -1,0 +1,6 @@
+{
+  "name": "3S BMS Protection Board",
+  "author": "AlexaInc",
+  "pins": ["B-", "B1", "B2", "B+", "P-", "P+"],
+  "controls": []
+}

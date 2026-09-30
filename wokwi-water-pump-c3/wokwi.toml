@@ -1,0 +1,9 @@
+[wokwi]
+version = 1
+firmware = "firmware/firmware.bin"
+elf = "firmware/firmware.elf"
+
+# Root-level JSON/WASM avoids VS Code local-chip routing showing the part as Missing.
+[[chip]]
+name = "buck5v"
+binary = "buck5v.chip.wasm"

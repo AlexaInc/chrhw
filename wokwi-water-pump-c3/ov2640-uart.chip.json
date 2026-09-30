@@ -1,0 +1,11 @@
+{
+  "name": "ov2640-uart",
+  "author": "AlexaInc",
+  "pins": [
+    "VCC",
+    "GND",
+    "IN",
+    "OUT"
+  ],
+  "controls": []
+}

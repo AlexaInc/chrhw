@@ -1,0 +1,39 @@
+{
+  "name": "ESP32-CAM (serial, <IMG:size> protocol)",
+  "author": "Virtual camera node for the agri-robot main board",
+  "pins": ["GND", "VCC", "RX", "TX", "TRIG", "BUSY"],
+  "controls": [
+    {
+      "id": "scene",
+      "label": "Scene (0 bars / 1 leaf / 2 no answer / 3 truncated)",
+      "type": "range",
+      "min": 0,
+      "max": 3,
+      "step": 1
+    },
+    {
+      "id": "captureLatencyMs",
+      "label": "Capture latency (ms)",
+      "type": "range",
+      "min": 0,
+      "max": 900,
+      "step": 10
+    },
+    {
+      "id": "triggerMode",
+      "label": "Trigger (0 smart / 1 any C / 2 TRIG pin only)",
+      "type": "range",
+      "min": 0,
+      "max": 2,
+      "step": 1
+    },
+    {
+      "id": "idleGapMs",
+      "label": "Smart mode: idle gap before 'C' (ms)",
+      "type": "range",
+      "min": 1,
+      "max": 200,
+      "step": 1
+    }
+  ]
+}

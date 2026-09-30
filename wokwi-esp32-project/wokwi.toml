@@ -1,0 +1,35 @@
+[wokwi]
+version = 1
+firmware = "firmware/firmware.bin"
+elf = "firmware/firmware.elf"
+
+# Names match diagram.json part types (chip-r, chip-gps, ...).
+# Keep JSON and WASM at the project root so the VS Code extension and local
+# simulator resolve the same persisted files and do not show parts as Missing.
+[[chip]]
+name = "r"
+binary = "r.chip.wasm"
+
+[[chip]]
+name = "gps"
+binary = "gps.chip.wasm"
+
+[[chip]]
+name = "l98nmotorcontrl"
+binary = "l98nmotorcontrl.chip.wasm"
+
+[[chip]]
+name = "espcam"
+binary = "espcam.chip.wasm"
+
+[[chip]]
+name = "cell3v7"
+binary = "cell3v7.chip.wasm"
+
+[[chip]]
+name = "bms3s"
+binary = "bms3s.chip.wasm"
+
+[[chip]]
+name = "buck5v"
+binary = "buck5v.chip.wasm"
