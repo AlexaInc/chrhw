@@ -23,15 +23,15 @@
 #define ENB_PIN             13
 
 // WiFi & Server Credentials
-#define WIFI_SSID "Wokwi-GUEST"
-#define WIFI_PASSWORD ""
+#define WIFI_SSID "LAPTOP_92SEERD2_3485"
+#define WIFI_PASSWORD "[8447Yq9"
 
 // Define BOTH lines to send REST and Socket.IO traffic directly to this server.
 // CUSTOM_SERVER_URL is a BASE URL, not one endpoint such as /auth/login.
 // HTTPS automatically selects port 443 and WSS. An explicit port also works,
 // for example: "http://example.com:8000".
-#define CUSTOM_SERVER_HOST "crophealth.dpdns.org"
-#define CUSTOM_SERVER_URL  "https://crophealth.dpdns.org"
+// #define CUSTOM_SERVER_HOST "crophealth.dpdns.org"
+// #define CUSTOM_SERVER_URL  "https://crophealth.dpdns.org"
 
 // Comment out/delete BOTH CUSTOM_SERVER_* lines above to restore the original
 // fallback: http://<gateway-ip>:8000 and ws://<gateway-ip>:8000/socket.io/
