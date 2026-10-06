@@ -27,6 +27,33 @@ double currentLatitude = 0;
 double currentLongitude = 0;
 unsigned long lastLocationMillis = 0;
 
+// ---------------------------------------------------------------------------
+// GPS placeholder (see config.h) -------------------------------------------
+// `gpsHasFix()` is the only question the firmware asks about the module: the
+// helpers below answer with the last real fix, or with the placeholder position
+// from config.h while the GPS is silent. Navigation never uses the
+// placeholder - the rover refuses to drive on a position it did not measure.
+// ---------------------------------------------------------------------------
+bool gpsHasFix() {
+    return gps.location.isValid() && currentLatitude != 0 && currentLongitude != 0;
+}
+
+double reportLatitude() {
+#if GPS_FALLBACK_ENABLED
+    return gpsHasFix() ? currentLatitude : (double)GPS_FALLBACK_LATITUDE;
+#else
+    return currentLatitude;
+#endif
+}
+
+double reportLongitude() {
+#if GPS_FALLBACK_ENABLED
+    return gpsHasFix() ? currentLongitude : (double)GPS_FALLBACK_LONGITUDE;
+#else
+    return currentLongitude;
+#endif
+}
+
 Servo cameraServo;
 static const int MAX_WAYPOINTS = 512;
 struct MissionWaypoint { double latitude; double longitude; bool scan; int index; };
@@ -283,7 +310,9 @@ void updateStatusDisplay(bool force) {
     lastDisplayMillis = millis();
 
     bool wifiUp = WiFi.status() == WL_CONNECTED;
-    bool gpsFix = gps.location.isValid() && currentLatitude != 0 && currentLongitude != 0;
+    // gpsHasFix() also answers false for a 0,0 fix - and the row below says
+    // PLACEHOLDER, so the operator can see why the position is not from the sky.
+    bool gpsFix = gpsHasFix();
 
     display.clearDisplay();
     display.setTextSize(1);
@@ -312,7 +341,11 @@ void updateStatusDisplay(bool force) {
     // not merely on the UART pins being configured.
     display.setCursor(0, 43);
     if (gpsFix) display.printf("GPS FIX %d ", (int)(gps.satellites.isValid() ? gps.satellites.value() : 0));
+#if GPS_FALLBACK_ENABLED
+    else display.print("GPS NOFIX PLH ");
+#else
     else display.print("GPS NO FIX ");
+#endif
     if (!cameraStatusKnown) display.print("CAM ?");
     else display.print(cameraConnected ? "CAM OK" : "CAM ERR");
 
@@ -1505,17 +1538,25 @@ long readUltrasonic(int echoPin, String sensorName, bool quiet, uint32_t timeout
 }
 
 void sendLocationData() {
-    if (!socketConnected || currentLatitude == 0 || currentLongitude == 0) return;
-    DynamicJsonDocument doc(512);
+    if (!socketConnected) return;
+    const bool fix = gpsHasFix();
+#if !GPS_FALLBACK_ENABLED
+    if (!fix) return;   // no fix and the placeholder is switched off: stay silent
+#endif
+    DynamicJsonDocument doc(768);
     JsonArray event = doc.to<JsonArray>();
     event.add("message.upsert");
     JsonObject envelope = event.createNestedObject();
     envelope["Type"] = "location";
     JsonObject message = envelope.createNestedObject("Message");
-    message["latitude"] = currentLatitude;
-    message["longitude"] = currentLongitude;
-    message["altitude"] = gps.altitude.isValid() ? gps.altitude.meters() : 0;
-    message["satellites"] = gps.satellites.isValid() ? gps.satellites.value() : 0;
+    // fix:false = these are the placeholder coordinates from config.h, the GPS
+    // module is not answering. The app tells the operator instead of guessing.
+    message["latitude"] = reportLatitude();
+    message["longitude"] = reportLongitude();
+    message["altitude"] = fix && gps.altitude.isValid() ? gps.altitude.meters() : 0;
+    message["satellites"] = fix && gps.satellites.isValid() ? gps.satellites.value() : 0;
+    message["fix"] = fix;
+    message["placeholder"] = !fix;
     message["deviceId"] = DEVICE_ID;
     String output;
     serializeJson(doc, output);
@@ -1756,7 +1797,8 @@ void captureBothSides(int scanPoint) {
 void navigateMission() {
     if (!autonomousActive || autonomousPaused || currentWaypointIndex >= missionWaypointCount) return;
     setMotionSource(SRC_AUTO);
-    if (currentLatitude == 0 || currentLongitude == 0 || !gps.location.isValid()) {
+    // Never drive on the placeholder position: no measured fix, no motion.
+    if (!gpsHasFix()) {
         controlMotors("STOP");
         return;
     }
@@ -2022,8 +2064,8 @@ void captureAndUploadImage(const String &side, int scanPoint) {
                     // itself and accepts unmapped manual captures.
                     if (currentPlant.length() > 0) addField("plant", currentPlant);
                     if (currentBlockId.length() > 0) addField("blockId", currentBlockId);
-                    addField("latitude", String(currentLatitude, 7));
-                    addField("longitude", String(currentLongitude, 7));
+                    addField("latitude", String(reportLatitude(), 7));
+                    addField("longitude", String(reportLongitude(), 7));
                     addField("deviceId", DEVICE_ID);
                     addField("missionId", activeMissionId);
                     addField("patrolId", String(activePatrolId));

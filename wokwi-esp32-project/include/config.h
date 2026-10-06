@@ -39,6 +39,23 @@
 #define ROBOT_TOKEN "4408dc8d907853dcb3c3cd3e9714e78f8a92a5509755d25cd6e561dd2c78d9d6"
 #endif
 
+// --- GPS placeholder position ----------------------------------------------
+// The GPS module can be missing, unpowered or without a sky view, and the
+// operator still needs a position on the map. While there is no valid fix the
+// rover reports the placeholder position below and marks the message
+// `fix:false`, so the app shows "NO GPS FIX" instead of an empty map.
+// Change these two numbers to your own field centre, or set
+// GPS_FALLBACK_ENABLED to 0 to send nothing at all while there is no fix.
+#ifndef GPS_FALLBACK_ENABLED
+#define GPS_FALLBACK_ENABLED 1
+#endif
+#ifndef GPS_FALLBACK_LATITUDE
+#define GPS_FALLBACK_LATITUDE 7.489087449264883
+#endif
+#ifndef GPS_FALLBACK_LONGITUDE
+#define GPS_FALLBACK_LONGITUDE 80.36537714662697
+#endif
+
 // --- Wi-Fi & server -------------------------------------------------------
 // Defaults target the Wokwi simulator (Wokwi-GUEST). For real hardware put
 // your SSID/password and the server URL in config.local.h.
