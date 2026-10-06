@@ -1,76 +1,88 @@
-# ESP32-C3 SuperMini Water Pump — external power, no USB
+# ESP32 DevKit V1 Water Pump Controller
 
-This project starts from the user's latest Wokwi project `476516556808428545`. Its existing parts, positions, and wire routes are preserved. Only the external buck-converter section and related wiring/text were appended.
+This is the ESP32 DevKit V1 version of the existing pump controller. It keeps
+the server-compatible identity `esp_c3_pump` so no server/client change is
+required.
 
-## Exact physical controller
+## Pin wiring
 
-Physical board: **ESP32-C3 SuperMini 4MB** from the supplied datasheet.
+| ESP32 DevKit V1 | Device |
+|---|---|
+| GPIO25 | Relay module IN |
+| GPIO34 | Soil sensor analog AO |
+| GPIO2 | Status LED (on-board LED where available) |
+| 5V/VIN | Regulated 5.0 V from pump-controller buck |
+| GND | Relay GND, sensor GND and buck OUT- common ground |
 
-Wokwi does not provide that exact compact PCB, so simulation uses `board-esp32-c3-devkitm-1`. It has the same ESP32-C3 architecture and the firmware uses GPIO numbers that exist on the SuperMini:
+GPIO34 is intentionally used because it is an ADC1 pin and therefore works
+while ESP32 Wi-Fi is active. Never apply more than 3.3 V to GPIO34.
 
-- GPIO4 -> relay IN
-- GPIO3 -> status LED
-- GPIO0 -> soil-moisture analog signal
-- 5V/GND -> external regulated board power
-
-## USB-free power wiring
-
-A **second 12V-to-5V buck converter is required** for the pump controller. One physical buck cannot power both the separate robot and pump assemblies.
-
-Router adapter/load and buck input:
-
-```text
-Router adapter +12V -> fuse -> relay COM
-Router adapter +12V -> pump-system buck VIN+
-Router adapter GND  -> pump negative
-Router adapter GND  -> pump-system buck VIN-
-Relay NO            -> pump positive
-Relay NC            -> unconnected
-```
-
-Buck and logic:
+## Pump power wiring
 
 ```text
-Buck OUT+ adjusted to 5.0V -> ESP32-C3 SuperMini 5V
-Buck OUT+ adjusted to 5.0V -> relay VCC
-Buck OUT-                  -> ESP32-C3 GND
-Buck OUT-                  -> relay GND
-ESP32-C3 GPIO4             -> relay IN
+12 V supply + -> fuse -> relay COM
+relay NO       -> pump +
+pump -         -> 12 V supply -
+relay NC       -> not connected
+
+12 V supply +  -> 5 V buck VIN+
+12 V supply -  -> 5 V buck VIN-
+buck OUT+ 5.0V -> ESP32 VIN/5V and relay VCC
+buck OUT-      -> ESP32 GND, relay GND and sensor GND
 ```
 
-Before connecting the C3, measure and adjust buck output to 5.0V. The datasheet says external 3.3–6V may be applied at the 5V pin and warns that USB and external power must not be connected simultaneously. Therefore disconnect external 5V before plugging in USB for firmware upload.
+Do not power the pump from the ESP32 or its 5 V pin. Confirm the buck output is
+5.0 V before connecting the ESP32. Add a fuse sized for the pump and wiring.
+Keep water away from exposed electronics and mains wiring.
 
-The JQC3F-05VDC-C marking confirms a 5V relay coil, but not the module trigger polarity. Firmware defaults to active-low (`RELAY_ACTIVE_LOW true`). Change it to `false` if physical testing shows inverted operation.
+## Relay module
 
-## Arduino IDE upload
+The firmware defaults to an active-low relay (`RELAY_ACTIVE_LOW true`). If the
+relay turns on when it should be off, set this to `false` in `config.h` and
+upload again. When GPIO25 controls relay IN, remove any unrelated input jumper;
+do not remove relay-board coil/optocoupler jumpers unless its own manual calls
+for separate supplies.
+
+## Soil sensor
+
+- Sensor VCC: use 3.3 V if its AO can otherwise exceed 3.3 V.
+- Sensor AO -> GPIO34.
+- Sensor GND -> common GND.
+- Calibrate the raw wet/dry values in `soilPercent()` for the real sensor and soil.
+
+## Arduino IDE
 
 Open:
 
-`arduino-ide/esp32-c3-water-pump/esp32-c3-water-pump.ino`
+`arduino-ide/esp32-devkit-v1-water-pump/esp32-devkit-v1-water-pump.ino`
 
-Keep `config.h` in the same sketch folder. Settings:
+Keep `config.h` in the same folder. Select:
 
-- Board: ESP32C3 Dev Module
-- Flash: 4MB
-- USB CDC On Boot: Enabled
-- Upload mode: USB
+- Board: **DOIT ESP32 DEVKIT V1** (or **ESP32 Dev Module**)
+- Upload speed: 115200 or 921600
+- Serial Monitor: 115200
 
-Install WebSockets by Links2004 and ArduinoJson 6.x. Upload using USB with external 5V disconnected. After upload, unplug USB, connect regulated external 5V, and press RESET.
+Install:
 
-## Server identity
+- WebSockets by Links2004
+- ArduinoJson 6.x
 
-- role: `esp_c3_pump`
-- device id: `pump-01`
-- `PUMP_TOKEN` must match server `.env` `PUMP_TOKEN`
+Edit `WIFI_SSID`, `WIFI_PASSWORD`, server settings and `PUMP_TOKEN` in
+`config.h` before uploading. The token must match the server `PUMP_TOKEN`.
 
-## Safety
+## Direct active-low relay mode
 
-Verify the old router adapter output is 12V DC, verify polarity, and ensure its current rating meets the pump startup current. Add a fuse. Never put 12V on any ESP32-C3 pin. Keep water away from exposed mains adapters and electronics.
+This build follows the tested module behavior directly: GPIO25 LOW turns the
+relay ON and GPIO25 HIGH turns it OFF. `RELAY_ACTIVE_LOW` is `true`, and the
+firmware also uses explicit LOW/ON and HIGH/OFF output levels.
 
-## ESP32-C3 SuperMini serial monitor
+```text
+GPIO25 -> relay IN
+5V      -> relay VCC
+GND     -> relay GND
+```
 
-Wokwi and the physical SuperMini need different Serial routing. The default `wokwi` PlatformIO environment keeps `Serial` on TX/RX because the diagram connects those pins to `$serialMonitor`; enabling USB CDC here causes only ROM boot text to appear. The separate `supermini-usb` environment enables `ARDUINO_USB_MODE=1` and `ARDUINO_USB_CDC_ON_BOOT=1` for a physical board's native USB. Use `pio run -e wokwi` for Wokwi and `pio run -e supermini-usb -t upload` for the physical board. In Arduino IDE select **ESP32C3 Dev Module**, **USB CDC On Boot: Enabled**, and **USB Mode: Hardware CDC and JTAG**. For normal external-power operation, do not connect USB simultaneously; use a 3.3V UART adapter on TX/RX if logs are needed.
-
-## Pump operating modes
-
-The C3 supports explicit `pump_on`, `pump_off`, and `pump_auto` commands. Manual ON/OFF disables automatic control; AUTO uses the configured moisture threshold with hysteresis. The pump has its own `PUMP_TOKEN`, separate from the robot credential. `CUSTOM_SERVER_HOST` and `CUSTOM_SERVER_URL` are configured in `config.h`; comment both out to restore gateway-IP port-8000 fallback.
+The relay IN terminal was observed around 4.4 V when released. ESP32 GPIO is
+not 5-V tolerant, so a transistor/3.3-V-compatible relay module remains the
+recommended permanent interface. Do not use the direct connection if 4.4 V is
+present at the ESP32 end of the GPIO25 wire.

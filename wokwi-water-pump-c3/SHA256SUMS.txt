@@ -1,0 +1,10 @@
+5c1f1a54f51eea19bfc76d12d705d1773464a84e4933a3262531cde41a2f30e7  ./.gitignore
+e44417dab5150db5c8137c625fefd17e10e27201841bf8c0c91ada66faed9a29  ./README.md
+f5d90f84386fa716a42c7e7accd8e9f9ef09b259ae93b0b3dfeb3e2a2b3e926f  ./arduino-ide/esp32-devkit-v1-water-pump/config.h
+7e660851466ba2d87ddda2c25eca45d5e059553fdfd9d525300d005716f1edff  ./arduino-ide/esp32-devkit-v1-water-pump/esp32-devkit-v1-water-pump.ino
+bc47f0bcf4651546d4932904a90c25b349aa55206a7e4a63a05a8a6b8300f015  ./arduino-ide/relay-gpio25-test/relay-gpio25-test.ino
+710d362ac96938b77e15753332d05f421b3e4a117e6bdcbc423e1cce25156ca0  ./firmware/esp32-devkit-v1-water-pump.bin
+f5d90f84386fa716a42c7e7accd8e9f9ef09b259ae93b0b3dfeb3e2a2b3e926f  ./include/config.h
+6fb902c8f21c5e3f617c3c29a6e5589445e348ba3e60dd90b09775b596fad4c5  ./platformio.ini
+7e660851466ba2d87ddda2c25eca45d5e059553fdfd9d525300d005716f1edff  ./sketch.ino
+7e660851466ba2d87ddda2c25eca45d5e059553fdfd9d525300d005716f1edff  ./src/main.cpp

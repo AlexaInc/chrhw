@@ -33,3 +33,11 @@ binary = "bms3s.chip.wasm"
 [[chip]]
 name = "buck5v"
 binary = "buck5v.chip.wasm"
+
+[[chip]]
+name = "dcadapter"
+binary = "dcadapter.chip.wasm"
+
+[[chip]]
+name = "charger3s"
+binary = "charger3s.chip.wasm"

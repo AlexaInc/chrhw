@@ -66,18 +66,18 @@ Full-build script එකට `pio` සහ `wokwi-cli` දෙකම PATH එකේ
 
 | Diagram type | Source | Binary used by VS Code |
 |---|---|---|
-| `chip-r` | `r.chip.c` | `dist/r.chip.wasm` |
-| `chip-gps` | `gps.chip.c` | `dist/gps.chip.wasm` |
-| `chip-l98nmotorcontrl` | `l98nmotorcontrl.chip.c` | `dist/l98nmotorcontrl.chip.wasm` |
-| `chip-espcam` | `espcam.chip.c` | `dist/espcam.chip.wasm` |
+| `chip-r` | `r.chip.c` | `r.chip.wasm` |
+| `chip-gps` | `gps.chip.c` | `gps.chip.wasm` |
+| `chip-l98nmotorcontrl` | `l98nmotorcontrl.chip.c` | `l98nmotorcontrl.chip.wasm` |
+| `chip-espcam` | `espcam.chip.c` | `espcam.chip.wasm` |
 
-සෑම `.wasm` file එකකටම එකම basename එක සහිත `.json` file එක `dist/` තුළ තිබේ. `wokwi.toml` paths සියල්ල `/` භාවිතයෙන් සකසා ඇත.
+සෑම `.wasm` file එකකටම එකම basename එක සහිත `.json` file එක project root තුළ තිබේ. `wokwi.toml` එම root binaries භාවිත කරයි.
 
 ### “Missing” chip/editor bug එක සඳහා කළ fix
 
-- Custom-chip `.json` සහ `.wasm` යුගල `dist/` තුළ copy කර ඇත.
-- `wokwi.toml` හි `[[chip]]` blocks හතරම නිවැරදි diagram names වලට map කර ඇත.
-- Local routing එකට root files නොව `dist/*.chip.wasm` explicit paths භාවිත කර ඇත.
+- Custom-chip `.json` සහ `.wasm` යුගල project root තුළ එකම copy එකක් ලෙස තබා ඇත.
+- `wokwi.toml` හි `[[chip]]` blocks diagram names වලට සහ root binaries වලට map කර ඇත.
+- පරණ duplicate `dist/` copies ඉවත් කර project එක සරල කර ඇත.
 
 `r.chip.json` තුළ original project එකෙන් පැමිණි custom `body` SVG property එකක් ඇත. Latest Wokwi CLI එක ඒ property එක ගැන **validation warning** එකක් දෙයි, නමුත් WASM compile එක සාර්ථකය. ඇතැම් VS Code diagram-editor versions වල custom SVG වෙනුවට generic breakout drawing එක පෙන්විය හැක; එය chip simulation logic failure එකක් නොවේ.
 
@@ -116,7 +116,7 @@ Robot config එක `ROBOT_TOKEN` භාවිත කරයි. Server `.env` �
 - Serial baud rate `921600`; Wokwi serial monitor ඒ අනුව firmware මගින් initialize වේ.
 - Simulation එකට internet/server access නොලැබුණොත් Wi-Fi/WebSocket/HTTP functions reconnect හෝ timeout විය හැක. එය custom-chip loading error එකක් නොවේ.
 - `include/config.h` තුළ server authentication token එකක් තිබේ. Original online project එක public නම් token එක exposed වී තිබිය හැකි බැවින් production භාවිතයට පෙර token එක rotate කිරීම සුදුසුය.
-- `WebAssembly.compile(): expected magic word ... found 7b 22...` වැනි error එකක් තවමත් ලැබුණොත් extension එක update/reload කර, VS Code තුළ open කර ඇත්තේ project root folder එකදැයි බලන්න. `dist/*.wasm` files delete වී නැති බවත් තහවුරු කරන්න.
+- `WebAssembly.compile(): expected magic word ... found 7b 22...` වැනි error එකක් තවමත් ලැබුණොත් extension එක update/reload කර, VS Code තුළ open කර ඇත්තේ project root folder එකදැයි බලන්න. root `*.chip.wasm` files delete වී නැති බවත් තහවුරු කරන්න.
 - Wokwi CLI `lint` දැනට original diagram එකේ `wokwi-junction` parts 9 ගැන `unknown-part-type` ලෙස report කරයි. ඒ parts original online Wokwi project එකෙන්ම පැමිණි wire-junction helpers වන අතර browser simulator එක ඒවා භාවිත කරයි; custom-chip WASM/path error එකක් නොවේ.
 - මෙහි command-line simulation එක run කිරීමට පුද්ගලික `WOKWI_CLI_TOKEN` එකක් අවශ්‍ය බැවින් token එක package එකට ඇතුළත් කර නැත. VS Code Wokwi extension එකෙන් ඔබගේ account/license භාවිත කර start කරන්න.
 
@@ -125,3 +125,51 @@ Robot config එක `ROBOT_TOKEN` භාවිත කරයි. Server `.env` �
 The controller now accepts the server's `autonomous_mission` command (up to 512 waypoints), follows GPS lawnmower waypoints in selected-block order, and uses the front/left/right (~45°) ultrasonic sensors for obstacle avoidance. The camera servo stays at 90° while moving. At each scan waypoint the rover stops, turns the camera left, uploads one image, turns right, uploads one image, and returns to center before continuing. Upload metadata includes mission, patrol, scan-point and side.
 
 Manual `drive`, `stop`, pause and resume commands override autonomous motion. Because this build has no IMU/compass or wheel encoders, low-speed GPS course and timed obstacle turns are best-effort outdoors; precise crop-row tracking needs additional heading/odometry hardware or RTK GPS.
+
+## Camera diagnostic protocol
+
+A no-frame reply now includes `<IMG:0><CAMERR:STAGE:code>`. The controller logs
+`INIT`, `CAPTURE`, or `ENCODE`, which separates physical sensor initialization
+faults from raw-frame and RGB565 software-JPEG failures. If it reports `no
+diagnostic`, upload the current camera sketch to the ESP32-CAM board.
+
+### `ENCODE:0x101` correction
+
+`frame2jpg()` required a second contiguous JPEG output allocation and failed on
+the physical board. The UART camera now uses `frame2jpg_cb()` like the working
+CameraWebServer example. It encodes the same frame twice: a count-only pass to
+produce `<IMG:size>`, followed by a chunked pass written directly to UART. This
+avoids allocating a complete JPEG buffer alongside the RGB565 frame.
+
+### AI Thinker raw-camera compatibility
+
+The physical UART camera sketch mirrors the proven Espressif CameraWebServer
+raw configuration: `PIXFORMAT_RGB565`, `FRAMESIZE_240X240`, 20 MHz XCLK, one
+frame buffer and `CAMERA_GRAB_WHEN_EMPTY`.
+
+### Socket reconnect after `field_map`
+
+`field_map` is connection-time configuration, not a motor action. The
+controller now consumes it without forwarding `FIELD_MAP` to `controlMotors()`.
+Socket event JSON capacity is sized from the payload (8-48 KB) instead of
+allocating 96 KB for every event, avoiding WiFi/WebSocket heap starvation.
+Disconnect logs include WiFi state and free heap for diagnosis.
+
+### Known-good Socket.IO handshake restored
+
+The connection path now matches Wokwi project 476291712621785089: Engine.IO 4
+with `role` and `token` query parameters only. The experimental EIO3 fallback
+was removed because the server reported `forced close`. `deviceId` is omitted;
+the server already defaults this role to `robot-01`.
+
+
+### Bounded autonomous mission transfer
+
+The ESP32 WebSockets library accepts frames up to 15 KB. The production DB's
+216-waypoint active mission serialized to 35,737 bytes, so the server's automatic
+mission restore closed the ESP32 transport immediately after every connection.
+The server now sends `autonomous_mission_begin`, 32-waypoint
+`autonomous_mission_chunk` events, and `autonomous_mission_end`. The controller
+assembles these directly into its fixed waypoint array and never moves until the
+full route is validated. The actual 216-waypoint route was reconstructed exactly
+in 7 chunks; the largest complete Socket.IO event was 5,428 bytes.

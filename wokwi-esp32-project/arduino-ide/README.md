@@ -43,7 +43,7 @@ Arduino IDE settings:
 - Partition Scheme: **Huge APP (3MB No OTA/1MB SPIFFS)** (Default also fits)
 - PSRAM: **Enabled**, if the menu is shown
 
-No third-party camera library is required: `esp_camera.h` comes with the Espressif ESP32 board package.
+No third-party camera library is required: `esp_camera.h` and `img_converters.h` come with the Espressif ESP32 board package. This sketch captures **RGB565** (not camera hardware JPEG), then uses `frame2jpg()` to software-encode the UART/upload JPEG. It uses QVGA with PSRAM and QQVGA without PSRAM.
 
 ### ESP32-CAM upload with an FTDI adapter
 
@@ -66,7 +66,7 @@ Use a stable 5V supply. Do not try to run the camera from a weak 3.3V output.
 
 Both use **921600 baud**. The DevKit sends a standalone `C`; the camera replies with:
 
-`<IMG:jpeg-size>` followed immediately by the raw JPEG bytes.
+`<IMG:jpeg-size>` followed immediately by software-encoded JPEG bytes.
 
 The ESP32-CAM sketch deliberately sends no debug text over UART, because the same UART carries binary JPEG data. The DevKit's UART0 is also its USB serial port, so the Serial Monitor may show binary garbage during a photo transfer; that is expected.
 
@@ -101,3 +101,35 @@ initialize. If you still get a timeout, it is a hardware/link problem:
 4. **Disconnect the USB serial monitor** while capturing: UART0 is shared with
    the USB bridge, and an open monitor/board can corrupt the CAM's reply bytes.
 5. Both sketches use **921600 baud** — keep them matched.
+
+## OLED camera check at boot
+
+The controller now requests one real frame before Wi-Fi setup. The OLED displays **Camera connected** only after the complete JPEG arrives; otherwise it displays **Camera NOT ready**. The live screen continues to show `CAM OK` or `CAM ERR` next to GPS status. This verifies camera initialization, RGB565-to-JPEG encoding, and the crossed UART link rather than showing a hardcoded connection message.
+
+### Reading `<IMG:0>` diagnostics
+
+With the current sketches, a failed capture is followed by a reason such as
+`<CAMERR:INIT:0x105>`. The controller prints it as `reason=INIT:0x105`:
+
+- `INIT` — `esp_camera_init()` could not detect/start the sensor. `0x105`
+  (`ESP_ERR_NOT_FOUND`) normally means ribbon orientation/contact, wrong camera
+  pin map, failed sensor, or inadequate 5V power. This cannot be repaired in
+  software.
+- `CAPTURE` — initialization succeeded, but `esp_camera_fb_get()` returned no
+  frame. Check power stability/XCLK/ribbon.
+- `ENCODE` — RGB565 was captured but software JPEG conversion failed, usually
+  because of insufficient free memory. Ensure PSRAM is enabled and detected.
+- `no diagnostic` — the ESP32-CAM is still running an older sketch; upload the
+  updated `esp32-cam-uart.ino` to the camera board as well as the controller.
+
+The standalone `C` visible immediately before a controller debug line is the
+intentional UART capture command echoed by the DevKit USB serial connection; it
+is not itself an error.
+
+### `ENCODE:0x101` correction
+
+`frame2jpg()` required a second contiguous JPEG output allocation and failed on
+the physical board. The UART camera now uses `frame2jpg_cb()` like the working
+CameraWebServer example. It encodes the same frame twice: a count-only pass to
+produce `<IMG:size>`, followed by a chunked pass written directly to UART. This
+avoids allocating a complete JPEG buffer alongside the RGB565 frame.

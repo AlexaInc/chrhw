@@ -21,10 +21,16 @@ uint16_t serverPort = SERVER_PORT;
 bool serverSecure = false;
 
 void setPump(bool on, unsigned long durationSeconds = 0) {
+  // This 5 V relay module is active-low: LOW energizes, HIGH releases.
+  // Keep the levels explicit so a configuration mismatch cannot invert ON/OFF.
+  const uint8_t relayLevel = on ? LOW : HIGH;
+  digitalWrite(RELAY_PIN, relayLevel);
   pumpOn = on;
-  digitalWrite(RELAY_PIN, RELAY_ACTIVE_LOW ? !on : on);
   digitalWrite(STATUS_LED_PIN, on ? HIGH : LOW);
   pumpStopAt = on && durationSeconds ? millis() + durationSeconds * 1000UL : 0;
+  Serial.printf("[PUMP] Relay requested=%s GPIO%d=%s readback=%d\n",
+                on ? "ON" : "OFF", RELAY_PIN,
+                relayLevel == LOW ? "LOW" : "HIGH", digitalRead(RELAY_PIN));
 }
 
 int soilPercent() {
@@ -188,9 +194,9 @@ void connectSocket() {
 void setup() {
   // RELAY_ACTIVE_LOW modules can turn on while their input floats during boot.
   // Drive the relay OFF before Serial, WiFi, delays, or sensor initialization.
-  digitalWrite(RELAY_PIN, RELAY_ACTIVE_LOW ? HIGH : LOW);
+  digitalWrite(RELAY_PIN, HIGH);
   pinMode(RELAY_PIN, OUTPUT);
-  digitalWrite(RELAY_PIN, RELAY_ACTIVE_LOW ? HIGH : LOW);
+  digitalWrite(RELAY_PIN, HIGH);
   pinMode(STATUS_LED_PIN, OUTPUT);
   digitalWrite(STATUS_LED_PIN, LOW);
   pinMode(SOIL_PIN, INPUT);
@@ -199,7 +205,7 @@ void setup() {
 
   Serial.begin(115200);
   delay(500);
-  Serial.printf("\n[PUMP] ESP32-C3 pump controller booting (SAFE RELAY OFF)\n[PUMP] Firmware: %s\n", PUMP_FW_VERSION);
+  Serial.printf("\n[PUMP] ESP32 DevKit V1 pump controller booting (SAFE RELAY OFF)\n[PUMP] Firmware: %s\n", PUMP_FW_VERSION);
   connectWiFi();
   initServerAddress();
   connectSocket();
