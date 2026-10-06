@@ -41,3 +41,47 @@ What was verified against `wokwi-esp32-project/src/main.cpp` and
   one-to-one; no change needed there either.
 
 No source files in this repository were modified by this pass.
+
+
+---
+
+## Follow-up (2026-10-06): motion limits, SD cache, single firmware source
+
+The "no firmware changes were required" conclusion above was about *matching
+what the client showed*, and it still holds for the telemetry surface. The
+2026-10-06 update adds capabilities the client and server now genuinely use, so
+this note is extended rather than replaced:
+
+- **Speed limits** — `set_speed` / `motion_config` are now real commands
+  (`FleetConfig.driveSpeedPercent`, `turnSpeedPercent`, clamped 0-100 by the
+  server and again by `MOTION_HARD_MAX_PWM` in the firmware). The dashboard
+  shows the limit next to the PWM the rover reports it is actually using.
+- **Field-map cache** — the rover stores the map on its SD card with a content
+  revision and reports it in `device_hello`; the server only re-sends the map
+  when the revision differs (legacy firmware still receives it after 2.5 s).
+  `map_status` + `RobotStatus.fieldMap` expose *IN SYNC / NOT SYNCED*.
+- **Safety telemetry** — `RobotStatus.motion` carries `appliedPwm`, `intent`,
+  `source`, `blockedBy` (`obstacle` / `failsafe`) and `obstacleStopCm`, and an
+  obstacle stop or a dead-man failsafe cut raises a real alert.
+- **One source per project** — `sketch.ino` and the Arduino IDE sketches now
+  `#include src/main.cpp`; configuration lives in `include/config.h`. The
+  follow-up (front-arc update) adds `include/arc_math.h` next to it, so the
+  geometry/decision maths is shared by the firmware AND by the PC unit test
+  (`scripts/test-arc-math.sh`) instead of being duplicated.
+- **Front-arc avoidance** — the rover no longer stops at every plant: it steers
+  to the wider side, creeps past and (in autonomous mode) returns to the mission
+  heading. The server/client side is purely informational: `motion_config`
+  reasons `avoiding` / `creep` / `turn-back` / `clear` / `no-path` /
+  `emergency`, `blockedBy` `plant-left` / `plant-right` / `plant-ahead`, and
+  `avoidState`, `avoidDir`, `gapLeftCm`, `gapRightCm`, `frontCm`,
+  `sensorAngleLeftDeg`, `sensorAngleRightDeg`, `avoidAssist` on both
+  `motion_config` and the `sensors` telemetry. Alerts: `no-path` and
+  `emergency` are warnings, `avoiding` / `creep` are info, and the firmware
+  reports state CHANGES only so the alert stream stays quiet.
+- **Sensor angles are settings** — `FleetConfig.sensorAngleLeftDeg`,
+  `sensorAngleRightDeg` (clamped 0-80) and `avoidAssist` (bool) travel with the
+  speed limits on `apply_config` / `set_speed` / `motion_config`, are persisted,
+  and are pushed to the rover on connect.
+
+Nothing in this update fabricates a reading the hardware cannot produce: every
+new field is either a command echo or a value the firmware measured itself.

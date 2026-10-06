@@ -1,0 +1,26 @@
+// ---------------------------------------------------------------------------
+// config.local.h — per-machine overrides (THIS IS THE ONLY FILE YOU EDIT FOR
+// Wi-Fi / server / token changes). Copy it once:
+//     PlatformIO : cp include/config.local.h.example include/config.local.h
+//     Arduino IDE: copy this file into the sketch folder next to the .ino
+// config.local.h is git-ignored, so credentials never land in the repository.
+//
+// Everything is #ifndef-guarded in include/config.h, so defining a value here
+// simply replaces the default. Delete a line to fall back to the default.
+// ---------------------------------------------------------------------------
+#pragma once
+
+// --- Wi-Fi (real hardware) ---
+#define WIFI_SSID     "YOUR_WIFI_NAME"
+#define WIFI_PASSWORD "YOUR_WIFI_PASSWORD"
+
+// --- Server (leave undefined for the http://<gateway-ip>:8000 fallback) ---
+#define CUSTOM_SERVER_HOST "crophealth.dpdns.org"
+#define CUSTOM_SERVER_URL  "https://crophealth.dpdns.org"
+
+// --- Device identity: must match ROBOT_TOKEN / PUMP_TOKEN in chrserver .env ---
+// #define ROBOT_TOKEN "…64 hex chars…"
+
+// --- Optional: tighten the speed ceiling for a new chassis/motor set ---
+// #define MOTION_HARD_MAX_PWM 120
+// #define MOTION_CRUISE_PWM   95

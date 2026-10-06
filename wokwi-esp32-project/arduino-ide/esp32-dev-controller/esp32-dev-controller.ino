@@ -1,24 +1,17 @@
-// ESP32 DevKit V1 raw relay test.
-// DISCONNECT ALL 230/240 V WIRING before running this test.
-// Wiring: GPIO25 -> IN, 5V -> VCC, GND -> GND.
-
-static const int RELAY_PIN = 25;
-
-void setup() {
-  Serial.begin(115200);
-  pinMode(RELAY_PIN, OUTPUT);
-  digitalWrite(RELAY_PIN, LOW);
-  Serial.println("GPIO25 raw relay test started; mains must be disconnected.");
-}
-
-void loop() {
-  digitalWrite(RELAY_PIN, LOW);
-  delay(20);
-  Serial.printf("GPIO25 commanded LOW, readback=%d (hold 3 seconds)\n", digitalRead(RELAY_PIN));
-  delay(3000);
-
-  digitalWrite(RELAY_PIN, HIGH);
-  delay(20);
-  Serial.printf("GPIO25 commanded HIGH, readback=%d (hold 3 seconds)\n", digitalRead(RELAY_PIN));
-  delay(3000);
-}
+// ---------------------------------------------------------------------------
+// CHR-01 rover — Arduino IDE sketch.
+//
+// The firmware source of truth is ../../../src/main.cpp (the file PlatformIO
+// compiles). This sketch includes it, so editing the firmware in ONE place
+// updates the Wokwi simulation build and this Arduino IDE build together.
+//
+// Board settings (Arduino IDE):
+//   Board            : "ESP32 Dev Module"
+//   Partition Scheme : "Default 4MB with spiffs" (or any with >= 1.3MB app)
+//   Upload Speed     : 921600
+//   Monitor Speed    : 921600
+//
+// Configuration: pins/Wi-Fi/tokens/limits come from ../../../include/config.h.
+// Put machine-specific values in a `config.local.h` file next to THIS sketch.
+// ---------------------------------------------------------------------------
+#include "../../src/main.cpp"
