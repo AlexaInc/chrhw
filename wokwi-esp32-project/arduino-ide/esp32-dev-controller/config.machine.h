@@ -11,6 +11,9 @@
 // After editing this file run:   bash scripts/sync-arduino-ide.sh
 // ---------------------------------------------------------------------------
 
+// This board's OTA identity: upload the rover image under the SAME target.
+#define FW_TARGET "rover"
+
 // Wi-Fi of THIS board (the machine-specific part - never committed elsewhere).
 #define WIFI_SSID "LAPTOP_92SEERD2_3485"
 #define WIFI_PASSWORD "[8447Yq9"

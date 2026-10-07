@@ -12,6 +12,8 @@
 #include "arc_math.h"
 #include "logo_bitmap.h"
 #include <HTTPClient.h>
+#include <HTTPUpdate.h>
+#include <WiFiClientSecure.h>
 #include <TinyGPSPlus.h>
 #include <ESP32Servo.h>
 #include <math.h>
@@ -1048,6 +1050,8 @@ void sendDeviceHello() {
     hello["deviceId"] = DEVICE_ID;
     hello["role"] = DEVICE_ROLE;
     hello["firmware"] = FW_VERSION;
+    // The admin panel matches images to boards with this value (see config.h).
+    hello["fwTarget"] = FW_TARGET;
     hello["mapRev"] = cachedMapRev;
     hello["mapBlocks"] = cachedMapBlocks;
     hello["mapBytes"] = cachedMapBytes;
@@ -1063,6 +1067,134 @@ void sendDeviceHello() {
     Serial.printf("[IOc] Hello sent (firmware=%s, mapRev=%s, sd=%d)\n", FW_VERSION,
                   cachedMapRev.length() ? cachedMapRev.c_str() : "none", (int)sdOk);
 }
+
+// ---------------------------------------------------------------------------
+// OTA firmware update (admin panel -> chrserver -> this board)
+//
+// The panel queues an image; the server sends this board an `ota` command and
+// then serves the file itself, because the rover usually reaches the field
+// gateway and not the internet. This side only ever accepts an image for its own
+// FW_TARGET - a build for another board is refused here as well as on the
+// server, so a pump image can never be flashed onto the rover.
+//
+// Safety: motors are stopped and the rover is handed to manual BEFORE the
+// download starts, and nothing moves again while the flash runs (the update
+// blocks the loop, then the board reboots into the new firmware).
+// ---------------------------------------------------------------------------
+#if OTA_ENABLED
+static String otaVersion = "";
+static int otaReportedPercent = -1;
+
+void sendOtaStatus(const char *status, const char *reason = "", int percent = -1) {
+    Serial.printf("[OTA] %s%s%s\n", status, reason && *reason ? " - " : "", reason ? reason : "");
+    if (!socketConnected) return;
+    DynamicJsonDocument doc(384);
+    JsonArray event = doc.to<JsonArray>();
+    event.add("ota_status");
+    JsonObject message = event.createNestedObject();
+    message["deviceId"] = DEVICE_ID;
+    message["target"] = FW_TARGET;
+    message["version"] = otaVersion;
+    message["status"] = status;
+    if (percent >= 0) message["percent"] = percent;
+    if (reason && *reason) message["reason"] = reason;
+    String output;
+    serializeJson(doc, output);
+    socketIO.sendEVENT(output);
+}
+
+bool applyOtaUpdate(const String &version, const String &path, const String &md5, long size) {
+    if (!OTA_ENABLED) {
+        sendOtaStatus("ignored", "OTA is disabled in this build");
+        return false;
+    }
+    if (WiFi.status() != WL_CONNECTED) {
+        sendOtaStatus("failed", "no Wi-Fi");
+        return false;
+    }
+    if (path.length() == 0) {
+        sendOtaStatus("failed", "the command carried no download path");
+        return false;
+    }
+    // Only ever the server this board already talks to (gateway or hosted).
+    const String url = serverBaseUrl + path;
+    if (!url.startsWith("http")) {
+        sendOtaStatus("failed", "no server address yet");
+        return false;
+    }
+
+    // Stop first: flashing never happens with the motors live.
+    setMotionSource(SRC_MANUAL);
+    autonomousPaused = true;
+    controlMotors("STOP");
+    delay(200);
+
+    // Two app slots are required for OTA. A single-slot partition scheme (e.g.
+    // "Huge APP") has nowhere to put the image - say so instead of half flashing.
+    if (size > 0 && (long)ESP.getFreeSketchSpace() < size) {
+        sendOtaStatus("failed", "not enough flash space - use a partition scheme with two app slots");
+        return false;
+    }
+
+    otaVersion = version;
+    otaReportedPercent = -1;
+    sendOtaStatus("starting", "");
+
+    httpUpdate.rebootOnUpdate(true);
+    httpUpdate.setLedPin(-1);
+    httpUpdate.onStart([]() { sendOtaStatus("downloading", ""); });
+    httpUpdate.onProgress([](int current, int total) {
+        if (total <= 0) return;
+        const int percent = (int)((100.0 * current) / total);
+        if (percent / 10 == otaReportedPercent / 10) return; // one message per 10 %
+        otaReportedPercent = percent;
+        Serial.printf("[OTA] %d%% (%d/%d bytes)\n", percent, current, total);
+    });
+    // onEnd takes no argument in this core version - onError reports failures.
+    httpUpdate.onEnd([]() { Serial.println("[OTA] download complete, flashing"); });
+
+    Serial.printf("[OTA] downloading %s (running %s, requested %s, md5 %s)\n", url.c_str(), FW_VERSION,
+                  version.length() ? version.c_str() : "?");
+
+    // The board authenticates the download with its own device token. It goes in
+    // the URL because the HTTPUpdate API in this core version takes no headers.
+    String downloadUrl = url;
+    downloadUrl += downloadUrl.indexOf('?') >= 0 ? "&" : "?";
+    downloadUrl += "token=";
+    downloadUrl += ROBOT_TOKEN;
+
+    if (serverSecure) {
+        WiFiClientSecure client;
+        client.setInsecure(); // the tunnel certificate is not pinned in the firmware
+        switch (httpUpdate.update(client, downloadUrl, FW_VERSION)) {
+            case HTTP_UPDATE_FAILED:
+                sendOtaStatus("failed", httpUpdate.getLastErrorString().c_str());
+                return false;
+            case HTTP_UPDATE_NO_UPDATES:
+                sendOtaStatus("success", "already up to date"); // server says: this is your build
+                return false;
+            default:
+                break;
+        }
+    } else {
+        WiFiClient client;
+        switch (httpUpdate.update(client, downloadUrl, FW_VERSION)) {
+            case HTTP_UPDATE_FAILED:
+                sendOtaStatus("failed", httpUpdate.getLastErrorString().c_str());
+                return false;
+            case HTTP_UPDATE_NO_UPDATES:
+                sendOtaStatus("success", "already up to date");
+                return false;
+            default:
+                break;
+        }
+    }
+    // rebootOnUpdate(true) reboots inside update(); reaching this line means the
+    // image is written and the reboot follows.
+    sendOtaStatus("success", "flashed, rebooting");
+    return true;
+}
+#endif
 
 void sendMotionStatus(const char *reason) {
     if (!socketConnected) return;
@@ -1245,7 +1377,31 @@ void socketIOEvent(socketIOmessageType_t type, uint8_t *payload, size_t length) 
                     Serial.print("[DEBUG] [CMD] 🎮 Action extracted: ");
                     Serial.println(action);
                     JsonVariant data = doc[1]["command"]["data"];
-                    if (strcmp(action, "field_map") == 0) {
+                    if (strcmp(action, "ota") == 0) {
+                        // Firmware update pushed from the admin panel. The image
+                        // must belong to THIS board family: a mismatch is
+                        // reported back and never downloaded.
+#if OTA_ENABLED
+                        const char *otaTarget = data["target"] | "";
+                        const char *otaRequested = data["version"] | "";
+                        const char *otaPath = data["path"] | "";
+                        const char *otaMd5 = data["md5"] | "";
+                        const long otaSize = data["size"] | 0L;
+                        Serial.printf("[OTA] Command for target=%s version=%s (this board: %s)\n",
+                                      otaTarget, otaRequested, FW_TARGET);
+                        if (strcmp(otaTarget, FW_TARGET) != 0) {
+                            otaVersion = otaRequested;
+                            sendOtaStatus("ignored", "target mismatch - this image is for another board");
+                        } else if (strcmp(otaRequested, FW_VERSION) == 0) {
+                            otaVersion = otaRequested;
+                            sendOtaStatus("success", "already running this version");
+                        } else {
+                            applyOtaUpdate(String(otaRequested), String(otaPath), String(otaMd5), otaSize);
+                        }
+#else
+                        Serial.println("[OTA] Ignored: OTA is disabled in this build");
+#endif
+                    } else if (strcmp(action, "field_map") == 0) {
                         // field_map is configuration the server only sends when
                         // this rover's cached revision is out of date - the map
                         // itself is kept on the SD card. Mission waypoints

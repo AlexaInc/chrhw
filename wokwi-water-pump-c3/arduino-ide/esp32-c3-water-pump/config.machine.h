@@ -13,6 +13,8 @@
 
 // --- ESP32-C3 Super Mini (the physical pump board) -------------------------
 #define PUMP_FW_VERSION "2026-10-06-ESP32-C3-SUPERMINI"
+// This board's OTA identity: upload the C3 image under the SAME target.
+#define FW_TARGET "pump-c3"
 
 // Wi-Fi of THIS board.
 #define WIFI_SSID "LAPTOP_92SEERD2_3485"

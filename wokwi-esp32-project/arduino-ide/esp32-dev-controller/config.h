@@ -28,6 +28,9 @@
 // After editing this file run:   bash scripts/sync-arduino-ide.sh
 // ---------------------------------------------------------------------------
 
+// This board's OTA identity: upload the rover image under the SAME target.
+#define FW_TARGET "rover"
+
 // Wi-Fi of THIS board (the machine-specific part - never committed elsewhere).
 #define WIFI_SSID "LAPTOP_92SEERD2_3485"
 #define WIFI_PASSWORD "[8447Yq9"
@@ -75,6 +78,28 @@
 // Reported to the server in the boot handshake (device_hello).
 #ifndef FW_VERSION
 #define FW_VERSION "2026-10-06-arc-avoid"
+#endif
+
+// --- Over-the-air (OTA) firmware updates ----------------------------------
+// The admin panel pushes updates: the board downloads the image from the same
+// server it already talks to, flashes itself and reboots. The server decides
+// WHICH image; these flags only say what this build accepts.
+//
+// FW_TARGET is the identity of this board family. An image uploaded under
+// another target is refused here (and never even handed over by the server), so
+// a pump image can never end up on the rover or the other way round. It is also
+// what the panel shows next to each board.
+#ifndef FW_TARGET
+#define FW_TARGET "rover"
+#endif
+#ifndef OTA_ENABLED
+#define OTA_ENABLED 1
+#endif
+// Where OTA is decided about: the admin panel's "Update boards" trigger, plus
+// the same request being kept queued on the server for a board that is off.
+// This flag only exists so a build can be compiled without any OTA code (0).
+#if OTA_ENABLED && !defined(ENABLE_OTA)
+#define ENABLE_OTA 1
 #endif
 #ifndef DEVICE_ID
 #define DEVICE_ID "robot-01"

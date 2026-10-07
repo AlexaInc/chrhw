@@ -2,6 +2,8 @@
 #include <WiFi.h>
 #include <SocketIOclient.h>
 #include <ArduinoJson.h>
+#include <HTTPUpdate.h>
+#include <WiFiClientSecure.h>
 #include "config.h"
 
 SocketIOclient socketIO;
@@ -59,6 +61,142 @@ void sendIrrigationState() {
   if (!socketIO.sendEVENT(output)) Serial.println("[PUMP] Failed to send irrigation telemetry");
 }
 
+/**
+ * Tell the server who this board is. The admin panel needs two things it cannot
+ * guess: which firmware is running (to show "update available") and FW_TARGET
+ * (to send THIS board the image built for it - the C3 and the DevKit have
+ * different pins, so they must never share a .bin).
+ */
+void sendDeviceHello() {
+  if (!socketConnected) return;
+  DynamicJsonDocument doc(512);
+  JsonArray event = doc.to<JsonArray>();
+  event.add("device_hello");
+  JsonObject hello = event.createNestedObject();
+  hello["deviceId"] = DEVICE_ID;
+  hello["role"] = DEVICE_ROLE;
+  hello["firmware"] = PUMP_FW_VERSION;
+  hello["fwTarget"] = FW_TARGET;
+  hello["pumpOn"] = pumpOn;
+  hello["autoMode"] = autoMode;
+  hello["threshold"] = thresholdPercent;
+  String output;
+  serializeJson(doc, output);
+  if (!socketIO.sendEVENT(output)) Serial.println("[PUMP] Failed to send hello");
+  Serial.printf("[PUMP] Hello sent (firmware=%s, target=%s)\n", PUMP_FW_VERSION, FW_TARGET);
+}
+
+// ---------------------------------------------------------------------------
+// OTA firmware update (admin panel -> chrserver -> this board)
+//
+// Same chain as the rover: the panel queues an image, the server sends the `ota`
+// command and serves the file itself. This board only ever accepts an image for
+// its own FW_TARGET (a DevKit image must never land on the C3, and the other way
+// round), and it releases the relay BEFORE the download so the pump is off while
+// flashing - after the reboot the relay stays off until the server says
+// otherwise, exactly like a normal boot.
+// ---------------------------------------------------------------------------
+#if OTA_ENABLED
+static String otaVersion = "";
+
+void sendOtaStatus(const char *status, const char *reason = "", int percent = -1) {
+  Serial.printf("[PUMP][OTA] %s%s%s\n", status, reason && *reason ? " - " : "", reason ? reason : "");
+  if (!socketConnected) return;
+  DynamicJsonDocument doc(384);
+  JsonArray event = doc.to<JsonArray>();
+  event.add("ota_status");
+  JsonObject message = event.createNestedObject();
+  message["deviceId"] = DEVICE_ID;
+  message["target"] = FW_TARGET;
+  message["version"] = otaVersion;
+  message["status"] = status;
+  if (percent >= 0) message["percent"] = percent;
+  if (reason && *reason) message["reason"] = reason;
+  String output;
+  serializeJson(doc, output);
+  socketIO.sendEVENT(output);
+}
+
+bool applyOtaUpdate(const String &version, const String &path, const String &md5, long size) {
+  if (WiFi.status() != WL_CONNECTED) {
+    sendOtaStatus("failed", "no Wi-Fi");
+    return false;
+  }
+  if (path.length() == 0) {
+    sendOtaStatus("failed", "the command carried no download path");
+    return false;
+  }
+  const String url = serverBaseUrl + path;
+  if (!url.startsWith("http")) {
+    sendOtaStatus("failed", "no server address yet");
+    return false;
+  }
+
+  // Pump OFF and stay off across the reboot: flashing with a live relay is the
+  // one thing this must never do.
+  autoMode = false;
+  setPump(false);
+  activeBlockId = "";
+  delay(200);
+
+  if (size > 0 && (long)ESP.getFreeSketchSpace() < size) {
+    sendOtaStatus("failed", "not enough flash space - use a partition scheme with two app slots");
+    return false;
+  }
+
+  otaVersion = version;
+  sendOtaStatus("starting", "");
+
+  httpUpdate.rebootOnUpdate(true);
+#ifdef STATUS_LED_PIN
+  httpUpdate.setLedPin(STATUS_LED_PIN, HIGH);
+#else
+  httpUpdate.setLedPin(-1);
+#endif
+  httpUpdate.onStart([]() { sendOtaStatus("downloading", ""); });
+  // onEnd takes no argument in this core version - onError reports failures.
+  httpUpdate.onEnd([]() { Serial.println("[PUMP][OTA] download complete, flashing"); });
+
+  Serial.printf("[PUMP][OTA] downloading %s (running %s, requested %s, md5 %s)\n", url.c_str(), PUMP_FW_VERSION,
+                version.length() ? version.c_str() : "?");
+  // The board authenticates the download with its own device token. It goes in
+  // the URL because the HTTPUpdate API in this core version takes no headers.
+  String downloadUrl = url;
+  downloadUrl += downloadUrl.indexOf('?') >= 0 ? "&" : "?";
+  downloadUrl += "token=";
+  downloadUrl += PUMP_TOKEN;
+
+  if (serverSecure) {
+    WiFiClientSecure client;
+    client.setInsecure(); // the tunnel certificate is not pinned in the firmware
+    switch (httpUpdate.update(client, downloadUrl, PUMP_FW_VERSION)) {
+      case HTTP_UPDATE_FAILED:
+        sendOtaStatus("failed", httpUpdate.getLastErrorString().c_str());
+        return false;
+      case HTTP_UPDATE_NO_UPDATES:
+        sendOtaStatus("success", "already up to date");
+        return false;
+      default:
+        break;
+    }
+  } else {
+    WiFiClient client;
+    switch (httpUpdate.update(client, downloadUrl, PUMP_FW_VERSION)) {
+      case HTTP_UPDATE_FAILED:
+        sendOtaStatus("failed", httpUpdate.getLastErrorString().c_str());
+        return false;
+      case HTTP_UPDATE_NO_UPDATES:
+        sendOtaStatus("success", "already up to date");
+        return false;
+      default:
+        break;
+    }
+  }
+  sendOtaStatus("success", "flashed, rebooting");
+  return true;
+}
+#endif
+
 void socketEvent(socketIOmessageType_t type, uint8_t *payload, size_t length) {
   switch (type) {
     case sIOtype_DISCONNECT:
@@ -71,6 +209,7 @@ void socketEvent(socketIOmessageType_t type, uint8_t *payload, size_t length) {
       socketIO.send(sIOtype_CONNECT, "/");
       socketConnected = true;
       lastTelemetryAt = millis();
+      sendDeviceHello();
       Serial.println("[PUMP] Socket.IO transport connected; namespace join sent");
       break;
     case sIOtype_ERROR:
@@ -93,7 +232,28 @@ void socketEvent(socketIOmessageType_t type, uint8_t *payload, size_t length) {
       JsonObject data = command["data"];
       Serial.printf("[PUMP] Command: %s\n", action.c_str());
 
-      if (action == "pump_on") {
+      if (action == "ota") {
+        // Firmware update from the admin panel - only for THIS board's target.
+#if OTA_ENABLED
+        String otaTarget = String((const char *)(data["target"] | ""));
+        String otaRequested = String((const char *)(data["version"] | ""));
+        String otaPath = String((const char *)(data["path"] | ""));
+        String otaMd5 = String((const char *)(data["md5"] | ""));
+        long otaSize = data["size"] | 0L;
+        Serial.printf("[PUMP][OTA] Command target=%s version=%s (this board: %s)\n", otaTarget.c_str(), otaRequested.c_str(), FW_TARGET);
+        if (otaTarget != FW_TARGET) {
+          otaVersion = otaRequested;
+          sendOtaStatus("ignored", "target mismatch - this image is for another board");
+        } else if (otaRequested == PUMP_FW_VERSION) {
+          otaVersion = otaRequested;
+          sendOtaStatus("success", "already running this version");
+        } else {
+          applyOtaUpdate(otaRequested, otaPath, otaMd5, otaSize);
+        }
+#else
+        Serial.println("[PUMP][OTA] Ignored: OTA is disabled in this build");
+#endif
+      } else if (action == "pump_on") {
         autoMode = false;
         activeBlockId = String((const char *)(data["blockId"] | ""));
         setPump(true, data["durationSeconds"] | 0);

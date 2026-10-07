@@ -13,6 +13,8 @@
 
 // --- ESP32 DevKit V1 (the bench/testing pump board) ------------------------
 #define PUMP_FW_VERSION "2026-10-03-ESP32-DEVKIT-V1"
+// This board's OTA identity: upload the DevKit image under the SAME target.
+#define FW_TARGET "pump-devkit"
 
 // Wi-Fi of THIS board.
 #define WIFI_SSID "LAPTOP_92SEERD2_3485"

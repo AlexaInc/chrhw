@@ -175,6 +175,45 @@ while IFS= read -r hdr; do
 done < <(find wokwi-esp32-project/arduino-ide wokwi-water-pump-c3/arduino-ide \( -name 'arc_math.h' -o -name 'logo_bitmap.h' \) | sort)
 
 echo
+echo "== 1e. OTA identities (one target per board, never shared) ============="
+# Over-the-air updates pick the image by FW_TARGET. Two boards sharing a target
+# would mean a board can be handed an image built for the other one (the C3 and
+# the DevKit have different pins), so every Arduino IDE folder must declare its
+# own target, and no target may be used twice.
+ota_targets=""
+ota_ok=1
+while IFS= read -r mach; do
+    folder="$(basename "$(dirname "$mach")")"
+    target="$(sed -nE 's/^[[:space:]]*#define[[:space:]]+FW_TARGET[[:space:]]+"([^"]+)".*/\1/p' "$mach" | head -1)"
+    if [ -z "$target" ]; then
+        bad "$mach does not define FW_TARGET - the server cannot tell which image belongs to $folder"
+        ota_ok=0
+        continue
+    fi
+    case " $ota_targets " in
+        *" $target "*)
+            bad "FW_TARGET \"$target\" is used by more than one board folder - an image could reach the wrong board"
+            ota_ok=0
+            ;;
+        *) ota_targets="$ota_targets $target"; ok "$folder -> FW_TARGET \"$target\"" ;;
+    esac
+done < <(find wokwi-esp32-project/arduino-ide wokwi-water-pump-c3/arduino-ide -name config.machine.h | sort)
+# The shared configs must offer a default, and the projects must ship OTA code.
+for cfg in wokwi-esp32-project/include/config.h wokwi-water-pump-c3/include/config.h; do
+    if grep -qE '^[[:space:]]*#ifndef[[:space:]]+FW_TARGET' "$cfg" && grep -qE '^[[:space:]]*#ifndef[[:space:]]+OTA_ENABLED' "$cfg"; then
+        ok "$cfg offers FW_TARGET + OTA_ENABLED defaults"
+    else
+        bad "$cfg must define FW_TARGET and OTA_ENABLED defaults"
+        ota_ok=0
+    fi
+done
+if grep -q "action, \"ota\"" wokwi-esp32-project/src/main.cpp && grep -q 'action == "ota"' wokwi-water-pump-c3/src/main.cpp; then
+    ok "both firmwares handle the 'ota' command"
+else
+    bad "a firmware does not handle the 'ota' command"
+fi
+
+echo
 echo "== 2. the shared firmware sources ======================================"
 while IFS= read -r main; do
     lines=$(wc -l < "$main")

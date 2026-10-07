@@ -10,43 +10,51 @@ Two Wokwi-designed projects that run on real ESP32 boards and talk to
 
 ---
 
-## 1. One firmware source per project (no more drifting copies)
+## 1. One firmware source, and self-contained Arduino IDE folders
 
 The same firmware used to exist as several hand-copied files
-(`sketch.ino`, `src/main.cpp`, `arduino-ide/<board>/*.ino`, …) and every edit
-had to be repeated in each copy. That is gone:
+(`sketch.ino`, `src/main.cpp`, `arduino-ide/<board>/*.ino`, …) and every edit had
+to be repeated in each copy. That is gone. There are two rules now:
 
 ```
 wokwi-esp32-project/
-├── src/main.cpp                                  <-- THE firmware (edit here)
-├── include/config.h                              <-- THE configuration (edit here)
-├── config.h, logo_bitmap.h                       -> include-shims
-├── sketch.ino                                    -> #include "src/main.cpp"
-└── arduino-ide/esp32-dev-controller/
-    ├── esp32-dev-controller.ino                  -> #include "../../src/main.cpp"
-    ├── config.h                                  -> this board's Wi-Fi + server routing
-    └── logo_bitmap.h                             -> shim
+├── src/main.cpp                        <-- THE firmware (edit ONLY here)
+├── include/config.h                    <-- THE configuration (edit ONLY here)
+├── config.h, logo_bitmap.h             -> include-shims (Wokwi/PlatformIO build)
+├── sketch.ino                          -> #include "src/main.cpp"
+└── arduino-ide/esp32-dev-controller/   <-- opens directly in the Arduino IDE
+    ├── esp32-dev-controller.ino        -> board settings + notes (no code)
+    ├── main.cpp                        -> byte-identical copy of src/main.cpp
+    ├── config.h                        -> GENERATED: config.machine.h + include/config.h
+    ├── config.machine.h                <-- THIS board's Wi-Fi / pins  (edit here)
+    ├── arc_math.h, logo_bitmap.h       -> copies
+    └── README.md                       -> what the folder is, how to refresh it
 ```
 
-* **Firmware code** lives in `src/main.cpp` only. `sketch.ino` (Wokwi/Arduino)
-  and `arduino-ide/<board>/*.ino` (real boards) `#include` it.
-* **Pins, tokens, limits and the SD wiring** live in `include/config.h` only.
-  Every value is `#ifndef`-guarded, so a build target can override just what
-  differs (see `include/config.local.h.example` — `config.local.h` is
-  git-ignored, so credentials stay out of the repository).
-* The Arduino IDE sketch folders keep only their machine-specific overrides
-  (Wi-Fi credentials, and for the rover `CHRH_FORCE_GATEWAY_MODE 1`, i.e. the
-  original LAN `http://<gateway-ip>:8000` fallback).
-* `./scripts/check-code-copies.sh` verifies all of that after every edit: every
-  sketch must include the one source, no sketch may carry firmware code of its
-  own, every board config must include `include/config.h`, tokens/Wi-Fi must not
-  be duplicated, and it warns when `firmware/firmware.bin` is older than the
-  source (Wokwi runs the binary, not your source).
-* Because the Arduino IDE sketch compiles that same `src/main.cpp`, the firmware
-  you upload to the real board and the firmware the simulator runs are the same
-  code — verified by building both paths: PlatformIO/Wokwi and the
-  `arduino-ide/esp32-dev-controller` sketch land on exactly the same size
-  (RAM 18.7 %, flash 83.9 %, 1100181 bytes).
+* **Firmware code** lives in `src/main.cpp` only. `sketch.ino` (Wokwi/PlatformIO)
+  includes it; the Arduino IDE folders carry a **copy** of it, because the IDE can
+  only compile files inside the sketch folder.
+* **Pins, tokens, limits, the SD wiring and the OTA identity** live in
+  `include/config.h` only. Every value is `#ifndef`-guarded, so a build target can
+  override just what differs (`include/config.local.h.example`; `config.local.h`
+  is git-ignored, so credentials stay out of the repository).
+* The Arduino IDE folders own their machine values (`config.machine.h`: Wi-Fi, and
+  for the rover `CHRH_FORCE_GATEWAY_MODE 1`, i.e. the LAN
+  `http://<gateway-ip>:8000` fallback) plus their `FW_TARGET` (see §8).
+* After ANY firmware edit:
+
+  ```bash
+  ./scripts/sync-arduino-ide.sh     # refresh every Arduino IDE folder
+  ./scripts/check-code-copies.sh    # prove nothing drifted (byte-compares the copies)
+  ```
+
+* `check-code-copies.sh` verifies all of that: no include may leave a sketch
+  folder, `main.cpp` must equal `src/main.cpp` byte for byte, `setup()/loop()`
+  must be defined in exactly one file per folder (never twice), the generated
+  `config.h` must carry the real configuration, every `#if/#ifdef` must have its
+  `#endif`, tokens/Wi-Fi must not be duplicated, OTA targets must be unique, and
+  it warns when `firmware/firmware.bin` is older than the source (Wokwi runs the
+  binary, not your source).
 
 ## 2. Build, simulate and flash
 
@@ -63,8 +71,15 @@ cd wokwi-water-pump-c3 && pio run
 > firmware change run `./scripts/refresh-firmware.sh <project>` before starting
 > the simulator, otherwise the simulator keeps running the old binary.
 
-Real hardware: open the matching `arduino-ide/<board>/` sketch in the Arduino
-IDE and upload — it compiles the same `src/main.cpp` you just edited.
+Real hardware: open the matching `arduino-ide/<board>/` **folder** in the Arduino
+IDE and upload — it compiles the copy of `src/main.cpp` that
+`scripts/sync-arduino-ide.sh` put inside it, so it is the same code you edited.
+
+> **Partition scheme matters once OTA is in play (§8).** Pick a scheme with TWO
+> app slots — "Default 4MB with spiffs", or "Minimal SPIFFS (1.9MB APP with OTA)".
+> A single-slot scheme ("Huge APP") leaves nowhere to put an over-the-air image,
+> and the board refuses the update with "not enough flash space" instead of half
+> flashing itself.
 
 Guards and helpers (all plain scripts, no PlatformIO needed for the first two):
 
@@ -218,13 +233,68 @@ MISO = GPIO36 (VP)**.
 
 ## 7. Pump project
 
-Same single-source layout (`sketch.ino` and both Arduino IDE sketches include
-`src/main.cpp`; only the per-board pins/Wi-Fi/token live in the sketch-folder
-`config.h`). Pump logic itself is unchanged — it is deliberately fail-safe:
-relay stays OFF at boot, manual by default, pump runs only on command or in
-auto mode.
+Same single-source layout (`sketch.ino` includes `src/main.cpp`; both Arduino IDE
+folders carry a copy — see §1), and each board's pins/Wi-Fi/`FW_TARGET` live in
+its own `config.machine.h`. Pump logic itself is deliberately fail-safe: relay
+stays OFF at boot, manual by default, pump runs only on command or in auto mode,
+and the relay is released before any OTA flash starts (§8).
 
-## 8. History
+## 8. Over-the-air (OTA) firmware updates (new)
+
+The boards no longer need a USB cable for every change: the operator uploads a
+compiled `.bin` to `chrserver` and presses **Update**, and the board downloads it
+from the same server it already talks to, flashes itself and reboots.
+
+**In the firmware** (`include/config.h`, per board):
+
+| Symbol | Meaning |
+|---|---|
+| `FW_TARGET` | Identity of the board family this build is for: `rover`, `pump-c3`, `pump-devkit`. It is reported in `device_hello` and every `ota` command must match it. |
+| `OTA_ENABLED` | `1` (default) accepts updates, `0` compiles the OTA code out completely. |
+
+**How the update runs**
+
+1. The panel queues an image for one target and the server sends this board
+   `control_command` → `{ action: "ota", data: { target, version, md5, sha256, size, path } }`.
+2. The board checks `target == FW_TARGET`. A mismatch is reported as
+   `ota_status: ignored` and *nothing* is downloaded — a DevKit image can never
+   land on the C3, and a pump image can never land on the rover.
+3. It goes safe first: the rover stops its motors and hands over to manual
+   (`SRC_MANUAL`, `autonomousPaused`), the pump releases the relay. Nothing moves
+   or pumps during a flash.
+4. `HTTPUpdate` downloads `serverBaseUrl + path?token=<device token>` and flashes
+   the spare app slot, then the board reboots into the new image
+   (`rebootOnUpdate(true)`).
+5. The board reports progress as `ota_status` (`starting`, then `failed` with a
+   reason, or `success`), and after the reboot its `device_hello` carries the new
+   `FW_VERSION`/`PUMP_FW_VERSION`. **The server only treats the update as
+   finished when that new version arrives** — a device's own "success" is not
+   trusted, so a board that keeps rebooting into the old build is visible instead
+   of silently "updated".
+
+**What it needs**
+
+* A partition scheme with **two app slots** (see §2). The build refuses early
+  with "not enough flash space" rather than half-flashing.
+* The device token of that board (`ROBOT_TOKEN` / `PUMP_TOKEN`) — it is sent as
+  `?token=`, so the download route can hand a rover token only rover images and a
+  pump token only pump images.
+* The server address the board already uses: the hosted `CUSTOM_SERVER_URL` or the
+  LAN gateway (`CHRH_FORCE_GATEWAY_MODE 1` on the rover). Nothing about OTA needs
+  internet access from the field.
+* **One USB flash per board, once.** A board running an older build has no
+  `FW_TARGET` and no OTA code, so the *first* update must be flashed with a
+  cable. Every update after that can come over the air.
+
+**Trying it without hardware** — the decision logic is the same code the panel
+calls, and the ESP32 build is the real toolchain:
+
+```bash
+cd wokwi-esp32-project && pio run     # compiles the OTA path for the real board
+cd wokwi-water-pump-c3 && pio run
+```
+
+## 9. History
 
 * `0001-*.patch`, `chrhw-0001-*.patch` — historical firmware patches kept for
   reference (already applied).
@@ -233,5 +303,15 @@ auto mode.
   rover steers around plants instead of stopping at them, the angles are
   panel-adjustable, and `scripts/{check-code-copies,test-arc-math,sim-obstacle}.sh`
   were added so behaviour and code-copies are verifiable before flashing.
+* Arduino IDE folders are now **self-contained** (2026-10-07): the IDE can only
+  compile files inside the sketch folder, so `main.cpp`, `arc_math.h`,
+  `logo_bitmap.h` and a generated `config.h` live in each `arduino-ide/<board>/`
+  folder, kept in step by `scripts/sync-arduino-ide.sh` and proven byte-identical
+  by `scripts/check-code-copies.sh`. Before this, opening a folder in the IDE
+  failed with "No such file or directory" because the sketch included `../../`.
+* Over-the-air updates (2026-10-07): `FW_TARGET` + `OTA_ENABLED` in
+  `include/config.h`, the `ota` command handler with the target check and the
+  stop-before-flash safety, and `ota_status` reporting (§8). The first flash of
+  each board still needs a cable.
 * `AUDIT_NOTES_client_server_alignment.md` — client/server alignment audit,
   with a follow-up section for this safety/cache update.

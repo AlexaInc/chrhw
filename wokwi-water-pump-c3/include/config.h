@@ -37,6 +37,23 @@
 #define PUMP_FW_VERSION "2026-10-06-shared-source"
 #endif
 
+// --- Over-the-air (OTA) firmware updates ----------------------------------
+// Same chain as the rover: the admin panel queues an image, the board downloads
+// it from the server it already talks to, flashes it and reboots (the relay is
+// released before the flash starts, so the pump is off the whole time).
+//
+// FW_TARGET names the board the image was built for. The two pump boards have
+// different pins, so they must NOT share images: the C3 Super Mini and the
+// DevKit V1 builds override this below with "pump-c3" / "pump-devkit". The
+// generic "pump" default matches nothing on the server, which keeps a build
+// without board-specific values from ever being pushed to a board.
+#ifndef FW_TARGET
+#define FW_TARGET "pump"
+#endif
+#ifndef OTA_ENABLED
+#define OTA_ENABLED 1
+#endif
+
 // --- Wi-Fi & server -------------------------------------------------------
 // Defaults target the Wokwi simulator. Real boards override these in their own
 // sketch-folder config.h (or config.local.h).

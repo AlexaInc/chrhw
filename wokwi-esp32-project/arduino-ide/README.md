@@ -18,6 +18,14 @@
 > Open the folder (not a single file) in the Arduino IDE: `main.cpp` is compiled
 > automatically, and the `.ino` tab only documents the board settings.
 
+> **Over-the-air updates:** this board reports `FW_TARGET` (in
+> `config.machine.h`) to the server and accepts an `ota` command only for that
+> target. Pick a partition scheme with **two app slots** ("Default 4MB with
+> spiffs" or "Minimal SPIFFS (1.9MB APP with OTA)") — a single-slot scheme like
+> "Huge APP" leaves nowhere to put an over-the-air image, and the board will
+> refuse the update instead of half-flashing itself. After this build is on the
+> board once (over USB), every later update can come from the admin panel.
+
 ## 1) ESP32 DevKit controller
 
 Open:
