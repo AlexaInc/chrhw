@@ -139,7 +139,29 @@ while IFS= read -r sketch; do
 done < <(find wokwi-esp32-project/arduino-ide wokwi-water-pump-c3/arduino-ide -name '*.ino' -not -path '*/.pio/*' | sort)
 
 echo
-echo "== 1c. generated copies match their sources ============================"
+echo "== 1c. preprocessor conditionals are balanced =========================="
+# A generated config.h is built by cutting blocks out of include/config.h, so a
+# mistake there can leave an "#if/#ifdef" without its "#endif" - the Arduino IDE
+# then fails with "error: unterminated #ifdef". Count them, nesting included.
+pp_balance() { # prints a reason on failure, nothing on success
+    awk '
+        /^[[:space:]]*#[[:space:]]*(if|ifdef|ifndef)([[:space:]]|$)/ { d++; next }
+        /^[[:space:]]*#[[:space:]]*endif([[:space:]]|$)/ { d--; if (d < 0) { print "an #endif without an #if"; exit } }
+        END { if (d > 0) printf "%d unclosed #if/#ifdef\n", d }
+    ' "$1"
+}
+while IFS= read -r f; do
+    reason="$(pp_balance "$f" || true)"
+    if [ -z "$reason" ]; then
+        ok "$f: #if/#endif balanced"
+    else
+        bad "$f: $reason"
+    fi
+done < <(find wokwi-esp32-project/arduino-ide wokwi-water-pump-c3/arduino-ide \
+            \( -name '*.h' -o -name '*.cpp' \) -not -path '*/.pio/*' | sort)
+
+echo
+echo "== 1d. generated copies match their sources ============================"
 while IFS= read -r hdr; do
     base="$(basename "$hdr")"
     srcfile="$(dirname "$(dirname "$(dirname "$hdr")")")/include/$base"

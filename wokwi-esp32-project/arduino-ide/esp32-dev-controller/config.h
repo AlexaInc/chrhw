@@ -11,14 +11,9 @@
 //
 // Everything in the shared part is #ifndef-guarded, so the board values above
 // always win. A config.local.h next to this file (optional, git-ignored) is
-// still loaded first and beats both.
+// read after the board values and before the shared defaults, so it beats both.
 // ---------------------------------------------------------------------------
 #pragma once
-
-#ifdef __has_include
-#if __has_include("config.local.h")
-#include "config.local.h"
-#endif
 
 #pragma once
 // ---------------------------------------------------------------------------
@@ -44,6 +39,12 @@
 // #define CUSTOM_SERVER_HOST "crophealth.dpdns.org"
 // #define CUSTOM_SERVER_URL  "https://crophealth.dpdns.org"
 
+#ifdef __has_include
+#if __has_include("config.local.h")
+#include "config.local.h"
+#endif
+#endif
+
 // ===========================================================================
 // --- copy of wokwi-esp32-project/include/config.h (generated, do not edit) -------------------------
 // ===========================================================================
@@ -65,11 +66,7 @@
 // include/config.local.h.example (config.local.h is git-ignored, so no
 // credentials are ever committed again).
 // ===========================================================================
-#ifdef __has_include
-#if __has_include("config.local.h")
-#include "config.local.h"
-#endif
-#endif
+// (config.local.h is already included at the top of this generated file)
 
 // --- Identity -------------------------------------------------------------
 #ifndef DEVICE_ROLE

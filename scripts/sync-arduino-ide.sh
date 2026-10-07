@@ -112,21 +112,46 @@ write_config_h() {
         printf '//\n'
         printf '// Everything in the shared part is #ifndef-guarded, so the board values above\n'
         printf '// always win. A config.local.h next to this file (optional, git-ignored) is\n'
-        printf '// still loaded first and beats both.\n'
+        printf '// read after the board values and before the shared defaults, so it beats both.\n'
         printf '// ---------------------------------------------------------------------------\n'
         printf '#pragma once\n\n'
-        # A config.local.h next to the sketch (optional, git-ignored) must be read
-        # BEFORE the board values and the shared config, so hoist that block to the
-        # top - the shared copy's own guarded block stays where it is (a no-op then).
-        awk '/^#ifdef __has_include/{f=1} f{print} f&&/^#endif/{exit}' "$shared"
-        printf '\n'
         cat "$dir/config.machine.h"
+        printf '\n'
+        # The optional git-ignored config.local.h is read HERE - after the board
+        # values (plain #define lines, so a local value must come later to win) and
+        # BEFORE the shared defaults (all #ifndef-guarded, so they can never clobber
+        # a value that is already defined). Priority stays local > board > shared,
+        # exactly as the hand-written sketch configs behaved.
+        #
+        # The block is spelled out in full on purpose: cutting it out of the shared
+        # file with "print until the first #endif" stops inside it (the block nests
+        # two levels) and left an #ifdef without its #endif - the Arduino IDE then
+        # fails with "error: unterminated #ifdef". The shared copy's own block is
+        # neutralised further down instead.
+        printf '#ifdef __has_include\n'
+        printf '#if __has_include("config.local.h")\n'
+        printf '#include "config.local.h"\n'
+        printf '#endif\n'
+        printf '#endif\n'
         printf '\n// ===========================================================================\n'
         printf '// --- copy of %s (generated, do not edit) -------------------------\n' "$shared"
         printf '// ===========================================================================\n'
-        # drop the shared file's own "#pragma once" (it would be a no-op here, but a
-        # single copy is easier to read) and keep every other line untouched
-        grep -v '^#pragma once' "$shared"
+        # In the copied body: drop the shared file's own "#pragma once" (a no-op here)
+        # and neutralise its config.local.h block - that include already happened at
+        # the top of this generated file, and doing it twice is pointless.
+        awk '
+            /^[[:space:]]*#[[:space:]]*ifdef[[:space:]]+__has_include/ {
+                print "// (config.local.h is already included at the top of this generated file)"
+                skip=1; d=1; next
+            }
+            skip {
+                if ($0 ~ /^[[:space:]]*#[[:space:]]*(if|ifdef|ifndef)([[:space:]]|$)/) d++
+                if ($0 ~ /^[[:space:]]*#[[:space:]]*endif([[:space:]]|$)/) { d--; if (d==0) skip=0 }
+                next
+            }
+            /^[[:space:]]*#pragma once([[:space:]]|$)/ { next }
+            { print }
+        ' "$shared"
     } > "$tmp"
     if [ -f "$out" ] && cmp -s "$tmp" "$out"; then
         ok "$out (up to date)"

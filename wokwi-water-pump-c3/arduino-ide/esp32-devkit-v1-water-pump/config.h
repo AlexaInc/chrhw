@@ -11,14 +11,9 @@
 //
 // Everything in the shared part is #ifndef-guarded, so the board values above
 // always win. A config.local.h next to this file (optional, git-ignored) is
-// still loaded first and beats both.
+// read after the board values and before the shared defaults, so it beats both.
 // ---------------------------------------------------------------------------
 #pragma once
-
-#ifdef __has_include
-#if __has_include("config.local.h")
-#include "config.local.h"
-#endif
 
 #pragma once
 // ---------------------------------------------------------------------------
@@ -45,6 +40,12 @@
 #define STATUS_LED_PIN 2
 #define SOIL_PIN 34
 
+#ifdef __has_include
+#if __has_include("config.local.h")
+#include "config.local.h"
+#endif
+#endif
+
 // ===========================================================================
 // --- copy of wokwi-water-pump-c3/include/config.h (generated, do not edit) -------------------------
 // ===========================================================================
@@ -63,11 +64,7 @@
 // creates a git-ignored `config.local.h` next to the sketch. Every default
 // below is #ifndef-guarded so the local value always wins.
 // ===========================================================================
-#ifdef __has_include
-#if __has_include("config.local.h")
-#include "config.local.h"
-#endif
-#endif
+// (config.local.h is already included at the top of this generated file)
 
 // --- Identity -------------------------------------------------------------
 // The server-compatible identity stays `esp_c3_pump` for every board build so
