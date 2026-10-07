@@ -1,0 +1,6 @@
+{
+  "name": "Ceramic capacitor",
+  "author": "AlexaInc",
+  "pins": ["1", "2"],
+  "controls": []
+}

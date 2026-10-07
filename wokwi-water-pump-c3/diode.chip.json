@@ -1,0 +1,6 @@
+{
+  "name": "Diode (Schottky)",
+  "author": "AlexaInc",
+  "pins": ["ANODE", "CATHODE"],
+  "controls": []
+}

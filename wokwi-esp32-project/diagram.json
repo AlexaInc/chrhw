@@ -306,6 +306,699 @@
       "attrs": {
         "text": "Switch robot OFF while charging. Set current for the cells/BMS; use matched protected cells."
       }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r_m1",
+      "top": 30,
+      "left": -180,
+      "attrs": {
+        "value": "220"
+      }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r_m2",
+      "top": 90,
+      "left": -180,
+      "attrs": {
+        "value": "220"
+      }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r_m3",
+      "top": 150,
+      "left": -180,
+      "attrs": {
+        "value": "220"
+      }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r_m4",
+      "top": 210,
+      "left": -180,
+      "attrs": {
+        "value": "220"
+      }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r_m5",
+      "top": 270,
+      "left": -180,
+      "attrs": {
+        "value": "220"
+      }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r_m6",
+      "top": 330,
+      "left": -180,
+      "attrs": {
+        "value": "220"
+      }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r_trig",
+      "top": -640,
+      "left": -80,
+      "attrs": {
+        "value": "220"
+      }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r_d1a",
+      "top": -820,
+      "left": 140,
+      "attrs": {
+        "value": "1000"
+      }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r_d1b",
+      "top": -770,
+      "left": 140,
+      "attrs": {
+        "value": "2000"
+      }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r_d2a",
+      "top": -680,
+      "left": -520,
+      "attrs": {
+        "value": "1000"
+      }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r_d2b",
+      "top": -630,
+      "left": -520,
+      "attrs": {
+        "value": "2000"
+      }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r_d3a",
+      "top": -680,
+      "left": 460,
+      "attrs": {
+        "value": "1000"
+      }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r_d3b",
+      "top": -630,
+      "left": 460,
+      "attrs": {
+        "value": "2000"
+      }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r_gpio12",
+      "top": 300,
+      "left": -300,
+      "attrs": {
+        "value": "10000"
+      }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r_dhtpu",
+      "top": 570,
+      "left": 40,
+      "attrs": {
+        "value": "10000"
+      }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r_i2c1",
+      "top": 900,
+      "left": -520,
+      "attrs": {
+        "value": "4700"
+      }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r_i2c2",
+      "top": 960,
+      "left": -520,
+      "attrs": {
+        "value": "4700"
+      }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r_sd",
+      "top": -210,
+      "left": -190,
+      "attrs": {
+        "value": "33"
+      }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r_cam1",
+      "top": 40,
+      "left": 760,
+      "attrs": {
+        "value": "10000"
+      }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r_cam2",
+      "top": 100,
+      "left": 760,
+      "attrs": {
+        "value": "10000"
+      }
+    },
+    {
+      "type": "chip-fuse",
+      "id": "fuse1",
+      "top": -420,
+      "left": -520,
+      "attrs": {
+        "value": "5A"
+      }
+    },
+    {
+      "type": "chip-diode",
+      "id": "d1",
+      "top": -420,
+      "left": -360,
+      "attrs": {
+        "value": "SS34"
+      }
+    },
+    {
+      "type": "chip-ecap",
+      "id": "c12e",
+      "top": -350,
+      "left": -520,
+      "attrs": {
+        "value": "470uF"
+      }
+    },
+    {
+      "type": "chip-cap",
+      "id": "c12c",
+      "top": -350,
+      "left": -360,
+      "attrs": {
+        "value": "100nF"
+      }
+    },
+    {
+      "type": "chip-diode",
+      "id": "d_f1",
+      "top": -160,
+      "left": -340,
+      "attrs": {
+        "value": "1N5819"
+      }
+    },
+    {
+      "type": "chip-diode",
+      "id": "d_f2",
+      "top": -100,
+      "left": -340,
+      "attrs": {
+        "value": "1N5819"
+      }
+    },
+    {
+      "type": "chip-diode",
+      "id": "d_f3",
+      "top": -40,
+      "left": -340,
+      "attrs": {
+        "value": "1N5819"
+      }
+    },
+    {
+      "type": "chip-diode",
+      "id": "d_f4",
+      "top": 30,
+      "left": -340,
+      "attrs": {
+        "value": "1N5819"
+      }
+    },
+    {
+      "type": "chip-ecap",
+      "id": "c5e",
+      "top": 260,
+      "left": -500,
+      "attrs": {
+        "value": "1000uF"
+      }
+    },
+    {
+      "type": "chip-cap",
+      "id": "c5c",
+      "top": 320,
+      "left": -500,
+      "attrs": {
+        "value": "100nF"
+      }
+    },
+    {
+      "type": "chip-ecap",
+      "id": "c3v3e",
+      "top": 300,
+      "left": 300,
+      "attrs": {
+        "value": "10uF"
+      }
+    },
+    {
+      "type": "chip-cap",
+      "id": "c3v3c",
+      "top": 360,
+      "left": 300,
+      "attrs": {
+        "value": "100nF"
+      }
+    },
+    {
+      "type": "chip-ecap",
+      "id": "c_srve",
+      "top": 260,
+      "left": 760,
+      "attrs": {
+        "value": "470uF"
+      }
+    },
+    {
+      "type": "chip-cap",
+      "id": "c_srvc",
+      "top": 320,
+      "left": 760,
+      "attrs": {
+        "value": "100nF"
+      }
+    },
+    {
+      "type": "chip-cap",
+      "id": "c_u1",
+      "top": -700,
+      "left": -12,
+      "attrs": {
+        "value": "100nF"
+      }
+    },
+    {
+      "type": "chip-cap",
+      "id": "c_u2",
+      "top": -560,
+      "left": -346,
+      "attrs": {
+        "value": "100nF"
+      }
+    },
+    {
+      "type": "chip-cap",
+      "id": "c_u3",
+      "top": -560,
+      "left": 296,
+      "attrs": {
+        "value": "100nF"
+      }
+    },
+    {
+      "type": "chip-cap",
+      "id": "c_lcd",
+      "top": 880,
+      "left": 40,
+      "attrs": {
+        "value": "100nF"
+      }
+    },
+    {
+      "type": "chip-cap",
+      "id": "c_sd",
+      "top": -150,
+      "left": 120,
+      "attrs": {
+        "value": "100nF"
+      }
+    },
+    {
+      "type": "chip-cap",
+      "id": "c_dht",
+      "top": 430,
+      "left": 200,
+      "attrs": {
+        "value": "100nF"
+      }
+    },
+    {
+      "type": "chip-cap",
+      "id": "c_rain",
+      "top": -540,
+      "left": 220,
+      "attrs": {
+        "value": "100nF"
+      }
+    },
+    {
+      "type": "chip-cap",
+      "id": "c_gps",
+      "top": -460,
+      "left": 220,
+      "attrs": {
+        "value": "100nF"
+      }
+    },
+    {
+      "type": "chip-cap",
+      "id": "c_cam",
+      "top": -20,
+      "left": 700,
+      "attrs": {
+        "value": "100nF"
+      }
+    },
+    {
+      "type": "chip-cap",
+      "id": "c_esp",
+      "top": 430,
+      "left": 300,
+      "attrs": {
+        "value": "100nF"
+      }
+    },
+    {
+      "type": "chip-ldo33",
+      "id": "ldo1",
+      "top": -140,
+      "left": 700,
+      "attrs": {
+        "outputVoltage": "3.3"
+      }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "t_title",
+      "top": 0,
+      "left": -1300,
+      "attrs": {
+        "text": "PROTECTION ADDED - new parts here (details: guide Sheet 3)"
+      }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "t_motor",
+      "top": 34,
+      "left": -1300,
+      "attrs": {
+        "text": "220 ohm in series on all 6 L298N inputs (EN A, IN1-4, EN B)"
+      }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "t_trig",
+      "top": 68,
+      "left": -1300,
+      "attrs": {
+        "text": "220 ohm in series on the shared SR04 TRIG line"
+      }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "t_echo",
+      "top": 102,
+      "left": -1300,
+      "attrs": {
+        "text": "ECHO divider 1k+2k on all 3 sensors (5V ECHO -> 3.3V GPIO)"
+      }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "t_gpio12",
+      "top": 136,
+      "left": -1300,
+      "attrs": {
+        "text": "10k pull-down on GPIO12/D12 (init_flash boot crash fix)"
+      }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "t_12v",
+      "top": 170,
+      "left": -1300,
+      "attrs": {
+        "text": "5A fuse + SS34 reverse-polarity diode in the 12V feed (after BMS P+)"
+      }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "t_5v",
+      "top": 204,
+      "left": -1300,
+      "attrs": {
+        "text": "1000uF + 100nF at ESP32 VIN (brownout fix)"
+      }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "t_3v3",
+      "top": 238,
+      "left": -1300,
+      "attrs": {
+        "text": "10uF + 100nF on the 3V3 pin"
+      }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "t_servo",
+      "top": 272,
+      "left": -1300,
+      "attrs": {
+        "text": "470uF + 100nF at the servo (servo V+ wire straight from the 5V rail)"
+      }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "t_caps",
+      "top": 306,
+      "left": -1300,
+      "attrs": {
+        "text": "100nF at every module VCC-GND (ulrasonic x3, OLED, SD, DHT, rain, GPS, CAM, ESP)"
+      }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "t_ldo",
+      "top": 340,
+      "left": -1300,
+      "attrs": {
+        "text": "ESP32-CAM gets its own 3.3V (AMS1117) - not from the ESP32 3V3 pin"
+      }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "t_fly",
+      "top": 374,
+      "left": -1300,
+      "attrs": {
+        "text": "1N5819 x4 freewheel diodes: OUT1..OUT4 to +12V (cathode to 12V)"
+      }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "t_star",
+      "top": 408,
+      "left": -1300,
+      "attrs": {
+        "text": "STAR GROUND: motor GND and logic GND meet only at BMS P-"
+      }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "t_dht",
+      "top": 442,
+      "left": -1300,
+      "attrs": {
+        "text": "10k DHT22 pull-up (SDA -> 3V3)"
+      }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "t_i2c",
+      "top": 476,
+      "left": -1300,
+      "attrs": {
+        "text": "4.7k I2C pull-ups (SDA / SCL -> 3V3)"
+      }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "t_sd",
+      "top": 510,
+      "left": -1300,
+      "attrs": {
+        "text": "33 ohm in series with SD SCK"
+      }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "t_cam",
+      "top": 544,
+      "left": -1300,
+      "attrs": {
+        "text": "10k in series on both ESP32-CAM UART lines"
+      }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "t_ult5v",
+      "top": 578,
+      "left": -1300,
+      "attrs": {
+        "text": "ultrasonic VCC moved to the 5V rail (was 3V3) - ECHO now needs the divider"
+      }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "t_motcaps",
+      "top": 612,
+      "left": -1300,
+      "attrs": {
+        "text": "motors: in reality add 100nF across each motor terminal too (not drawn)"
+      }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "t_i_fuse",
+      "top": -462,
+      "left": -520,
+      "attrs": {
+        "text": "5A FUSE"
+      }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "t_i_ss34",
+      "top": -462,
+      "left": -360,
+      "attrs": {
+        "text": "SS34"
+      }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "t_i_c12",
+      "top": -300,
+      "left": -520,
+      "attrs": {
+        "text": "470uF"
+      }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "t_i_c12c",
+      "top": -300,
+      "left": -360,
+      "attrs": {
+        "text": "100nF"
+      }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "t_i_motor",
+      "top": 0,
+      "left": -180,
+      "attrs": {
+        "text": "220R x6"
+      }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "t_i_echo",
+      "top": -870,
+      "left": 140,
+      "attrs": {
+        "text": "1k+2k"
+      }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "t_i_gpio12",
+      "top": 270,
+      "left": -300,
+      "attrs": {
+        "text": "10k GPIO12"
+      }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "t_i_servo",
+      "top": 230,
+      "left": 760,
+      "attrs": {
+        "text": "470uF"
+      }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "t_i_ldo",
+      "top": -180,
+      "left": 700,
+      "attrs": {
+        "text": "AMS1117 3V3"
+      }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "t_i_fly",
+      "top": -200,
+      "left": -340,
+      "attrs": {
+        "text": "1N5819 x4"
+      }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "t_i_sd",
+      "top": -250,
+      "left": -190,
+      "attrs": {
+        "text": "33R SCK"
+      }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "t_i_cam",
+      "top": 10,
+      "left": 830,
+      "attrs": {
+        "text": "10k x2"
+      }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "t_i_i2c",
+      "top": 870,
+      "left": -520,
+      "attrs": {
+        "text": "4.7k x2"
+      }
     }
   ],
   "connections": [
@@ -659,17 +1352,6 @@
       ]
     ],
     [
-      "esp:D33",
-      "sd1:SCK",
-      "green",
-      [
-        "h-19.2",
-        "v-96",
-        "h124.8",
-        "v-134.39"
-      ]
-    ],
-    [
       "esp:VP",
       "sd1:DO",
       "green",
@@ -678,63 +1360,6 @@
         "v-38.7",
         "h124.8",
         "v-163.31"
-      ]
-    ],
-    [
-      "esp:D25",
-      "chip3:EN A",
-      "green",
-      [
-        "h-28.8",
-        "v-259.2",
-        "v-163.2"
-      ]
-    ],
-    [
-      "esp:D26",
-      "chip3:IN1",
-      "blue",
-      [
-        "h-38.4",
-        "v-144.1",
-        "h0",
-        "v-278.4"
-      ]
-    ],
-    [
-      "esp:D27",
-      "chip3:IN2",
-      "violet",
-      [
-        "h-48",
-        "v-9.9"
-      ]
-    ],
-    [
-      "esp:D14",
-      "chip3:IN3",
-      "gray",
-      [
-        "h-57.6",
-        "v-143.9"
-      ]
-    ],
-    [
-      "esp:D12",
-      "chip3:IN4",
-      "white",
-      [
-        "h-76.8",
-        "v-259.9"
-      ]
-    ],
-    [
-      "esp:D13",
-      "chip3:EN B",
-      "purple",
-      [
-        "h-96",
-        "v-230.6"
       ]
     ],
     [
@@ -768,59 +1393,11 @@
       ]
     ],
     [
-      "j8:J",
-      "j6:J",
-      "red",
-      [
-        "v67.2",
-        "h192"
-      ]
-    ],
-    [
-      "esp:D32",
-      "ultrasonic1:ECHO",
-      "cyan",
-      [
-        "h-115.2",
-        "v-806.5",
-        "h172.8"
-      ]
-    ],
-    [
-      "ultrasonic2:ECHO",
-      "esp:D23",
-      "white",
-      [
-        "v624",
-        "h392.8",
-        "v57.5"
-      ]
-    ],
-    [
       "chip3:GND",
       "j4:J",
       "black",
       [
         "h0"
-      ]
-    ],
-    [
-      "esp:D15",
-      "j9:J",
-      "blue",
-      [
-        "h249.3",
-        "v-518.6"
-      ]
-    ],
-    [
-      "ultrasonic3:ECHO",
-      "esp:VN",
-      "green",
-      [
-        "v633.6",
-        "h-452",
-        "v67.9"
       ]
     ],
     [
@@ -852,42 +1429,12 @@
       ]
     ],
     [
-      "esp:TX0",
-      "chip4:RX",
-      "green",
-      [
-        "h383.7",
-        "v8.9"
-      ]
-    ],
-    [
-      "esp:RX0",
-      "chip4:TX",
-      "green",
-      [
-        "h345.3",
-        "v38.2",
-        "h268.8",
-        "v-38.4"
-      ]
-    ],
-    [
       "chip4:GND",
       "j4:J",
       "black",
       [
         "h-134.4",
         "v-86.4"
-      ]
-    ],
-    [
-      "j6:J",
-      "chip4:VCC",
-      "red",
-      [
-        "v9.6",
-        "h316.8",
-        "v124.8"
       ]
     ],
     [
@@ -955,16 +1502,6 @@
       ]
     ],
     [
-      "bms1:P+",
-      "chip3:12V",
-      "red",
-      [
-        "h115.2",
-        "v67.2",
-        "h384"
-      ]
-    ],
-    [
       "bms1:P-",
       "chip3:GND",
       "black",
@@ -972,17 +1509,6 @@
         "h96",
         "v-105.38",
         "h515"
-      ]
-    ],
-    [
-      "bms1:P+",
-      "buck1:VIN+",
-      "red",
-      [
-        "h48",
-        "v201.82",
-        "h-164.79",
-        "v57.6"
       ]
     ],
     [
@@ -1051,6 +1577,564 @@
         "v38.4",
         "h249.6"
       ]
+    ],
+    [
+      "esp:D25",
+      "r_m1:1",
+      "green",
+      []
+    ],
+    [
+      "r_m1:2",
+      "chip3:EN A",
+      "green",
+      []
+    ],
+    [
+      "esp:D26",
+      "r_m2:1",
+      "blue",
+      []
+    ],
+    [
+      "r_m2:2",
+      "chip3:IN1",
+      "blue",
+      []
+    ],
+    [
+      "esp:D27",
+      "r_m3:1",
+      "violet",
+      []
+    ],
+    [
+      "r_m3:2",
+      "chip3:IN2",
+      "violet",
+      []
+    ],
+    [
+      "esp:D14",
+      "r_m4:1",
+      "gray",
+      []
+    ],
+    [
+      "r_m4:2",
+      "chip3:IN3",
+      "gray",
+      []
+    ],
+    [
+      "esp:D12",
+      "r_m5:1",
+      "white",
+      []
+    ],
+    [
+      "r_m5:2",
+      "chip3:IN4",
+      "white",
+      []
+    ],
+    [
+      "esp:D13",
+      "r_m6:1",
+      "purple",
+      []
+    ],
+    [
+      "r_m6:2",
+      "chip3:EN B",
+      "purple",
+      []
+    ],
+    [
+      "esp:D15",
+      "r_trig:1",
+      "blue",
+      []
+    ],
+    [
+      "r_trig:2",
+      "j9:J",
+      "blue",
+      []
+    ],
+    [
+      "ultrasonic1:ECHO",
+      "r_d1a:1",
+      "cyan",
+      []
+    ],
+    [
+      "r_d1a:2",
+      "r_d1b:1",
+      "cyan",
+      []
+    ],
+    [
+      "r_d1b:1",
+      "esp:D32",
+      "cyan",
+      []
+    ],
+    [
+      "r_d1b:2",
+      "j3:J",
+      "black",
+      []
+    ],
+    [
+      "ultrasonic2:ECHO",
+      "r_d2a:1",
+      "white",
+      []
+    ],
+    [
+      "r_d2a:2",
+      "r_d2b:1",
+      "white",
+      []
+    ],
+    [
+      "r_d2b:1",
+      "esp:D23",
+      "white",
+      []
+    ],
+    [
+      "r_d2b:2",
+      "j3:J",
+      "black",
+      []
+    ],
+    [
+      "ultrasonic3:ECHO",
+      "r_d3a:1",
+      "green",
+      []
+    ],
+    [
+      "r_d3a:2",
+      "r_d3b:1",
+      "green",
+      []
+    ],
+    [
+      "r_d3b:1",
+      "esp:VN",
+      "green",
+      []
+    ],
+    [
+      "r_d3b:2",
+      "j3:J",
+      "black",
+      []
+    ],
+    [
+      "esp:D12",
+      "r_gpio12:1",
+      "black",
+      []
+    ],
+    [
+      "r_gpio12:2",
+      "j3:J",
+      "black",
+      []
+    ],
+    [
+      "dht1:SDA",
+      "r_dhtpu:1",
+      "red",
+      []
+    ],
+    [
+      "r_dhtpu:2",
+      "dht1:VCC",
+      "red",
+      []
+    ],
+    [
+      "lcd1:SDA",
+      "r_i2c1:1",
+      "red",
+      []
+    ],
+    [
+      "r_i2c1:2",
+      "lcd1:VCC",
+      "red",
+      []
+    ],
+    [
+      "lcd1:SCL",
+      "r_i2c2:1",
+      "red",
+      []
+    ],
+    [
+      "r_i2c2:2",
+      "lcd1:VCC",
+      "red",
+      []
+    ],
+    [
+      "esp:D33",
+      "r_sd:1",
+      "green",
+      []
+    ],
+    [
+      "r_sd:2",
+      "sd1:SCK",
+      "green",
+      []
+    ],
+    [
+      "esp:TX0",
+      "r_cam1:1",
+      "green",
+      []
+    ],
+    [
+      "r_cam1:2",
+      "chip4:RX",
+      "green",
+      []
+    ],
+    [
+      "esp:RX0",
+      "r_cam2:1",
+      "green",
+      []
+    ],
+    [
+      "r_cam2:2",
+      "chip4:TX",
+      "green",
+      []
+    ],
+    [
+      "bms1:P+",
+      "fuse1:1",
+      "red",
+      []
+    ],
+    [
+      "fuse1:2",
+      "d1:ANODE",
+      "red",
+      []
+    ],
+    [
+      "d1:CATHODE",
+      "chip3:12V",
+      "red",
+      []
+    ],
+    [
+      "d1:CATHODE",
+      "buck1:VIN+",
+      "red",
+      []
+    ],
+    [
+      "d1:CATHODE",
+      "c12e:+",
+      "red",
+      []
+    ],
+    [
+      "c12e:-",
+      "bms1:P-",
+      "black",
+      []
+    ],
+    [
+      "d1:CATHODE",
+      "c12c:1",
+      "red",
+      []
+    ],
+    [
+      "c12c:2",
+      "bms1:P-",
+      "black",
+      []
+    ],
+    [
+      "d_f1:ANODE",
+      "chip3:OUT1",
+      "blue",
+      []
+    ],
+    [
+      "d_f1:CATHODE",
+      "d1:CATHODE",
+      "red",
+      []
+    ],
+    [
+      "d_f2:ANODE",
+      "chip3:OUT2",
+      "blue",
+      []
+    ],
+    [
+      "d_f2:CATHODE",
+      "d1:CATHODE",
+      "red",
+      []
+    ],
+    [
+      "d_f3:ANODE",
+      "chip3:OUT3",
+      "blue",
+      []
+    ],
+    [
+      "d_f3:CATHODE",
+      "d1:CATHODE",
+      "red",
+      []
+    ],
+    [
+      "d_f4:ANODE",
+      "chip3:OUT4",
+      "blue",
+      []
+    ],
+    [
+      "d_f4:CATHODE",
+      "d1:CATHODE",
+      "red",
+      []
+    ],
+    [
+      "c5e:+",
+      "j2:J",
+      "red",
+      []
+    ],
+    [
+      "c5e:-",
+      "j3:J",
+      "black",
+      []
+    ],
+    [
+      "c5c:1",
+      "j2:J",
+      "red",
+      []
+    ],
+    [
+      "c5c:2",
+      "j3:J",
+      "black",
+      []
+    ],
+    [
+      "c3v3e:+",
+      "j5:J",
+      "red",
+      []
+    ],
+    [
+      "c3v3e:-",
+      "j3:J",
+      "black",
+      []
+    ],
+    [
+      "c3v3c:1",
+      "j5:J",
+      "red",
+      []
+    ],
+    [
+      "c3v3c:2",
+      "j3:J",
+      "black",
+      []
+    ],
+    [
+      "c_srve:+",
+      "servo1:V+",
+      "#8f4814",
+      []
+    ],
+    [
+      "c_srve:-",
+      "servo1:GND",
+      "black",
+      []
+    ],
+    [
+      "c_srvc:1",
+      "servo1:V+",
+      "#8f4814",
+      []
+    ],
+    [
+      "c_srvc:2",
+      "servo1:GND",
+      "black",
+      []
+    ],
+    [
+      "c_u1:1",
+      "ultrasonic1:VCC",
+      "red",
+      []
+    ],
+    [
+      "c_u1:2",
+      "ultrasonic1:GND",
+      "black",
+      []
+    ],
+    [
+      "c_u2:1",
+      "ultrasonic2:VCC",
+      "red",
+      []
+    ],
+    [
+      "c_u2:2",
+      "ultrasonic2:GND",
+      "black",
+      []
+    ],
+    [
+      "c_u3:1",
+      "ultrasonic3:VCC",
+      "red",
+      []
+    ],
+    [
+      "c_u3:2",
+      "ultrasonic3:GND",
+      "black",
+      []
+    ],
+    [
+      "c_lcd:1",
+      "lcd1:VCC",
+      "red",
+      []
+    ],
+    [
+      "c_lcd:2",
+      "lcd1:GND",
+      "black",
+      []
+    ],
+    [
+      "c_sd:1",
+      "sd1:VCC",
+      "red",
+      []
+    ],
+    [
+      "c_sd:2",
+      "sd1:GND",
+      "black",
+      []
+    ],
+    [
+      "c_dht:1",
+      "dht1:VCC",
+      "red",
+      []
+    ],
+    [
+      "c_dht:2",
+      "dht1:GND",
+      "black",
+      []
+    ],
+    [
+      "c_rain:1",
+      "chip1:VCC",
+      "red",
+      []
+    ],
+    [
+      "c_rain:2",
+      "chip1:GND",
+      "black",
+      []
+    ],
+    [
+      "c_gps:1",
+      "chip2:VCC",
+      "red",
+      []
+    ],
+    [
+      "c_gps:2",
+      "chip2:GND",
+      "black",
+      []
+    ],
+    [
+      "c_cam:1",
+      "chip4:VCC",
+      "red",
+      []
+    ],
+    [
+      "c_cam:2",
+      "chip4:GND",
+      "black",
+      []
+    ],
+    [
+      "c_esp:1",
+      "esp:VIN",
+      "red",
+      []
+    ],
+    [
+      "c_esp:2",
+      "esp:GND.1",
+      "black",
+      []
+    ],
+    [
+      "j8:J",
+      "j2:J",
+      "red",
+      []
+    ],
+    [
+      "j2:J",
+      "ldo1:VIN+",
+      "red",
+      []
+    ],
+    [
+      "j3:J",
+      "ldo1:VIN-",
+      "black",
+      []
+    ],
+    [
+      "ldo1:3V3",
+      "chip4:VCC",
+      "red",
+      []
+    ],
+    [
+      "ldo1:GND",
+      "j3:J",
+      "black",
+      []
     ]
   ],
   "dependencies": {}

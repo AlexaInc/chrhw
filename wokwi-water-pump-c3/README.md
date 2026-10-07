@@ -93,3 +93,30 @@ The relay IN terminal was observed around 4.4 V when released. ESP32 GPIO is
 not 5-V tolerant, so a transistor/3.3-V-compatible relay module remains the
 recommended permanent interface. Do not use the direct connection if 4.4 V is
 present at the ESP32 end of the GPIO25 wire.
+
+## Circuit protection — round 9
+
+The pump side had the same problem (no fuse, no reverse-polarity protection, no
+bulk capacitance, no flyback diode across the pump). The diagram now shows:
+
+| New part(s) | Value | Where | Why |
+|---|---|---|---|
+| `pfuse1` | 5A blade | 12V feed -> relay `COM` | fuse in the adapter line |
+| `pd1` | SS34 | after the fuse | reverse-polarity protection |
+| `pc12e` + `pc12c` | 470uF + 100nF | 12V rail at the relay | relay/pump switching dips |
+| `pd2` | 1N5819 | across the pump (cathode to +12V) | freewheel diode for the pump motor |
+| `pc5e` + `pc5c` | 1000uF + 100nF | buck 5V output | logic rail stability |
+| `pc_c3`, `pc_soil` | 100nF each | ESP32-C3 VCC, soil sensor | per-module bypass |
+| `pr_in` + `pr_pd` | 220 ohm + 10k | relay `IN` line | series protection + pull-down so the relay cannot chatter at boot |
+
+`cap`, `ecap`, `diode` and `fuse` are custom chips (pins only, passive). Their
+prebuilt `*.chip.wasm` files sit next to `diagram.json` and `wokwi.toml` maps
+them, exactly like `buck5v`.
+
+### 9. Sinhala summary
+
+* 12V feed එකට **5A fuse + SS34**, 12V rail එකට **470uF + 100nF**, 5V rail එකට **1000uF + 100nF**.
+* Pump motor එකට **1N5819 flyback diode** - ඕක නැතුව relay off වෙද්දී spike එකෙන් C3 මැරෙනවා.
+* Relay `IN` line එකට **220Ω series + 10k pull-down**.
+* විස්තර: `chr-robot-protection-circuits.zip` (Sinhala guide) සහ `chr-wokwi-protection-diagram.zip`.
+

@@ -1,0 +1,6 @@
+{
+  "name": "Electrolytic capacitor",
+  "author": "AlexaInc",
+  "pins": ["+", "-"],
+  "controls": []
+}

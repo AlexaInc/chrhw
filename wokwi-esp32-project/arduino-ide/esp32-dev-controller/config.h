@@ -32,8 +32,8 @@
 #define FW_TARGET "rover"
 
 // Wi-Fi of THIS board (the machine-specific part - never committed elsewhere).
-#define WIFI_SSID "LAPTOP_92SEERD2_3485"
-#define WIFI_PASSWORD "[8447Yq9"
+#define WIFI_SSID "vivo Y29"
+#define WIFI_PASSWORD "00000000"
 
 // This board talks to the LAN gateway (http://<gateway-ip>:8000 / ws://...) 
 // instead of the hosted server. To use the hosted server instead, delete the

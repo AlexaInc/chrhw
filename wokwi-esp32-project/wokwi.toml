@@ -41,3 +41,23 @@ binary = "dcadapter.chip.wasm"
 [[chip]]
 name = "charger3s"
 binary = "charger3s.chip.wasm"
+
+[[chip]]
+name = "cap"
+binary = "cap.chip.wasm"
+
+[[chip]]
+name = "ecap"
+binary = "ecap.chip.wasm"
+
+[[chip]]
+name = "diode"
+binary = "diode.chip.wasm"
+
+[[chip]]
+name = "fuse"
+binary = "fuse.chip.wasm"
+
+[[chip]]
+name = "ldo33"
+binary = "ldo33.chip.wasm"

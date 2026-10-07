@@ -7,3 +7,19 @@ elf = "firmware/firmware.elf"
 [[chip]]
 name = "buck5v"
 binary = "buck5v.chip.wasm"
+
+[[chip]]
+name = "cap"
+binary = "cap.chip.wasm"
+
+[[chip]]
+name = "ecap"
+binary = "ecap.chip.wasm"
+
+[[chip]]
+name = "diode"
+binary = "diode.chip.wasm"
+
+[[chip]]
+name = "fuse"
+binary = "fuse.chip.wasm"

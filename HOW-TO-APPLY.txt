@@ -1,0 +1,59 @@
+chr-wokwi-protection — HOW TO APPLY (30 seconds)
+================================================
+
+1) Windows:   install.bat -Root D:\
+   (give it the folder that holds your chrhw repo; add -DryRun first if you
+    want to see the list without writing anything)
+
+   Git Bash / Linux / macOS:
+   bash install.sh /d/fcp_backend
+
+2) The installer finds your chrhw folder, shows every file it changes, saves the
+   old copy of each file under backup/<date-time>/, copies the new files and
+   then runs the diagram checker.  It must end with:
+
+     == wokwi-esp32-project   115 parts / 155 connections / 14 chip types
+        OK - diagram, chip files and wokwi.toml agree
+     == wokwi-water-pump-c3    43 parts /  40 connections /  5 chip types
+        OK - diagram, chip files and wokwi.toml agree
+
+-----------------------------------------------
+IS IT ALREADY APPLIED?  10-second check
+-----------------------------------------------
+Open   chrhw/wokwi-esp32-project/diagram.json   and search for one of these
+names (Ctrl+F):
+
+     r_gpio12        the 10k pull-down on GPIO12 (the init_flash fix)
+     fuse1           the 5A fuse
+     r_m1 .. r_m6    the six 220 ohm resistors to the L298N
+     c5e, c12e       the big electrolytic capacitors
+
+* names found      -> the new diagram is in place.
+* nothing found    -> that is still the OLD file; the update was not applied.
+
+You can also run, inside wokwi-esp32-project:
+
+     python3 scripts/check-wokwi-diagram.py
+
+It prints "115 parts / 155 connections" when the new diagram is in place, and
+"38 parts / 79 connections" when it is still the old one.
+
+-----------------------------------------------
+WHY THE PARTS ARE NEW "CUSTOM CHIPS"
+-----------------------------------------------
+Wokwi has no built-in capacitor / diode / fuse part, so each of them is a small
+custom chip with two pins only (no signal behaviour):
+
+     cap   ecap   diode   fuse   ldo33      (rover)
+     cap   ecap   diode   fuse             (pump)
+
+The .chip.c source, the .chip.json pin list and the already-compiled
+.chip.wasm are in the project root next to diagram.json.  wokwi.toml maps them,
+so nothing else has to be built before starting the simulator.
+
+-----------------------------------------------
+IF A PART SHOWS "Missing"
+-----------------------------------------------
+That means the chip's .chip.wasm / .chip.json is not in the same folder as
+diagram.json.  Copy the whole project folder again (installer does this), or run
+the checker above - it names the missing file exactly.

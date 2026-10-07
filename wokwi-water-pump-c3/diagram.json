@@ -3,21 +3,38 @@
   "author": "AlexaInc",
   "editor": "wokwi",
   "parts": [
-    { "type": "board-esp32-c3-devkitm-1", "id": "c3", "top": 20, "left": -10, "attrs": {} },
+    {
+      "type": "board-esp32-c3-devkitm-1",
+      "id": "c3",
+      "top": 20,
+      "left": -10,
+      "attrs": {}
+    },
     {
       "type": "wokwi-relay-module",
       "id": "relay",
       "top": -120,
       "left": 190,
-      "attrs": { "transistor": "npn" }
+      "attrs": {
+        "transistor": "npn"
+      }
     },
-    { "type": "wokwi-potentiometer", "id": "soil", "top": 180, "left": -170, "attrs": {} },
+    {
+      "type": "wokwi-potentiometer",
+      "id": "soil",
+      "top": 180,
+      "left": -170,
+      "attrs": {}
+    },
     {
       "type": "wokwi-led",
       "id": "pump",
       "top": -105,
       "left": 430,
-      "attrs": { "color": "blue", "label": "WATER PUMP LOAD" }
+      "attrs": {
+        "color": "blue",
+        "label": "WATER PUMP LOAD"
+      }
     },
     {
       "type": "wokwi-resistor",
@@ -25,14 +42,19 @@
       "top": -96,
       "left": 365,
       "rotate": 90,
-      "attrs": { "value": "220" }
+      "attrs": {
+        "value": "220"
+      }
     },
     {
       "type": "wokwi-led",
       "id": "status",
       "top": 150,
       "left": 195.8,
-      "attrs": { "color": "green", "label": "PUMP STATUS" }
+      "attrs": {
+        "color": "green",
+        "label": "PUMP STATUS"
+      }
     },
     {
       "type": "wokwi-resistor",
@@ -40,76 +62,617 @@
       "top": 164,
       "left": 130,
       "rotate": 90,
-      "attrs": { "value": "220" }
+      "attrs": {
+        "value": "220"
+      }
     },
-    { "type": "wokwi-vcc", "id": "motorVcc", "top": -180, "left": 278, "attrs": {} },
-    { "type": "wokwi-gnd", "id": "motorGnd", "top": 5, "left": 465, "attrs": {} },
-    { "type": "wokwi-gnd", "id": "statusGnd", "top": 259.2, "left": 181.8, "attrs": {} },
+    {
+      "type": "wokwi-vcc",
+      "id": "motorVcc",
+      "top": -180,
+      "left": 278,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-gnd",
+      "id": "motorGnd",
+      "top": 5,
+      "left": 465,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-gnd",
+      "id": "statusGnd",
+      "top": 259.2,
+      "left": 181.8,
+      "attrs": {}
+    },
     {
       "type": "wokwi-text",
       "id": "psuText",
       "top": -220,
       "left": 260,
-      "attrs": { "text": "OLD ROUTER ADAPTER: 12V DC -> RELAY COM -> PUMP" }
+      "attrs": {
+        "text": "OLD ROUTER ADAPTER: 12V DC -> RELAY COM -> PUMP"
+      }
     },
     {
       "type": "wokwi-text",
       "id": "soilText",
       "top": 270,
       "left": -180,
-      "attrs": { "text": "Soil Moisture Simulation" }
+      "attrs": {
+        "text": "Soil Moisture Simulation"
+      }
     },
     {
       "type": "wokwi-text",
       "id": "relayNote",
       "top": -145,
       "left": 350,
-      "attrs": { "text": "JQC3F-05VDC-C module: active-LOW default; verify your module" }
+      "attrs": {
+        "text": "JQC3F-05VDC-C module: active-LOW default; verify your module"
+      }
     },
     {
       "type": "wokwi-text",
       "id": "pumpSafety",
       "top": -250,
       "left": 340,
-      "attrs": { "text": "12V adapter current must meet pump rating; add fuse on +12V" }
+      "attrs": {
+        "text": "12V adapter current must meet pump rating; add fuse on +12V"
+      }
     },
     {
       "type": "chip-buck5v",
       "id": "logicBuck",
       "top": 40,
       "left": -390,
-      "attrs": { "outputVoltage": "5" }
+      "attrs": {
+        "outputVoltage": "5"
+      }
     },
-    { "type": "wokwi-junction", "id": "j1", "top": 129.6, "left": -110.4, "attrs": {} },
-    { "type": "wokwi-junction", "id": "j2", "top": 110.4, "left": -81.6, "attrs": {} }
+    {
+      "type": "wokwi-junction",
+      "id": "j1",
+      "top": 129.6,
+      "left": -110.4,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-junction",
+      "id": "j2",
+      "top": 110.4,
+      "left": -81.6,
+      "attrs": {}
+    },
+    {
+      "type": "chip-fuse",
+      "id": "pfuse1",
+      "top": -320,
+      "left": 250,
+      "attrs": {
+        "value": "5A"
+      }
+    },
+    {
+      "type": "chip-diode",
+      "id": "pd1",
+      "top": -320,
+      "left": 350,
+      "attrs": {
+        "value": "SS34"
+      }
+    },
+    {
+      "type": "chip-ecap",
+      "id": "pc12e",
+      "top": -320,
+      "left": 470,
+      "attrs": {
+        "value": "470uF"
+      }
+    },
+    {
+      "type": "chip-cap",
+      "id": "pc12c",
+      "top": -320,
+      "left": 570,
+      "attrs": {
+        "value": "100nF"
+      }
+    },
+    {
+      "type": "chip-diode",
+      "id": "pd2",
+      "top": -100,
+      "left": 560,
+      "attrs": {
+        "value": "1N5819"
+      }
+    },
+    {
+      "type": "chip-ecap",
+      "id": "pc5e",
+      "top": 200,
+      "left": -380,
+      "attrs": {
+        "value": "1000uF"
+      }
+    },
+    {
+      "type": "chip-cap",
+      "id": "pc5c",
+      "top": 260,
+      "left": -380,
+      "attrs": {
+        "value": "100nF"
+      }
+    },
+    {
+      "type": "chip-cap",
+      "id": "pc_c3",
+      "top": 300,
+      "left": -160,
+      "attrs": {
+        "value": "100nF"
+      }
+    },
+    {
+      "type": "chip-cap",
+      "id": "pc_soil",
+      "top": 180,
+      "left": -260,
+      "attrs": {
+        "value": "100nF"
+      }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "pr_in",
+      "top": -140,
+      "left": 60,
+      "attrs": {
+        "value": "220"
+      }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "pr_pd",
+      "top": -80,
+      "left": 60,
+      "attrs": {
+        "value": "10000"
+      }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "pt_title",
+      "top": -400,
+      "left": 1040,
+      "attrs": {
+        "text": "PROTECTION ADDED: fuse, SS34, bulk caps, relay-line protection, pump flyback diode"
+      }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "pt_1",
+      "top": -366,
+      "left": 1040,
+      "attrs": {
+        "text": "5A fuse + SS34 reverse-polarity diode on the +12V feed to the relay"
+      }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "pt_2",
+      "top": -332,
+      "left": 1040,
+      "attrs": {
+        "text": "470uF + 100nF across the 12V rail (at the relay)"
+      }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "pt_3",
+      "top": -298,
+      "left": 1040,
+      "attrs": {
+        "text": "1000uF + 100nF on the buck 5V output (logic rail)"
+      }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "pt_4",
+      "top": -264,
+      "left": 1040,
+      "attrs": {
+        "text": "1N5819 flyback across the pump (cathode to +12V)"
+      }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "pt_5",
+      "top": -230,
+      "left": 1040,
+      "attrs": {
+        "text": "220 ohm in series + 10k pull-down on the relay IN line"
+      }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "pt_6",
+      "top": -196,
+      "left": 1040,
+      "attrs": {
+        "text": "100nF at ESP32-C3 VCC and at the soil sensor"
+      }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "pt_i1",
+      "top": -360,
+      "left": 250,
+      "attrs": {
+        "text": "5A"
+      }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "pt_i2",
+      "top": -360,
+      "left": 350,
+      "attrs": {
+        "text": "SS34"
+      }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "pt_i3",
+      "top": -360,
+      "left": 470,
+      "attrs": {
+        "text": "470uF"
+      }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "pt_i4",
+      "top": 170,
+      "left": -380,
+      "attrs": {
+        "text": "1000uF"
+      }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "pt_i5",
+      "top": -60,
+      "left": 640,
+      "attrs": {
+        "text": "1N5819"
+      }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "pt_i6",
+      "top": -200,
+      "left": 60,
+      "attrs": {
+        "text": "220R+10k"
+      }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "pt_i7",
+      "top": 350,
+      "left": -160,
+      "attrs": {
+        "text": "100nF"
+      }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "pt_i8",
+      "top": 150,
+      "left": -260,
+      "attrs": {
+        "text": "100nF"
+      }
+    }
   ],
   "connections": [
-    [ "c3:4", "relay:IN", "green", [] ],
-    [ "c3:3", "r2:1", "green", [] ],
-    [ "r2:2", "status:A", "green", [ "v41.2", "h60.65" ] ],
-    [ "status:C", "statusGnd:GND", "black", [ "v33.4", "h25.2" ] ],
-    [ "motorVcc:VCC", "relay:COM", "red", [ "h48.4", "v61.96" ] ],
-    [ "relay:NO", "r1:1", "red", [ "h51.2", "v-40" ] ],
-    [ "r1:2", "pump:A", "red", [ "v32.4", "h60.65" ] ],
-    [ "pump:C", "motorGnd:GND", "black", [ "v24.6", "h30.2" ] ],
-    [ "soil:SIG", "c3:0", "green", [ "v20.3", "h111.8", "v-152.5" ] ],
-    [ "soil:VCC", "c3:3V3.1", "red", [ "v10.7", "h92.2", "v-210.1" ] ],
-    [ "c3:TX", "$serialMonitor:RX", "", [] ],
-    [ "c3:RX", "$serialMonitor:TX", "", [] ],
-    [ "motorVcc:VCC", "logicBuck:VIN+", "red", [ "h-518", "v142.36", "h-182.4", "v58.18" ] ],
+    [
+      "c3:3",
+      "r2:1",
+      "green",
+      []
+    ],
+    [
+      "r2:2",
+      "status:A",
+      "green",
+      [
+        "v41.2",
+        "h60.65"
+      ]
+    ],
+    [
+      "status:C",
+      "statusGnd:GND",
+      "black",
+      [
+        "v33.4",
+        "h25.2"
+      ]
+    ],
+    [
+      "relay:NO",
+      "r1:1",
+      "red",
+      [
+        "h51.2",
+        "v-40"
+      ]
+    ],
+    [
+      "r1:2",
+      "pump:A",
+      "red",
+      [
+        "v32.4",
+        "h60.65"
+      ]
+    ],
+    [
+      "pump:C",
+      "motorGnd:GND",
+      "black",
+      [
+        "v24.6",
+        "h30.2"
+      ]
+    ],
+    [
+      "soil:SIG",
+      "c3:0",
+      "green",
+      [
+        "v20.3",
+        "h111.8",
+        "v-152.5"
+      ]
+    ],
+    [
+      "soil:VCC",
+      "c3:3V3.1",
+      "red",
+      [
+        "v10.7",
+        "h92.2",
+        "v-210.1"
+      ]
+    ],
+    [
+      "c3:TX",
+      "$serialMonitor:RX",
+      "",
+      []
+    ],
+    [
+      "c3:RX",
+      "$serialMonitor:TX",
+      "",
+      []
+    ],
+    [
+      "motorVcc:VCC",
+      "logicBuck:VIN+",
+      "red",
+      [
+        "h-518",
+        "v142.36",
+        "h-182.4",
+        "v58.18"
+      ]
+    ],
     [
       "motorGnd:GND",
       "logicBuck:VIN-",
       "black",
-      [ "h-33.6", "v340.6", "h-638.4", "v-249.6", "h-206.4", "v-37.82" ]
+      [
+        "h-33.6",
+        "v340.6",
+        "h-638.4",
+        "v-249.6",
+        "h-206.4",
+        "v-37.82"
+      ]
     ],
-    [ "c3:5V.1", "j1:J", "red", [ "h-99.38", "v-20.3" ] ],
-    [ "j1:J", "logicBuck:5V", "red", [ "v0" ] ],
-    [ "relay:VCC", "j1:J", "red", [ "h0" ] ],
-    [ "logicBuck:GND", "j2:J", "black", [ "h0" ] ],
-    [ "j2:J", "c3:GND.3", "black", [ "v0" ] ],
-    [ "j2:J", "soil:GND", "black", [ "v192", "h-67.2" ] ],
-    [ "j2:J", "relay:GND", "black", [ "v0" ] ]
+    [
+      "c3:5V.1",
+      "j1:J",
+      "red",
+      [
+        "h-99.38",
+        "v-20.3"
+      ]
+    ],
+    [
+      "j1:J",
+      "logicBuck:5V",
+      "red",
+      [
+        "v0"
+      ]
+    ],
+    [
+      "relay:VCC",
+      "j1:J",
+      "red",
+      [
+        "h0"
+      ]
+    ],
+    [
+      "logicBuck:GND",
+      "j2:J",
+      "black",
+      [
+        "h0"
+      ]
+    ],
+    [
+      "j2:J",
+      "c3:GND.3",
+      "black",
+      [
+        "v0"
+      ]
+    ],
+    [
+      "j2:J",
+      "soil:GND",
+      "black",
+      [
+        "v192",
+        "h-67.2"
+      ]
+    ],
+    [
+      "j2:J",
+      "relay:GND",
+      "black",
+      [
+        "v0"
+      ]
+    ],
+    [
+      "motorVcc:VCC",
+      "pfuse1:1",
+      "red",
+      []
+    ],
+    [
+      "pfuse1:2",
+      "pd1:ANODE",
+      "red",
+      []
+    ],
+    [
+      "pd1:CATHODE",
+      "relay:COM",
+      "red",
+      []
+    ],
+    [
+      "pc12e:+",
+      "pd1:CATHODE",
+      "red",
+      []
+    ],
+    [
+      "pc12e:-",
+      "motorGnd:GND",
+      "black",
+      []
+    ],
+    [
+      "pc12c:1",
+      "pd1:CATHODE",
+      "red",
+      []
+    ],
+    [
+      "pc12c:2",
+      "motorGnd:GND",
+      "black",
+      []
+    ],
+    [
+      "pd2:ANODE",
+      "pump:C",
+      "blue",
+      []
+    ],
+    [
+      "pd2:CATHODE",
+      "pd1:CATHODE",
+      "red",
+      []
+    ],
+    [
+      "pc5e:+",
+      "j1:J",
+      "red",
+      []
+    ],
+    [
+      "pc5e:-",
+      "j2:J",
+      "black",
+      []
+    ],
+    [
+      "pc5c:1",
+      "j1:J",
+      "red",
+      []
+    ],
+    [
+      "pc5c:2",
+      "j2:J",
+      "black",
+      []
+    ],
+    [
+      "pc_c3:1",
+      "c3:5V.1",
+      "red",
+      []
+    ],
+    [
+      "pc_c3:2",
+      "c3:GND.3",
+      "black",
+      []
+    ],
+    [
+      "pc_soil:1",
+      "soil:VCC",
+      "red",
+      []
+    ],
+    [
+      "pc_soil:2",
+      "soil:GND",
+      "black",
+      []
+    ],
+    [
+      "c3:4",
+      "pr_in:1",
+      "green",
+      []
+    ],
+    [
+      "pr_in:2",
+      "relay:IN",
+      "green",
+      []
+    ],
+    [
+      "relay:IN",
+      "pr_pd:1",
+      "black",
+      []
+    ],
+    [
+      "pr_pd:2",
+      "j2:J",
+      "black",
+      []
+    ]
   ],
   "dependencies": {}
 }

@@ -294,7 +294,67 @@ cd wokwi-esp32-project && pio run     # compiles the OTA path for the real board
 cd wokwi-water-pump-c3 && pio run
 ```
 
-## 9. History
+## 9. Circuit protection in the Wokwi diagrams (new)
+
+Two boards died with `assert failed: __esp_system_init_fn_init_flash` **before any
+application code ran**, so the fix is physical and it now lives *inside*
+`diagram.json` in both projects — the paper guide (`chr-robot-protection-circuits.zip`)
+and the diagram say the same thing.
+
+Nothing existing was moved. The protection parts are new parts around the old
+ones, and the connections that need a part **in series** were re-drawn through it:
+
+```
+D25/D26/D27/D14/D12/D13 -> 220R x6 -> L298N EN A / IN1 / IN2 / IN3 / IN4 / EN B
+D15 -> 220R -> TRIG bus (j9)
+HC-SR04 ECHO x3 -> 1k -> 2k -> D32 / D23 / VN          (2k also to GND, 5V -> 3.33V)
+D33 -> 33R -> SD SCK
+TX0 / RX0 -> 10k -> ESP32-CAM RX / TX
+BMS P+ -> 5A fuse -> SS34 -> L298N 12V + buck VIN+     (470uF + 100nF on the rail)
+ultrasonic VCC (j8) -> 5V rail (j2)                    (they were on 3V3)
+ESP32-CAM VCC -> ldo33 3V3 (its own AMS1117, not the ESP32 3V3 pin)
+```
+
+| Project | before | after |
+|---|---|---|
+| `wokwi-esp32-project` | 38 parts / 79 connections | **115 parts / 155 connections** |
+| `wokwi-water-pump-c3` | 17 parts / 21 connections | **43 parts / 40 connections** |
+
+What went in (full tables are in each project README):
+
+* **Power:** 5A fuse, SS34 reverse-polarity diode, 470uF+100nF (12V), 1000uF+100nF
+  (ESP32 VIN), 10uF+100nF (3V3), 470uF+100nF (servo), 100nF at every module.
+* **Signals:** 220R x6 on the L298N inputs, 220R on TRIG, 1k/2k divider on all
+  three ECHOs, **10k pull-down on GPIO12** (the MTDI flash-voltage strap that
+  was wired to `IN4` — this is the actual `init_flash` cause), 10k DHT pull-up,
+  4.7k I2C pull-ups, 33R on SD SCK, 10k on both camera UART lines.
+* **Motors:** 1N5819 x4 freewheel diodes (`OUT1..OUT4` -> +12V) in the rover and
+  1N5819 across the pump. On the real robot also add **100nF across each motor
+  terminal** and bring the motor ground and the logic ground together **only at
+  `BMS P-`** (star ground) — neither can be drawn in the simulator, so both are
+  text notes inside the diagrams.
+
+New custom chips, **pins only / passive** (`cap`, `ecap`, `diode`, `fuse`,
+`ldo33`): `.chip.c` source, `.chip.json` pin list and a prebuilt `.chip.wasm`
+sit in each project root, `wokwi.toml` maps them, `scripts/build-all.*` compiles
+them, and a new checker proves everything agrees:
+
+```bash
+cd wokwi-esp32-project
+python3 scripts/check-wokwi-diagram.py      # also checks ../wokwi-water-pump-c3
+#   OK - diagram, chip files and wokwi.toml agree
+```
+
+The green text block on the left of each diagram is the legend of everything
+that was added. Wires added by the generator carry no route on purpose: Wokwi
+draws their route on screen the first time you touch the diagram.
+
+**Flash settings that still matter** (the crash is not only wiring): Upload speed
+115200, Flash Frequency **40 MHz**, Flash Mode **DIO**, 4 MB, a partition scheme
+with **two app slots** (needed by §8), and Erase-all-before-upload once, plus
+`esptool erase_flash`.
+
+## 10. History
 
 * `0001-*.patch`, `chrhw-0001-*.patch` — historical firmware patches kept for
   reference (already applied).
@@ -313,5 +373,12 @@ cd wokwi-water-pump-c3 && pio run
   `include/config.h`, the `ota` command handler with the target check and the
   stop-before-flash safety, and `ota_status` reporting (§8). The first flash of
   each board still needs a cable.
+* Circuit protection inside the diagrams (2026-10-07): the two boards that died
+  in `init_flash` were a physical problem (GPIO12 strap, 5V ECHO, no bulk
+  capacitance, no flyback diodes, shared ground), so the fuse, SS34, all
+  capacitors, the ECHO dividers, the GPIO12 pull-down, the series resistors, the
+  pull-ups and the flyback diodes are now part of `diagram.json` in both
+  projects, together with five new passive custom chips and
+  `scripts/check-wokwi-diagram.py` (§9).
 * `AUDIT_NOTES_client_server_alignment.md` — client/server alignment audit,
   with a follow-up section for this safety/cache update.

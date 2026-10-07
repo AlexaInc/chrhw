@@ -20,7 +20,7 @@ if (-not $WokwiCommand) {
 }
 
 New-Item -ItemType Directory -Force -Path firmware | Out-Null
-foreach ($chip in @("r", "gps", "l98nmotorcontrl", "espcam", "cell3v7", "bms3s", "buck5v", "dcadapter", "charger3s")) {
+foreach ($chip in @("r", "gps", "l98nmotorcontrl", "espcam", "cell3v7", "bms3s", "buck5v", "dcadapter", "charger3s", "cap", "ecap", "diode", "fuse", "ldo33")) {
   & $WokwiCommand.Source chip compile "$chip.chip.c" -o "$chip.chip.wasm"
   if ($LASTEXITCODE -ne 0) { throw "Custom chip compilation failed: $chip" }
 }

@@ -1,0 +1,8 @@
+{
+  "name": "3.3V regulator AMS1117",
+  "author": "AlexaInc",
+  "pins": ["VIN+", "VIN-", "3V3", "GND"],
+  "controls": [
+    {"id":"outputVoltage","label":"Output voltage (V)","type":"range","min":3.0,"max":3.6,"step":0.1}
+  ]
+}
