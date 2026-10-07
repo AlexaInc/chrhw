@@ -4,10 +4,15 @@
 #
 # The rover and the pump used to exist as several full copies of the same
 # firmware (root sketch.ino, src/main.cpp, arduino-ide/<board>/*.ino), which
-# drifted apart. They are now shims: every sketch includes ../../src/main.cpp
-# (or src/main.cpp for the simulator entry), and every board keeps only its own
-# machine values (Wi-Fi, pins) in an arduino-ide/<board>/config.h that includes
-# ../../include/config.h.
+# drifted apart. There are two rules now, and this script checks both:
+#
+#   * Wokwi / PlatformIO sketches (sketch.ino) are SHIMS that include
+#     "src/main.cpp" - one firmware source, nothing copied.
+#   * Arduino IDE sketch folders (arduino-ide/<board>/) must be SELF-CONTAINED:
+#     the IDE can only compile files inside the folder, so main.cpp (a copy of
+#     src/main.cpp), the headers and a generated config.h live in there.
+#     Those copies are byte-compared against their sources, so they cannot
+#     drift - run scripts/sync-arduino-ide.sh to refresh them.
 #
 # Run this after ANY firmware edit (and before flashing a real board):
 #     ./scripts/check-code-copies.sh
@@ -47,15 +52,105 @@ while IFS= read -r ino; do
             continue
         fi
         ok "$ino -> $inc"
+    elif grep -qE 'void[[:space:]]+(setup|loop)[[:space:]]*\(' "$ino"; then
+        skip "$ino is a standalone sketch (separate device)"
+    elif [ -f "$(dirname "$ino")/main.cpp" ]; then
+        # The self-contained Arduino IDE layout: the folder holds main.cpp (the
+        # firmware copy) and the tab is documentation only. That is correct -
+        # and it is exactly what keeps a second firmware copy out of the tab.
+        ok "$ino (self-contained folder: main.cpp next to it)"
     else
-        if grep -qE 'void[[:space:]]+(setup|loop)[[:space:]]*\(' "$ino"; then
-            skip "$ino is a standalone sketch (separate device)"
-        else
-            bad "$ino includes no firmware source and defines no setup()/loop()"
-        fi
+        bad "$ino includes no firmware source, defines no setup()/loop(), and has no main.cpp in its folder"
     fi
 done < <(find wokwi-esp32-project wokwi-water-pump-c3 -name '*.ino' -not -path '*/.pio/*' | sort)
 [ "$entries" -gt 0 ] || bad "no .ino sketches found at all"
+
+echo
+echo "== 1b. Arduino IDE folders are self-contained =========================="
+# No file in an arduino-ide sketch folder may include anything outside it, the
+# firmware copy must equal src/main.cpp byte for byte, and every header the
+# firmware includes from the folder must exist there.
+while IFS= read -r sketch; do
+    dir="$(dirname "$sketch")"
+    # (a) nothing may reach outside the folder (commented-out lines do not count:
+    # the generated files explain the old layout in their comments)
+    outside="$(grep -rnE '^[[:space:]]*#include[[:space:]]*"\.\./' "$dir" 2>/dev/null || true)"
+    if [ -n "$outside" ]; then
+        bad "$dir still includes a path outside the folder:"
+        printf '%s\n' "$outside" | sed 's/^/          /'
+    else
+        ok "$(basename "$dir"): no include leaves the sketch folder"
+    fi
+    # (b) every file the firmware includes from the folder must BE in the folder
+    missing=""
+    while IFS= read -r inc; do
+        [ -f "$dir/$inc" ] || missing="$missing $inc"
+    done < <(grep -rhE '^[[:space:]]*#include[[:space:]]*"' "$dir" 2>/dev/null \
+                | sed -E 's/.*"([^"]*)".*/\1/' | sort -u \
+                | grep -v '^config\.local\.h$' || true)
+    if [ -z "$missing" ]; then
+        ok "$(basename "$dir"): the local includes the code needs are all present"
+    else
+        # not a failure by itself: quoted library headers (DHT.h, ...) are not files,
+        # but a firmware header with no copy in the folder IS the IDE's problem
+        real_missing=""
+        for m in $missing; do
+            case "$m" in
+                DHT.h|TinyGPSPlus.h|esp_camera.h|img_converters.h|config.local.h) ;;
+                *) real_missing="$real_missing $m" ;;
+            esac
+        done
+        if [ -z "$real_missing" ]; then
+            ok "$(basename "$dir"): only library headers are not local (fine)"
+        else
+            bad "$(basename "$dir"): includes $real_missing, which is not in the folder"
+        fi
+    fi
+    # The generated Arduino IDE board folders are the ones with config.machine.h.
+    # A hand-written standalone test sketch has neither main.cpp nor config.h.
+    if [ ! -f "$dir/config.machine.h" ]; then
+        inf "$(basename "$dir") is a standalone test sketch (no generated layout to check)"
+        continue
+    fi
+    # (c) the firmware copy is identical to the one PlatformIO compiles
+    src="$(dirname "$(dirname "$dir")")/src/main.cpp"
+    if [ -f "$dir/main.cpp" ] && [ -f "$src" ]; then
+        if cmp -s "$dir/main.cpp" "$src"; then
+            ok "$(basename "$dir")/main.cpp == $src (byte for byte)"
+        else
+            bad "$(basename "$dir")/main.cpp differs from $src - run scripts/sync-arduino-ide.sh"
+        fi
+    else
+        bad "$(basename "$dir")/main.cpp or $src is missing"
+    fi
+    # (d) exactly one setup()/loop() definition in the compiled set of the folder
+    defs="$(grep -lE 'void[[:space:]]+(setup|loop)[[:space:]]*\(' "$dir"/*.cpp "$dir"/*.ino 2>/dev/null | wc -l | tr -d ' ')"
+    if [ "$defs" = "1" ]; then
+        ok "$(basename "$dir"): setup()/loop() defined in exactly one file (no duplicate symbols)"
+    else
+        bad "$(basename "$dir"): setup()/loop() found in $defs files - exactly 1 is required"
+    fi
+    # (e) config.h must BE the config (machine + shared), not a pointer outside
+    if grep -q 'ECHO_FORWARD_PIN\|DEVICE_ROLE\|MAX_SPEED\|RELAY_ACTIVE_LOW' "$dir/config.h" 2>/dev/null; then
+        ok "$(basename "$dir")/config.h carries the real configuration"
+    else
+        bad "$(basename "$dir")/config.h does not contain the shared configuration - run scripts/sync-arduino-ide.sh"
+    fi
+done < <(find wokwi-esp32-project/arduino-ide wokwi-water-pump-c3/arduino-ide -name '*.ino' -not -path '*/.pio/*' | sort)
+
+echo
+echo "== 1c. generated copies match their sources ============================"
+while IFS= read -r hdr; do
+    base="$(basename "$hdr")"
+    srcfile="$(dirname "$(dirname "$(dirname "$hdr")")")/include/$base"
+    if [ -f "$srcfile" ]; then
+        if cmp -s "$hdr" "$srcfile"; then
+            ok "$hdr == $srcfile"
+        else
+            bad "$hdr differs from $srcfile - run scripts/sync-arduino-ide.sh"
+        fi
+    fi
+done < <(find wokwi-esp32-project/arduino-ide wokwi-water-pump-c3/arduino-ide \( -name 'arc_math.h' -o -name 'logo_bitmap.h' \) | sort)
 
 echo
 echo "== 2. the shared firmware sources ======================================"
@@ -70,20 +165,49 @@ done < <(find wokwi-esp32-project wokwi-water-pump-c3 -path '*/src/main.cpp' -no
 
 echo
 echo "== 3. config chains ===================================================="
+# The single source of truth is <project>/include/config.h. Every other config.h
+# is either a shim that includes it (Wokwi root copy) or a GENERATED copy of it
+# (Arduino IDE sketch folder, where includes cannot leave the folder).
 while IFS= read -r cfg; do
-    if grep -qE '#include[[:space:]]+"\.\./\.\./include/config\.h"' "$cfg"; then
-        ok "$cfg -> ../../include/config.h"
-    elif grep -qE 'DEVICE_ROLE|ECHO_FORWARD_PIN|RELAY_PIN|MOTION_CRUISE_PWM' "$cfg"; then
-        bad "$cfg duplicates firmware configuration - it must include ../../include/config.h instead"
+    case "$cfg" in
+        */arduino-ide/*/config.h)
+            if grep -q 'GENERATED FILE - DO NOT EDIT THIS COPY' "$cfg" && \
+               grep -q 'copy of .*include/config.h' "$cfg"; then
+                ok "$cfg is a generated copy of include/config.h (self-contained sketch folder)"
+            else
+                bad "$cfg is not the generated copy - run scripts/sync-arduino-ide.sh"
+            fi
+            ;;
+        *)
+            if grep -qE '#include[[:space:]]+"[^"]*include/config\.h"' "$cfg"; then
+                ok "$cfg -> include/config.h (shim)"
+            elif grep -qE 'DEVICE_ROLE|ECHO_FORWARD_PIN|RELAY_PIN|MOTION_CRUISE_PWM' "$cfg"; then
+                bad "$cfg duplicates firmware configuration - it must include the shared config instead"
+            else
+                inf "$cfg (no shared include, no duplicated firmware config)"
+            fi
+            ;;
+    esac
+done < <(find wokwi-esp32-project wokwi-water-pump-c3 -name config.h -not -path '*/.pio/*' -not -path '*/include/config.h' | sort)
+
+# the machine-value files of each Arduino IDE board folder (the part you own)
+while IFS= read -r mach; do
+    if grep -qE 'WIFI_SSID|RELAY_PIN|CHRH_FORCE_GATEWAY_MODE' "$mach"; then
+        ok "$mach holds this board's machine values (Wi-Fi / pins)"
     else
-        inf "$cfg (no central include, no duplicated firmware config)"
+        inf "$mach (no machine values - the board uses the shared defaults)"
     fi
-done < <(find wokwi-esp32-project/arduino-ide wokwi-water-pump-c3/arduino-ide -name config.h -not -path '*/.pio/*' | sort)
+done < <(find wokwi-esp32-project/arduino-ide wokwi-water-pump-c3/arduino-ide -name config.machine.h | sort)
 
 echo
 echo "== 4. secrets stay in the central config ==============================="
 for pat in ROBOT_TOKEN PUMP_TOKEN; do
-    hits=$(grep -rl "define[[:space:]]*$pat" --include='*.h' --include='*.ino' --include='*.cpp' . 2>/dev/null | grep -v '/\.pio/' | sort | tr '\n' ' ')
+    # A generated Arduino IDE config.h is a byte-compared copy of the central
+    # config (checked in section 3), so it is not a second source of truth.
+    hits=$(grep -rl "define[[:space:]]*$pat" --include='*.h' --include='*.ino' --include='*.cpp' . 2>/dev/null \
+             | grep -v '/\.pio/' \
+             | while read -r f; do grep -q 'GENERATED FILE - DO NOT EDIT THIS COPY' "$f" 2>/dev/null || printf '%s\n' "$f"; done \
+             | sort | tr '\n' ' ')
     count=$(printf '%s' "$hits" | wc -w)
     if [ "$count" -le 1 ]; then
         ok "$pat is defined in exactly one place"
@@ -101,7 +225,7 @@ for f in "${wifi_hits[@]:-}"; do
     [ -z "${f:-}" ] && continue
     case "$f" in
         ./wokwi-esp32-project/include/config.h|./wokwi-water-pump-c3/include/config.h) ;;
-        ./wokwi-*/arduino-ide/*/config.h|./wokwi-*/config.local.h) ;;
+        ./wokwi-*/arduino-ide/*/config.h|./wokwi-*/arduino-ide/*/config.machine.h|./wokwi-*/config.local.h) ;;
         *) wifi_bad="$wifi_bad $f" ;;
     esac
 done

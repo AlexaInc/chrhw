@@ -1,5 +1,23 @@
 # Arduino IDE upload sketches (two physical boards)
 
+> **These folders are SELF-CONTAINED — nothing is included from outside.**
+> The Arduino IDE can only compile files that live inside the sketch folder, so
+> `esp32-dev-controller/` holds the firmware itself (`main.cpp`, a byte-identical
+> copy of `../../src/main.cpp`), the headers it needs (`arc_math.h`,
+> `logo_bitmap.h`, `config.h`) and your own machine values
+> (`config.machine.h`: Wi-Fi, pins).
+>
+> * **To change the firmware**: edit `wokwi-esp32-project/src/main.cpp`, then run
+>   `bash scripts/sync-arduino-ide.sh` (it refreshes every Arduino IDE folder).
+> * **To change this board's Wi-Fi / pins**: edit
+>   `arduino-ide/esp32-dev-controller/config.machine.h`, then run the same script
+>   (or just re-open the sketch — only `config.h` is rebuilt from it).
+> * **Proof that nothing drifted**: `bash scripts/check-code-copies.sh` compares
+>   the copies against their sources byte for byte.
+>
+> Open the folder (not a single file) in the Arduino IDE: `main.cpp` is compiled
+> automatically, and the `.ino` tab only documents the board settings.
+
 ## 1) ESP32 DevKit controller
 
 Open:

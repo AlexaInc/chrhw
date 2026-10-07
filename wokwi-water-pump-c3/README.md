@@ -1,4 +1,11 @@
 # ESP32 DevKit V1 Water Pump Controller
+<!-- Arduino IDE folders -->
+> **The `arduino-ide/<board>/` folders are SELF-CONTAINED**: they carry their own
+> `main.cpp` (a byte-identical copy of `src/main.cpp`), `config.h` (generated from
+> `config.machine.h` + `include/config.h`) and a README. The Arduino IDE can only
+> compile files inside the sketch folder, so nothing is included from `../../` any
+> more. After a firmware edit run `bash scripts/sync-arduino-ide.sh`.
+
 
 This is the ESP32 DevKit V1 version of the existing pump controller. It keeps
 the server-compatible identity `esp_c3_pump` so no server/client change is
