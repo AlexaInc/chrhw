@@ -173,8 +173,8 @@
     {
       "type": "wokwi-resistor",
       "id": "r_trig",
-      "top": -640,
-      "left": -80,
+      "top": -639.25,
+      "left": -76.8,
       "attrs": { "value": "220" }
     },
     {
@@ -370,7 +370,7 @@
     {
       "type": "chip-cap",
       "id": "c_lcd",
-      "top": 701.82,
+      "top": 692.22,
       "left": -62.4,
       "attrs": { "value": "100nF" }
     },
@@ -788,7 +788,6 @@
     { "type": "wokwi-junction", "id": "j21", "top": 340.8, "left": 196.8, "attrs": {} },
     { "type": "wokwi-junction", "id": "j22", "top": 331.2, "left": 628.8, "attrs": {} },
     { "type": "wokwi-junction", "id": "j23", "top": 254.4, "left": 648, "attrs": {} },
-    { "type": "wokwi-junction", "id": "j24", "top": -216, "left": -244.8, "attrs": {} },
     { "type": "wokwi-junction", "id": "j25", "top": 187.2, "left": -244.8, "attrs": {} },
     { "type": "wokwi-text", "id": "text2", "top": -297.6, "left": 192, "attrs": { "text": "dl" } },
     { "type": "wokwi-text", "id": "text3", "top": -163.2, "left": 192, "attrs": { "text": "df" } },
@@ -868,7 +867,7 @@
       "motorB:M-",
       "chip3:OUT4",
       "blue",
-      [ "h-28.8", "v-86.4", "h-192", "v67.2", "h-144", "v-9.6" ]
+      [ "h-28.8", "v-86.4", "h-192", "v67.2", "h-182.4", "v-9.6" ]
     ],
     [ "buck1:5V", "j20:J", "#8f4814", [ "v0", "h11.41" ] ],
     [ "j20:J", "j16:J", "#8f4814", [ "v0" ] ],
@@ -954,11 +953,9 @@
     [ "chip3:OUT1", "d_l1:CATHODE", "violet", [ "h0" ] ],
     [ "chip3:OUT2", "d_l2:CATHODE", "green", [ "h88.21", "v19.2" ] ],
     [ "chip3:OUT3", "d_l3:CATHODE", "gray", [ "v0", "h78.61", "v38.4" ] ],
-    [ "chip3:OUT4", "d_l4:ANODE", "blue", [ "h-9.6", "v9.6", "h182.4", "v48" ] ],
     [ "j26:J", "d_l1:ANODE", "black", [ "h115.2", "v-86.4" ] ],
     [ "d_l2:ANODE", "j26:J", "black", [ "h-19.2", "v57.6" ] ],
     [ "j26:J", "d_l3:ANODE", "black", [ "v0", "h115.2", "v-28.8" ] ],
-    [ "j26:J", "d_l4:CATHODE", "black", [ "v0", "h115.2", "v9.6" ] ],
     [ "j26:J", "j11:J", "black", [ "v0", "h-86.4" ] ],
     [ "r_d1a:2", "r_d1b:1", "green", [ "v0" ] ],
     [ "r_d2a:2", "r_d2b:1", "green", [ "v0" ] ],
@@ -1081,7 +1078,21 @@
     [ "ultrasonic1:GND", "j_3v3_sensor:J", "black", [ "v0" ] ],
     [ "ultrasonic2:GND", "c_u2:2", "black", [ "v0" ] ],
     [ "ultrasonic2:VCC", "c_u2:1", "#8f4814", [ "v0" ] ],
-    [ "ultrasonic2:GND", "j_3v3_sensor:J", "black", [ "v0" ] ]
+    [ "ultrasonic2:GND", "j_3v3_sensor:J", "black", [ "v0" ] ],
+    [
+      "esp:D18",
+      "j35:J",
+      "magenta",
+      [ "h66.9", "v249.6", "h-76.8", "v374.4", "h-163.2", "v76.8" ]
+    ],
+    [
+      "esp:D21",
+      "j36:J",
+      "violet",
+      [ "h47.7", "v258.8", "h-28.8", "v364.8", "h-172.8", "v105.6" ]
+    ],
+    [ "chip3:OUT4", "d_l4:CATHODE", "blue", [ "h-9.6", "v9.6", "h182.4", "v57.6" ] ],
+    [ "j26:J", "d_l4:ANODE", "black", [ "v0", "h115.2", "v-9.6" ] ]
   ],
   "dependencies": {}
 }
