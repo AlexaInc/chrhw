@@ -38,15 +38,16 @@ void chip_timer_event(void *user_data) {
   chip_state_t *chip = (chip_state_t*)user_data;
   uint32_t rain = attr_read(chip->rain_attr);
   uint32_t threshold = attr_read(chip->threshold_attr);
-  float voltage = 5.0*((float)rain/1023.0);
-  if (pin_read(chip->pin_vcc) && !pin_read(chip->pin_gnd))
-  {
-    printf("%u %f     ", rain, voltage);
+  if (rain > 1023) rain = 1023;
+  // The simulated module is wired to 3V3 so neither AO nor DO can exceed
+  // ESP32-safe logic levels. A wet plate lowers AO; the control slider is
+  // defined as wetness (0=dry, 1023=wet).
+  float wetness_pct = 100.0f * ((float)rain / 1023.0f);
+  float voltage = 3.3f * (1.0f - ((float)rain / 1023.0f));
+  if (pin_read(chip->pin_vcc) && !pin_read(chip->pin_gnd)) {
+    printf("%u %.3fV %.1f%%\n", rain, voltage, wetness_pct);
     pin_dac_write(chip->pin_ao, voltage);
-    if (((voltage/5.0)*100) > threshold)
-        pin_write(chip->pin_do, HIGH);
-    else 
-        pin_write(chip->pin_do, LOW);
+    pin_write(chip->pin_do, wetness_pct >= (float)threshold ? HIGH : LOW);
   }
   
 }

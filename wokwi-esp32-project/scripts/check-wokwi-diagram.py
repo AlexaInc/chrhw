@@ -1,34 +1,32 @@
 #!/usr/bin/env python3
-"""Check a Wokwi project folder before starting the simulator.
+"""Validate a local Wokwi diagram and its custom-chip files.
 
-Usage:  python3 scripts/check-wokwi-diagram.py [project-folder ...]
-        (default: this project and the water pump project)
+Usage (from this project folder):
+    python3 scripts/check-wokwi-diagram.py .
 
-Checks
-  1. every `chip-xxx` part in diagram.json has xxx.chip.json and xxx.chip.wasm
-  2. every chip used by the diagram has a [[chip]] block in wokwi.toml
-  3. every [[chip]] block in wokwi.toml has its files
-  4. every connection endpoint names a part that exists and a pin that exists
-     (pin tables for the built-in parts; custom chips from their .chip.json)
-  5. duplicate part ids
+Checks diagram endpoints, local custom-chip manifests, Wokwi JSON keys and
+WebAssembly magic bytes. This is a structural check, not an electrical-safety
+or analog-simulation test.
 """
-import json, os, re, sys
+from __future__ import annotations
 
-HERE = os.path.dirname(os.path.abspath(__file__))          # .../wokwi-esp32-project/scripts
-ROVER = os.path.dirname(HERE)                               # .../wokwi-esp32-project
-REPO = os.path.dirname(ROVER)                               # .../chrhw
-DEFAULT = [ROVER, os.path.join(REPO, "wokwi-water-pump-c3")]
+import json
+import os
+import re
+import sys
+from pathlib import Path
+
+ALLOWED_CHIP_JSON_KEYS = {"name", "author", "pins", "controls", "display"}
 
 BUILTIN = {
     "wokwi-resistor": ["1", "2"],
     "wokwi-text": [],
-    "wokwi-junction": ["J"],
-    "wokwi-esp32-devkit-v1": ["VIN", "3V3", "GND.1", "GND.2", "GND.3", "EN", "VP", "VN",
-                              "D2", "D4", "D5", "D12", "D13", "D14", "D15", "D18", "D19",
-                              "D21", "D22", "D23", "D25", "D26", "D27", "D32", "D33", "D34",
-                              "D35", "RX0", "TX0", "RX2", "TX2"],
-    "board-esp32-c3-devkitm-1": ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
-                                 "TX", "RX", "3V3", "5V", "GND", "3V3.1", "5V.1", "GND.3"],
+    "wokwi-esp32-devkit-v1": [
+        "VIN", "3V3", "GND.1", "GND.2", "EN", "VP", "VN",
+        "D2", "D4", "D5", "D12", "D13", "D14", "D15", "D16", "D17",
+        "D18", "D19", "D21", "D22", "D23", "D25", "D26", "D27",
+        "D32", "D33", "D34", "D35", "RX0", "TX0", "RX2", "TX2",
+    ],
     "wokwi-hc-sr04": ["VCC", "TRIG", "ECHO", "GND"],
     "wokwi-dht22": ["VCC", "SDA", "NC", "GND"],
     "board-ssd1306": ["VCC", "GND", "SCL", "SDA"],
@@ -41,85 +39,154 @@ BUILTIN = {
     "wokwi-gnd": ["GND"],
     "$serialMonitor": ["RX", "TX"],
 }
-# chips whose .chip.c does not call pin_init() for some declared pins even though
-# they simulate fine (pre-existing, do not "fix" without testing the sim)
-KNOWN = {"gps", "espcam"}
+# These existing models intentionally keep some supply/unused pins visual-only.
+KNOWN_PIN_INIT_EXCEPTIONS = {"gps", "espcam"}
 
 
-def check(proj):
-    print("== " + proj)
-    problems = []
-    dpath = os.path.join(proj, "diagram.json")
-    if not os.path.exists(dpath):
+def parse_chip_blocks(text: str):
+    blocks = re.findall(r"(?ms)^\[\[chip\]\]\s*\n(.*?)(?=^\[\[|\Z)", text)
+    entries = []
+    for block in blocks:
+        name = re.search(r'^\s*name\s*=\s*["\']([^"\']+)["\']', block, re.M)
+        binary = re.search(r'^\s*binary\s*=\s*["\']([^"\']+)["\']', block, re.M)
+        if name and binary:
+            entries.append((name.group(1), binary.group(1)))
+        else:
+            entries.append((None, None))
+    return entries
+
+
+def check(project: str) -> int:
+    project = os.path.abspath(project)
+    print(f"== {project}")
+    problems: list[str] = []
+    diagram_path = os.path.join(project, "diagram.json")
+    toml_path = os.path.join(project, "wokwi.toml")
+    if not os.path.isfile(diagram_path):
         print("   no diagram.json - skipped")
         return 1
-    doc = json.load(open(dpath, encoding="utf-8"))
-    toml = open(os.path.join(proj, "wokwi.toml"), encoding="utf-8").read()
-    toml_names = re.findall(r'name\s*=\s*"([^"]+)"', toml)
-
-    ids = {}
-    for p in doc["parts"]:
-        if p["id"] in ids:
-            problems.append("duplicate part id %s" % p["id"])
-        ids[p["id"]] = p["type"]
-
-    pins = dict(BUILTIN)
-    for pid, t in ids.items():
-        if not t.startswith("chip-"):
-            continue
-        n = t[5:]
-        for ext in (".chip.json", ".chip.wasm"):
-            if not os.path.exists(os.path.join(proj, n + ext)):
-                problems.append("missing %s%s (part %s)" % (n, ext, pid))
-        j = os.path.join(proj, n + ".chip.json")
-        if os.path.exists(j):
-            pins[t] = json.load(open(j, encoding="utf-8")).get("pins", [])
-        if n not in toml_names:
-            problems.append("wokwi.toml has no [[chip]] for %s" % n)
-
-    for n in toml_names:
-        for ext in (".chip.json", ".chip.wasm"):
-            if not os.path.exists(os.path.join(proj, n + ext)):
-                problems.append("wokwi.toml chip %s has no %s" % (n, ext))
-        c = os.path.join(proj, n + ".chip.c")
-        j = os.path.join(proj, n + ".chip.json")
-        if os.path.exists(c) and os.path.exists(j) and n not in KNOWN:
-            inits = set(re.findall(r'pin_init\("([^"]+)"', open(c, encoding="utf-8").read()))
-            for pin in json.load(open(j, encoding="utf-8")).get("pins", []):
-                if pin and pin not in inits:
-                    problems.append("%s.chip.c does not pin_init(%r)" % (n, pin))
-
-    for c in doc["connections"]:
-        for ep in c[:2]:
-            pid, _, pin = ep.partition(":")
-            if pid.startswith("$"):
-                continue
-            if pid not in ids:
-                problems.append("connection references missing part %s" % ep)
-                continue
-            t = ids[pid]
-            if t in pins and pin not in pins[t]:
-                problems.append("part %s (%s) has no pin %r" % (pid, t, pin))
-
-    print("   %d parts / %d connections / %d chip types" % (len(doc["parts"]), len(doc["connections"]),
-                                                             len({t for t in ids.values() if t.startswith("chip-")})))
-    if problems:
-        for p in problems:
-            print("   [PROBLEM] " + p)
+    if not os.path.isfile(toml_path):
+        print("   no wokwi.toml")
         return 1
-    print("   OK - diagram, chip files and wokwi.toml agree")
+
+    try:
+        doc = json.loads(Path(diagram_path).read_text(encoding="utf-8"))
+        manifest = parse_chip_blocks(Path(toml_path).read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        print(f"   [PROBLEM] cannot read project config: {exc}")
+        return 1
+
+    manifest_map: dict[str, str] = {}
+    for name, binary in manifest:
+        if name is None or binary is None:
+            problems.append("malformed [[chip]] block in wokwi.toml (needs name and binary)")
+            continue
+        if name in manifest_map:
+            problems.append(f"duplicate [[chip]] name {name!r} in wokwi.toml")
+        manifest_map[name] = binary
+        wasm_path = Path(project, binary)
+        json_path = wasm_path.with_suffix(".json")
+        c_path = wasm_path.with_suffix(".c")
+        if not wasm_path.is_file():
+            problems.append(f"wokwi.toml chip {name} binary missing: {binary}")
+        else:
+            try:
+                if wasm_path.read_bytes()[:4] != b"\x00asm":
+                    problems.append(f"{binary} is not a WebAssembly binary (expected 00 61 73 6d)")
+            except OSError as exc:
+                problems.append(f"cannot read {binary}: {exc}")
+        if not json_path.is_file():
+            problems.append(f"wokwi.toml chip {name} pinout missing next to its binary: {json_path.name}")
+        if not c_path.is_file():
+            problems.append(f"wokwi.toml chip {name} source missing: {c_path.name}")
+
+    ids: dict[str, str] = {}
+    custom_pins: dict[str, list[str]] = {}
+    for part in doc.get("parts", []):
+        part_id = part.get("id")
+        part_type = part.get("type")
+        if not part_id or not part_type:
+            problems.append(f"part missing id or type: {part}")
+            continue
+        if part_id in ids:
+            problems.append(f"duplicate part id {part_id}")
+        ids[part_id] = part_type
+        if not part_type.startswith("chip-"):
+            continue
+        chip_name = part_type[5:]
+        if chip_name not in manifest_map:
+            problems.append(f"wokwi.toml has no [[chip]] block for diagram type {part_type}")
+        if chip_name not in custom_pins:
+            binary = manifest_map.get(chip_name, chip_name + ".chip.wasm")
+            pinout = Path(project, binary).with_suffix(".json")
+            if not pinout.is_file():
+                problems.append(f"missing {pinout.name} for part {part_id} ({part_type})")
+                custom_pins[part_type] = []
+                continue
+            try:
+                chip_doc = json.loads(pinout.read_text(encoding="utf-8"))
+            except (OSError, json.JSONDecodeError) as exc:
+                problems.append(f"invalid {pinout.name}: {exc}")
+                custom_pins[part_type] = []
+                continue
+            unknown = sorted(set(chip_doc) - ALLOWED_CHIP_JSON_KEYS)
+            if unknown:
+                problems.append(f"{pinout.name} has unsupported JSON key(s): {', '.join(unknown)}")
+            pins = chip_doc.get("pins", [])
+            if not isinstance(pins, list) or not all(isinstance(pin, str) for pin in pins):
+                problems.append(f"{pinout.name} must define pins as an array of strings")
+                pins = []
+            custom_pins[part_type] = pins
+
+            # Verify the C source initializes every named pin. Blank strings are
+            # intentional skipped pins in Wokwi's custom-chip JSON format.
+            source = Path(project, binary).with_suffix(".c")
+            if source.is_file() and chip_name not in KNOWN_PIN_INIT_EXCEPTIONS:
+                c_text = source.read_text(encoding="utf-8", errors="replace")
+                initialized = set(re.findall(r'pin_init\("([^"]+)"', c_text))
+                for pin in pins:
+                    if pin and pin not in initialized:
+                        problems.append(f"{source.name} does not pin_init({pin!r})")
+
+    pin_map = dict(BUILTIN)
+    pin_map.update(custom_pins)
+    for wire in doc.get("connections", []):
+        if not isinstance(wire, list) or len(wire) < 2:
+            problems.append(f"malformed connection: {wire!r}")
+            continue
+        for endpoint in wire[:2]:
+            if not isinstance(endpoint, str) or ":" not in endpoint:
+                problems.append(f"malformed endpoint {endpoint!r}")
+                continue
+            part_id, pin = endpoint.split(":", 1)
+            if part_id.startswith("$"):
+                continue
+            if part_id not in ids:
+                problems.append(f"connection references missing part {endpoint}")
+                continue
+            part_type = ids[part_id]
+            if part_type in pin_map and pin not in pin_map[part_type]:
+                problems.append(f"part {part_id} ({part_type}) has no pin {pin!r}")
+
+    count_custom = len({kind for kind in ids.values() if kind.startswith("chip-")})
+    print(f"   {len(ids)} parts / {len(doc.get('connections', []))} connections / {count_custom} custom-chip types")
+    if problems:
+        for item in problems:
+            print("   [PROBLEM] " + item)
+        return 1
+    print("   OK - diagram, chip files, JSON pinouts, WASM headers and wokwi.toml agree")
     return 0
 
 
 if __name__ == "__main__":
-    targets = sys.argv[1:] or DEFAULT
+    targets = sys.argv[1:] or ["."]
     rc = 0
     ran = 0
-    for t in targets:
-        if os.path.isdir(t):
-            rc |= check(t)
+    for target in targets:
+        if os.path.isdir(target):
+            rc |= check(target)
             ran += 1
     if not ran:
-        print("no project folder found - pass one, e.g. python3 check-wokwi-diagram.py ../wokwi-esp32-project")
+        print("no project folder found - pass one, e.g. python3 scripts/check-wokwi-diagram.py .")
         rc = 2
     sys.exit(rc)

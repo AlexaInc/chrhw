@@ -2,20 +2,19 @@
   "name": "L298N",
   "author": "Hansaka Rasanjana",
   "pins": [
-    "EN A",
+    "ENA",
     "IN1",
     "IN2",
     "IN3",
     "IN4",
-    "EN B",
+    "ENB",
     "OUT4",
     "OUT3",
     "OUT2",
-    "OUT1",     
+    "OUT1",
     "12V",
     "5V",
     "GND"
-  
   ],
   "controls": [
     {

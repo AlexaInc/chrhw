@@ -1498,8 +1498,8 @@ void setup() {
     Serial.println("========================================");
 
     // Initialize Pins
-    pinMode(RAIN_DIGITAL_PIN, INPUT);
     pinMode(ULTRASONIC_TRIG_PIN, OUTPUT);
+    pinMode(RAIN_DIGITAL_PIN, INPUT); // GPIO35 is input-only; custom DO is active-high
     pinMode(ECHO_FORWARD_PIN, INPUT);
     pinMode(ECHO_LEFT_PIN, INPUT);
     pinMode(ECHO_RIGHT_PIN, INPUT);
@@ -1723,16 +1723,23 @@ void sendSensorData() {
     float humidity = dht.readHumidity();
     float temperature = dht.readTemperature();
     
-    int rawRainValue = analogRead(RAIN_ANALOG_PIN);
-    float rainPercentage = constrain(map(rawRainValue, 4095, 0, 0, 100), 0.0, 100.0);
+    // The rain module is powered from 3V3 and AO is treated as a 0..3.3V
+    // signal. analogReadMilliVolts() avoids assuming a fixed ADC raw-count scale
+    // across Wokwi and real ESP32 boards. This sensor's AO falls as the plate
+    // gets wetter, so invert it to report wetness as 0..100 percent. DO is read
+    // as a diagnostic comparator signal; the established rainDrop/isRaining
+    // telemetry continues to use AO so the server/client contract is unchanged.
+    const uint32_t rainMilliVolts = analogReadMilliVolts(RAIN_ANALOG_PIN);
+    const float rainWetnessPct = constrain(
+        100.0f - (100.0f * (float)rainMilliVolts / 3300.0f), 0.0f, 100.0f);
+    const bool rainDigitalWet = digitalRead(RAIN_DIGITAL_PIN) == HIGH;
 
-    int rawSoilValue = analogRead(SOIL_ANALOG_PIN);
-    float soilMoisturePercentage = constrain(map(rawSoilValue, 4095, 1500, 0, 100), 0.0, 100.0);
-    int digitalRainState = digitalRead(RAIN_DIGITAL_PIN);
+    const bool isRaining = rainWetnessPct >= RAIN_THRESHOLD_PERCENT;
 
     Serial.printf("[DEBUG] [DHT22] Temp: %.2f °C | Humidity: %.2f %%\n", temperature, humidity);
-    Serial.printf("[DEBUG] [Rain] Raw Analog: %d | Calculated Percentage: %.2f %% | Digital State: %d\n", rawRainValue, rainPercentage, digitalRainState);
-    Serial.printf("[DEBUG] [Soil] Raw Analog: %d | Calculated Moisture: %.2f %%\n", rawSoilValue, soilMoisturePercentage);
+    Serial.printf("[DEBUG] [Rain] AO: %lu mV | Wetness: %.2f %% | DO: %s | raining(AO): %d\n",
+                  (unsigned long)rainMilliVolts, rainWetnessPct,
+                  rainDigitalWet ? "WET" : "DRY", (int)isRaining);
 
     // The arc is already scanned every SENSOR_SLOT_MS by updateSafetySensors():
     // re-triggering the sensors here would block the loop for up to 3 x the
@@ -1758,9 +1765,8 @@ void sendSensorData() {
     JsonObject message = data.createNestedObject("Message");
     message["temperature"] = temperature;
     message["humidity"] = humidity;
-    message["soilMoisture"] = soilMoisturePercentage;
-    message["rainDrop"] = rainPercentage;
-    message["isRaining"] = (digitalRainState == LOW);
+    message["rainDrop"] = rainWetnessPct;
+    message["isRaining"] = isRaining;
     message["distForward"] = distForward;
     message["distLeft"] = distLeft;
     message["distRight"] = distRight;

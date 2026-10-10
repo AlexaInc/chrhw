@@ -1,7 +1,7 @@
 {
   "name": "ESP32-CAM (serial, <IMG:size> protocol)",
   "author": "Virtual camera node for the agri-robot main board",
-  "pins": ["GND", "VCC", "RX", "TX", "TRIG", "BUSY"],
+  "pins": ["GND", "VCC", "RX", "TX", "", "", "", ""],
   "controls": [
     {
       "id": "scene",

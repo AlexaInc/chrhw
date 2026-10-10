@@ -28,8 +28,8 @@ void chip_init(void) {
   chip->pin_12v = pin_init("12V", INPUT);
   chip->pin_5v = pin_init("5V", INPUT);
   chip->pin_gnd = pin_init("GND", INPUT);
-  chip->pin_ENA = pin_init("EN A",INPUT);
-  chip->pin_ENB = pin_init("EN B",INPUT);
+  chip->pin_ENA = pin_init("ENA", INPUT);
+  chip->pin_ENB = pin_init("ENB", INPUT);
   chip->pin_IN1 = pin_init("IN1",INPUT);
   chip->pin_IN2 = pin_init("IN2",INPUT);
   chip->pin_IN3 = pin_init("IN3",INPUT);

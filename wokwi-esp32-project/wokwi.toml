@@ -61,3 +61,7 @@ binary = "fuse.chip.wasm"
 [[chip]]
 name = "ldo33"
 binary = "ldo33.chip.wasm"
+
+[[chip]]
+name = "dc-motor"
+binary = "dc-motor.chip.wasm"

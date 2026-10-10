@@ -1,0 +1,6 @@
+{
+  "name": "DC Motor",
+  "author": "AlexaInc",
+  "pins": ["M+", "M-"],
+  "controls": []
+}

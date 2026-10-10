@@ -3,297 +3,118 @@
   "author": "AlexaInc",
   "editor": "wokwi",
   "parts": [
-    {
-      "type": "wokwi-esp32-devkit-v1",
-      "id": "esp",
-      "top": 43.1,
-      "left": -24.2,
-      "attrs": {}
-    },
-    {
-      "type": "wokwi-junction",
-      "id": "j1",
-      "top": -33.6,
-      "left": -158.4,
-      "attrs": {}
-    },
-    {
-      "type": "wokwi-junction",
-      "id": "j2",
-      "top": 244.8,
-      "left": -158.4,
-      "attrs": {}
-    },
-    {
-      "type": "wokwi-junction",
-      "id": "j3",
-      "top": -14.4,
-      "left": -91.2,
-      "attrs": {}
-    },
-    {
-      "type": "wokwi-junction",
-      "id": "j4",
-      "top": -14.4,
-      "left": 139.2,
-      "attrs": {}
-    },
-    {
-      "type": "wokwi-junction",
-      "id": "j5",
-      "top": 244.8,
-      "left": 216,
-      "attrs": {}
-    },
-    {
-      "type": "wokwi-junction",
-      "id": "j6",
-      "top": -52.8,
-      "left": 216,
-      "attrs": {}
-    },
-    {
-      "type": "chip-r",
-      "id": "chip1",
-      "top": -526.98,
-      "left": -14.4,
-      "attrs": {}
-    },
-    {
-      "type": "chip-gps",
-      "id": "chip2",
-      "top": -450.18,
-      "left": -14.4,
-      "attrs": {}
-    },
-    {
-      "type": "chip-l98nmotorcontrl",
-      "id": "chip3",
-      "top": -296.58,
-      "left": -24,
-      "attrs": {}
-    },
+    { "type": "wokwi-esp32-devkit-v1", "id": "esp", "top": 43.1, "left": 23.8, "attrs": {} },
+    { "type": "chip-r", "id": "chip1", "top": -507.78, "left": -14.4, "attrs": {} },
+    { "type": "chip-gps", "id": "chip2", "top": -411.78, "left": -4.8, "attrs": {} },
+    { "type": "chip-l98nmotorcontrl", "id": "chip3", "top": -306.18, "left": -72, "attrs": {} },
     {
       "type": "wokwi-hc-sr04",
       "id": "ultrasonic1",
       "top": -852.9,
       "left": -52.1,
-      "attrs": {
-        "distance": "49"
-      }
+      "attrs": { "distance": "49" }
     },
     {
       "type": "wokwi-hc-sr04",
       "id": "ultrasonic2",
       "top": -708.9,
       "left": -388.1,
-      "attrs": {
-        "distance": "197"
-      }
+      "attrs": { "distance": "197" }
     },
     {
       "type": "wokwi-hc-sr04",
       "id": "ultrasonic3",
       "top": -708.9,
       "left": 255.1,
-      "attrs": {
-        "distance": "400"
-      }
+      "attrs": { "distance": "400" }
     },
-    {
-      "type": "wokwi-junction",
-      "id": "j7",
-      "top": -590.4,
-      "left": 43.2,
-      "attrs": {}
-    },
-    {
-      "type": "wokwi-junction",
-      "id": "j8",
-      "top": -609.6,
-      "left": 14.4,
-      "attrs": {}
-    },
-    {
-      "type": "wokwi-junction",
-      "id": "j9",
-      "top": -600,
-      "left": 24,
-      "attrs": {}
-    },
-    {
-      "type": "wokwi-potentiometer",
-      "id": "pot1",
-      "top": 449.9,
-      "left": -67.4,
-      "attrs": {}
-    },
-    {
-      "type": "wokwi-microsd-card",
-      "id": "sd1",
-      "top": -143.77,
-      "left": 0.07,
-      "attrs": {}
-    },
-    {
-      "type": "wokwi-dht22",
-      "id": "dht1",
-      "top": 403.5,
-      "left": 109.8,
-      "attrs": {}
-    },
+    { "type": "wokwi-microsd-card", "id": "sd1", "top": -105.37, "left": -57.53, "attrs": {} },
+    { "type": "wokwi-dht22", "id": "dht1", "top": 393.9, "left": 52.2, "attrs": {} },
     {
       "type": "board-ssd1306",
       "id": "lcd1",
       "top": 851.2,
       "left": -109.6,
-      "attrs": {
-        "i2cAddress": "0x3c"
-      }
+      "attrs": { "i2cAddress": "0x3c" }
     },
-    {
-      "type": "wokwi-text",
-      "id": "text1",
-      "top": 422.4,
-      "left": -76.8,
-      "attrs": {
-        "text": "Soil Moisture"
-      }
-    },
-    {
-      "type": "chip-espcam",
-      "id": "chip4",
-      "top": 68.22,
-      "left": 552,
-      "attrs": {}
-    },
-    {
-      "type": "wokwi-servo",
-      "id": "servo1",
-      "top": 151.6,
-      "left": 393.6,
-      "attrs": {}
-    },
+    { "type": "chip-espcam", "id": "chip4", "top": 58.62, "left": 580.8, "attrs": {} },
+    { "type": "wokwi-servo", "id": "servo1", "top": 151.6, "left": 393.6, "attrs": {} },
     {
       "type": "chip-cell3v7",
       "id": "cell1",
       "top": -310,
       "left": -820,
-      "attrs": {
-        "voltage": "3.7"
-      }
+      "attrs": { "voltage": "3.7" }
     },
     {
       "type": "chip-cell3v7",
       "id": "cell2",
-      "top": -210,
-      "left": -820,
-      "attrs": {
-        "voltage": "3.7"
-      }
+      "top": -190.98,
+      "left": -811.2,
+      "attrs": { "voltage": "3.7" }
     },
     {
       "type": "chip-cell3v7",
       "id": "cell3",
       "top": -110,
       "left": -820,
-      "attrs": {
-        "voltage": "3.7"
-      }
+      "attrs": { "voltage": "3.7" }
     },
-    {
-      "type": "chip-bms3s",
-      "id": "bms1",
-      "top": -220,
-      "left": -635,
-      "attrs": {}
-    },
+    { "type": "chip-bms3s", "id": "bms1", "top": -219.78, "left": -638.4, "attrs": {} },
     {
       "type": "chip-buck5v",
       "id": "buck1",
-      "top": 39.42,
-      "left": -609.6,
-      "attrs": {
-        "outputVoltage": "5"
-      }
-    },
-    {
-      "type": "wokwi-text",
-      "id": "powerTitle",
-      "top": -375,
-      "left": -835,
-      "attrs": {
-        "text": "ROBOT POWER: 3x 3.7V CELLS -> 3S BMS (12.6V MAX)"
-      }
-    },
-    {
-      "type": "wokwi-text",
-      "id": "bmsLabel",
-      "top": -275,
-      "left": -640,
-      "attrs": {
-        "text": "3S BMS: use P+/P- for load and charging"
-      }
+      "top": -85.38,
+      "left": -465.6,
+      "attrs": { "outputVoltage": "5" }
     },
     {
       "type": "wokwi-text",
       "id": "buckLabel",
-      "top": 5,
-      "left": -640,
-      "attrs": {
-        "text": "BUCK: adjust to 5.0V before connecting ESP32"
-      }
+      "top": 892.8,
+      "left": -1363.2,
+      "attrs": { "text": "BUCK: adjust to 5.0V before connecting ESP32" }
     },
     {
       "type": "wokwi-text",
       "id": "l298PowerLabel",
-      "top": 145,
-      "left": -640,
-      "attrs": {
-        "text": "L298N: remove 5V-EN jumper; buck 5V feeds logic pin"
-      }
+      "top": 134.4,
+      "left": -1296,
+      "attrs": { "text": "L298N: remove 5V-EN jumper; buck 5V feeds logic pin" }
     },
     {
       "type": "wokwi-text",
       "id": "safetyLabel",
-      "top": 205,
-      "left": -820,
-      "attrs": {
-        "text": "Add fuse at BMS P+. Never connect raw 3S voltage to ESP32 VIN/5V."
-      }
+      "top": 547.2,
+      "left": -1353.6,
+      "attrs": { "text": "Add fuse at BMS P+. Never connect raw 3S voltage to ESP32 VIN/5V." }
     },
     {
       "type": "chip-dcadapter",
       "id": "adapter1",
       "top": -220,
       "left": -1295,
-      "attrs": {
-        "voltage": "12"
-      }
+      "attrs": { "voltage": "12" }
     },
     {
       "type": "chip-charger3s",
       "id": "charger1",
       "top": -220,
       "left": -1080,
-      "attrs": {
-        "outputVoltage": "12.6"
-      }
+      "attrs": { "outputVoltage": "12.6" }
     },
     {
       "type": "wokwi-text",
       "id": "chargeTitle",
       "top": -375,
       "left": -1300,
-      "attrs": {
-        "text": "CHARGING: ROUTER ADAPTER -> 3S CC/CV CHARGER -> BMS P+/P-"
-      }
+      "attrs": { "text": "CHARGING: ROUTER ADAPTER -> 3S CC/CV CHARGER -> BMS P+/P-" }
     },
     {
       "type": "wokwi-text",
       "id": "chargeWarning",
-      "top": -95,
-      "left": -1300,
+      "top": -76.8,
+      "left": -1296,
       "attrs": {
         "text": "WARNING: Never connect adapter directly to BMS/cells. 12V adapter needs 12.6V BOOST CC/CV charger."
       }
@@ -310,407 +131,290 @@
     {
       "type": "wokwi-resistor",
       "id": "r_m1",
-      "top": 30,
-      "left": -180,
-      "attrs": {
-        "value": "220"
-      }
+      "top": 51.95,
+      "left": -240,
+      "attrs": { "value": "1000" }
     },
     {
       "type": "wokwi-resistor",
       "id": "r_m2",
-      "top": 90,
-      "left": -180,
-      "attrs": {
-        "value": "220"
-      }
+      "top": 71.15,
+      "left": -240,
+      "attrs": { "value": "1000" }
     },
     {
       "type": "wokwi-resistor",
       "id": "r_m3",
-      "top": 150,
-      "left": -180,
-      "attrs": {
-        "value": "220"
-      }
+      "top": 90.35,
+      "left": -240,
+      "attrs": { "value": "1000" }
     },
     {
       "type": "wokwi-resistor",
       "id": "r_m4",
-      "top": 210,
-      "left": -180,
-      "attrs": {
-        "value": "220"
-      }
+      "top": 109.55,
+      "left": -240,
+      "attrs": { "value": "1000" }
     },
     {
       "type": "wokwi-resistor",
       "id": "r_m5",
-      "top": 270,
-      "left": -180,
-      "attrs": {
-        "value": "220"
-      }
+      "top": 128.75,
+      "left": -240,
+      "attrs": { "value": "1000" }
     },
     {
       "type": "wokwi-resistor",
       "id": "r_m6",
-      "top": 330,
-      "left": -180,
-      "attrs": {
-        "value": "220"
-      }
+      "top": 147.95,
+      "left": -240,
+      "attrs": { "value": "1000" }
     },
     {
       "type": "wokwi-resistor",
       "id": "r_trig",
       "top": -640,
       "left": -80,
-      "attrs": {
-        "value": "220"
-      }
+      "attrs": { "value": "220" }
     },
     {
       "type": "wokwi-resistor",
       "id": "r_d1a",
-      "top": -820,
-      "left": 140,
-      "attrs": {
-        "value": "1000"
-      }
+      "top": -792.85,
+      "left": 134.4,
+      "attrs": { "value": "1000" }
     },
     {
       "type": "wokwi-resistor",
       "id": "r_d1b",
-      "top": -770,
-      "left": 140,
-      "attrs": {
-        "value": "2000"
-      }
+      "top": -792.85,
+      "left": 192,
+      "attrs": { "value": "2000" }
     },
     {
       "type": "wokwi-resistor",
       "id": "r_d2a",
-      "top": -680,
-      "left": -520,
-      "attrs": {
-        "value": "1000"
-      }
+      "top": -677.35,
+      "left": -558.2,
+      "rotate": 180,
+      "attrs": { "value": "1000" }
     },
     {
       "type": "wokwi-resistor",
       "id": "r_d2b",
-      "top": -630,
-      "left": -520,
-      "attrs": {
-        "value": "2000"
-      }
+      "top": -677.65,
+      "left": -614.4,
+      "rotate": 180,
+      "attrs": { "value": "2000" }
     },
     {
       "type": "wokwi-resistor",
       "id": "r_d3a",
-      "top": -680,
-      "left": 460,
-      "attrs": {
-        "value": "1000"
-      }
+      "top": -629.65,
+      "left": 441.6,
+      "attrs": { "value": "1000" }
     },
     {
       "type": "wokwi-resistor",
       "id": "r_d3b",
-      "top": -630,
-      "left": 460,
-      "attrs": {
-        "value": "2000"
-      }
+      "top": -629.65,
+      "left": 499.2,
+      "attrs": { "value": "2000" }
     },
     {
       "type": "wokwi-resistor",
       "id": "r_gpio12",
-      "top": 300,
-      "left": -300,
-      "attrs": {
-        "value": "10000"
-      }
+      "top": 167.15,
+      "left": -192,
+      "rotate": 180,
+      "attrs": { "value": "10000" }
     },
     {
       "type": "wokwi-resistor",
       "id": "r_dhtpu",
-      "top": 570,
-      "left": 40,
-      "attrs": {
-        "value": "10000"
-      }
+      "top": 570.35,
+      "left": 19.2,
+      "rotate": 180,
+      "attrs": { "value": "10000" }
     },
     {
       "type": "wokwi-resistor",
       "id": "r_i2c1",
-      "top": 900,
-      "left": -520,
-      "attrs": {
-        "value": "4700"
-      }
+      "top": 791.15,
+      "left": -9.6,
+      "attrs": { "value": "4700" }
     },
     {
       "type": "wokwi-resistor",
       "id": "r_i2c2",
-      "top": 960,
-      "left": -520,
-      "attrs": {
-        "value": "4700"
-      }
+      "top": 810.35,
+      "left": -9.6,
+      "attrs": { "value": "4700" }
     },
     {
       "type": "wokwi-resistor",
       "id": "r_sd",
-      "top": -210,
-      "left": -190,
-      "attrs": {
-        "value": "33"
-      }
+      "top": -168.85,
+      "left": -48,
+      "attrs": { "value": "33" }
     },
     {
       "type": "wokwi-resistor",
       "id": "r_cam1",
-      "top": 40,
-      "left": 760,
-      "attrs": {
-        "value": "10000"
-      }
+      "top": 42.35,
+      "left": 432,
+      "attrs": { "value": "470" }
     },
     {
       "type": "wokwi-resistor",
       "id": "r_cam2",
-      "top": 100,
-      "left": 760,
-      "attrs": {
-        "value": "10000"
-      }
+      "top": 61.55,
+      "left": 432,
+      "attrs": { "value": "470" }
     },
     {
       "type": "chip-fuse",
       "id": "fuse1",
-      "top": -420,
-      "left": -520,
-      "attrs": {
-        "value": "5A"
-      }
+      "top": -238.98,
+      "left": -465.6,
+      "attrs": { "value": "5A*" }
     },
     {
       "type": "chip-diode",
       "id": "d1",
-      "top": -420,
-      "left": -360,
-      "attrs": {
-        "value": "SS34"
-      }
+      "top": -190.98,
+      "left": -465.6,
+      "attrs": { "value": "SS34" }
     },
     {
       "type": "chip-ecap",
       "id": "c12e",
-      "top": -350,
-      "left": -520,
-      "attrs": {
-        "value": "470uF"
-      }
+      "top": -344.58,
+      "left": -398.4,
+      "attrs": { "value": "470uF" }
     },
     {
       "type": "chip-cap",
       "id": "c12c",
-      "top": -350,
-      "left": -360,
-      "attrs": {
-        "value": "100nF"
-      }
+      "top": -392.58,
+      "left": -398.4,
+      "attrs": { "value": "100nF" }
     },
     {
       "type": "chip-diode",
       "id": "d_f1",
-      "top": -160,
-      "left": -340,
-      "attrs": {
-        "value": "1N5819"
-      }
+      "top": -142.98,
+      "left": 139.2,
+      "attrs": { "value": "SS54*" }
     },
     {
       "type": "chip-diode",
       "id": "d_f2",
-      "top": -100,
-      "left": -340,
-      "attrs": {
-        "value": "1N5819"
-      }
+      "top": -114.18,
+      "left": 139.2,
+      "attrs": { "value": "SS54*" }
     },
     {
       "type": "chip-diode",
       "id": "d_f3",
-      "top": -40,
-      "left": -340,
-      "attrs": {
-        "value": "1N5819"
-      }
+      "top": -85.38,
+      "left": 139.2,
+      "attrs": { "value": "SS54*" }
     },
     {
       "type": "chip-diode",
       "id": "d_f4",
-      "top": 30,
-      "left": -340,
-      "attrs": {
-        "value": "1N5819"
-      }
+      "top": -56.58,
+      "left": 139.2,
+      "attrs": { "value": "SS54*" }
     },
-    {
-      "type": "chip-ecap",
-      "id": "c5e",
-      "top": 260,
-      "left": -500,
-      "attrs": {
-        "value": "1000uF"
-      }
-    },
-    {
-      "type": "chip-cap",
-      "id": "c5c",
-      "top": 320,
-      "left": -500,
-      "attrs": {
-        "value": "100nF"
-      }
-    },
-    {
-      "type": "chip-ecap",
-      "id": "c3v3e",
-      "top": 300,
-      "left": 300,
-      "attrs": {
-        "value": "10uF"
-      }
-    },
+    { "type": "chip-ecap", "id": "c5e", "top": 260, "left": -500, "attrs": { "value": "1000uF" } },
+    { "type": "chip-cap", "id": "c5c", "top": 320, "left": -500, "attrs": { "value": "100nF" } },
+    { "type": "chip-ecap", "id": "c3v3e", "top": 300, "left": 300, "attrs": { "value": "10uF" } },
     {
       "type": "chip-cap",
       "id": "c3v3c",
-      "top": 360,
-      "left": 300,
-      "attrs": {
-        "value": "100nF"
-      }
+      "top": 356.22,
+      "left": 302.4,
+      "attrs": { "value": "100nF" }
     },
     {
       "type": "chip-ecap",
       "id": "c_srve",
-      "top": 260,
-      "left": 760,
-      "attrs": {
-        "value": "470uF"
-      }
+      "top": 260.22,
+      "left": 763.2,
+      "attrs": { "value": "470uF" }
     },
-    {
-      "type": "chip-cap",
-      "id": "c_srvc",
-      "top": 320,
-      "left": 760,
-      "attrs": {
-        "value": "100nF"
-      }
-    },
+    { "type": "chip-cap", "id": "c_srvc", "top": 320, "left": 760, "attrs": { "value": "100nF" } },
     {
       "type": "chip-cap",
       "id": "c_u1",
-      "top": -700,
-      "left": -12,
-      "attrs": {
-        "value": "100nF"
-      }
+      "top": -709.38,
+      "left": 72,
+      "attrs": { "value": "100nF" }
     },
     {
       "type": "chip-cap",
       "id": "c_u2",
-      "top": -560,
-      "left": -346,
-      "attrs": {
-        "value": "100nF"
-      }
+      "top": -565.38,
+      "left": -244.8,
+      "attrs": { "value": "100nF" }
     },
     {
       "type": "chip-cap",
       "id": "c_u3",
-      "top": -560,
-      "left": 296,
-      "attrs": {
-        "value": "100nF"
-      }
+      "top": -555.78,
+      "left": 369.6,
+      "attrs": { "value": "100nF" }
     },
     {
       "type": "chip-cap",
       "id": "c_lcd",
-      "top": 880,
-      "left": 40,
-      "attrs": {
-        "value": "100nF"
-      }
+      "top": 701.82,
+      "left": -62.4,
+      "attrs": { "value": "100nF" }
     },
     {
       "type": "chip-cap",
       "id": "c_sd",
-      "top": -150,
-      "left": 120,
-      "attrs": {
-        "value": "100nF"
-      }
+      "top": -152.58,
+      "left": -43.2,
+      "attrs": { "value": "100nF" }
     },
     {
       "type": "chip-cap",
       "id": "c_dht",
-      "top": 430,
-      "left": 200,
-      "attrs": {
-        "value": "100nF"
-      }
+      "top": 529.02,
+      "left": 235.2,
+      "attrs": { "value": "100nF" }
     },
     {
       "type": "chip-cap",
       "id": "c_rain",
-      "top": -540,
-      "left": 220,
-      "attrs": {
-        "value": "100nF"
-      }
+      "top": -546.18,
+      "left": -14.4,
+      "attrs": { "value": "100nF" }
     },
     {
       "type": "chip-cap",
       "id": "c_gps",
-      "top": -460,
-      "left": 220,
-      "attrs": {
-        "value": "100nF"
-      }
+      "top": -450.18,
+      "left": -4.8,
+      "attrs": { "value": "100nF" }
     },
     {
       "type": "chip-cap",
       "id": "c_cam",
-      "top": -20,
-      "left": 700,
-      "attrs": {
-        "value": "100nF"
-      }
+      "top": 10.62,
+      "left": 580.8,
+      "attrs": { "value": "100nF" }
     },
     {
       "type": "chip-cap",
       "id": "c_esp",
-      "top": 430,
-      "left": 300,
-      "attrs": {
-        "value": "100nF"
-      }
-    },
-    {
-      "type": "chip-ldo33",
-      "id": "ldo1",
-      "top": -140,
-      "left": 700,
-      "attrs": {
-        "outputVoltage": "3.3"
-      }
+      "top": 317.82,
+      "left": 33.6,
+      "attrs": { "value": "100nF" }
     },
     {
       "type": "wokwi-text",
@@ -718,7 +422,7 @@
       "top": 0,
       "left": -1300,
       "attrs": {
-        "text": "PROTECTION ADDED - new parts here (details: guide Sheet 3)"
+        "text": "PROTECTION REWORK — simulator drawing only; check HARDWARE_SAFETY.md before wiring"
       }
     },
     {
@@ -727,7 +431,7 @@
       "top": 34,
       "left": -1300,
       "attrs": {
-        "text": "220 ohm in series on all 6 L298N inputs (EN A, IN1-4, EN B)"
+        "text": "1k series + 10k pull-downs on all 6 L298N inputs (driver stays off during reset)"
       }
     },
     {
@@ -735,26 +439,22 @@
       "id": "t_trig",
       "top": 68,
       "left": -1300,
-      "attrs": {
-        "text": "220 ohm in series on the shared SR04 TRIG line"
-      }
+      "attrs": { "text": "220 ohm series resistor on shared HC-SR04 TRIG; GPIO15 is a boot strap pin" }
     },
     {
       "type": "wokwi-text",
       "id": "t_echo",
       "top": 102,
       "left": -1300,
-      "attrs": {
-        "text": "ECHO divider 1k+2k on all 3 sensors (5V ECHO -> 3.3V GPIO)"
-      }
+      "attrs": { "text": "Each HC-SR04 ECHO: 1k series + 2k to GND -> about 3.33V from a 5.0V echo" }
     },
     {
       "type": "wokwi-text",
       "id": "t_gpio12",
-      "top": 136,
-      "left": -1300,
+      "top": 355.2,
+      "left": -1353.6,
       "attrs": {
-        "text": "10k pull-down on GPIO12/D12 (init_flash boot crash fix)"
+        "text": "GPIO12/MTDI is released from motor control; 10k pull-down retained for 3.3V-flash boards"
       }
     },
     {
@@ -763,7 +463,7 @@
       "top": 170,
       "left": -1300,
       "attrs": {
-        "text": "5A fuse + SS34 reverse-polarity diode in the 12V feed (after BMS P+)"
+        "text": "Fuse at battery positive + reverse-polarity stage rated for actual peak current (SS34 is not universal)"
       }
     },
     {
@@ -771,1371 +471,617 @@
       "id": "t_5v",
       "top": 204,
       "left": -1300,
-      "attrs": {
-        "text": "1000uF + 100nF at ESP32 VIN (brownout fix)"
-      }
+      "attrs": { "text": "Measure 5.0V logic buck output with a meter before connecting ESP32 VIN" }
     },
     {
       "type": "wokwi-text",
       "id": "t_3v3",
       "top": 238,
       "left": -1300,
-      "attrs": {
-        "text": "10uF + 100nF on the 3V3 pin"
-      }
+      "attrs": { "text": "3V3 bypass: 10uF + 100nF; ESP32 GPIO must never see 5V" }
     },
     {
       "type": "wokwi-text",
       "id": "t_servo",
       "top": 272,
       "left": -1300,
-      "attrs": {
-        "text": "470uF + 100nF at the servo (servo V+ wire straight from the 5V rail)"
-      }
+      "attrs": { "text": "Servo has its own 5V buck and local 470uF + 100nF; common ground only" }
     },
     {
       "type": "wokwi-text",
       "id": "t_caps",
       "top": 306,
       "left": -1300,
-      "attrs": {
-        "text": "100nF at every module VCC-GND (ulrasonic x3, OLED, SD, DHT, rain, GPS, CAM, ESP)"
-      }
+      "attrs": { "text": "100nF local bypass at each module VCC-GND; caps do not replace a rated supply" }
     },
     {
       "type": "wokwi-text",
       "id": "t_ldo",
-      "top": 340,
-      "left": -1300,
-      "attrs": {
-        "text": "ESP32-CAM gets its own 3.3V (AMS1117) - not from the ESP32 3V3 pin"
-      }
+      "top": 403.2,
+      "left": -1363.2,
+      "attrs": { "text": "Camera VCC pin is treated as 5V input; verify the exact ESP32-CAM board pinout" }
     },
     {
       "type": "wokwi-text",
       "id": "t_fly",
-      "top": 374,
-      "left": -1300,
+      "top": 422.4,
+      "left": -1363.2,
       "attrs": {
-        "text": "1N5819 x4 freewheel diodes: OUT1..OUT4 to +12V (cathode to 12V)"
+        "text": "Bare L298 needs 8 flyback diodes; check module for built-in diodes before adding any"
       }
     },
     {
       "type": "wokwi-text",
       "id": "t_star",
-      "top": 408,
-      "left": -1300,
-      "attrs": {
-        "text": "STAR GROUND: motor GND and logic GND meet only at BMS P-"
-      }
+      "top": 451.2,
+      "left": -1363.2,
+      "attrs": { "text": "Join grounds at BMS P-; route motor current away from ESP32/USB ground path" }
     },
     {
       "type": "wokwi-text",
       "id": "t_dht",
-      "top": 442,
-      "left": -1300,
-      "attrs": {
-        "text": "10k DHT22 pull-up (SDA -> 3V3)"
-      }
+      "top": 480,
+      "left": -1363.2,
+      "attrs": { "text": "10k DHT22 pull-up (SDA -> 3V3)" }
     },
     {
       "type": "wokwi-text",
       "id": "t_i2c",
-      "top": 476,
-      "left": -1300,
-      "attrs": {
-        "text": "4.7k I2C pull-ups (SDA / SCL -> 3V3)"
-      }
+      "top": 585.6,
+      "left": -1353.6,
+      "attrs": { "text": "4.7k I2C pull-ups (SDA / SCL -> 3V3)" }
     },
     {
       "type": "wokwi-text",
       "id": "t_sd",
-      "top": 510,
-      "left": -1300,
-      "attrs": {
-        "text": "33 ohm in series with SD SCK"
-      }
+      "top": 614.4,
+      "left": -1334.4,
+      "attrs": { "text": "33 ohm in series with SD SCK" }
     },
     {
       "type": "wokwi-text",
       "id": "t_cam",
-      "top": 544,
-      "left": -1300,
-      "attrs": {
-        "text": "10k in series on both ESP32-CAM UART lines"
-      }
+      "top": 662.4,
+      "left": -1315.2,
+      "attrs": { "text": "470 ohm UART series resistors; unplug camera TX/RX from GPIO1/3 while flashing" }
     },
     {
       "type": "wokwi-text",
       "id": "t_ult5v",
-      "top": 578,
-      "left": -1300,
-      "attrs": {
-        "text": "ultrasonic VCC moved to the 5V rail (was 3V3) - ECHO now needs the divider"
-      }
+      "top": 700.8,
+      "left": -1315.2,
+      "attrs": { "text": "HC-SR04 VCC=5V; ECHO divider is mandatory before any ESP32 GPIO" }
     },
     {
       "type": "wokwi-text",
       "id": "t_motcaps",
-      "top": 612,
-      "left": -1300,
-      "attrs": {
-        "text": "motors: in reality add 100nF across each motor terminal too (not drawn)"
-      }
+      "top": 739.2,
+      "left": -1305.6,
+      "attrs": { "text": "Add 100nF directly across each brushed-motor terminal on the real robot" }
     },
     {
       "type": "wokwi-text",
       "id": "t_i_fuse",
-      "top": -462,
-      "left": -520,
-      "attrs": {
-        "text": "5A FUSE"
-      }
+      "top": -460.8,
+      "left": -739.2,
+      "attrs": { "text": "FUSE: choose for BMS, wire and motor stall current; 5A is only a placeholder" }
     },
     {
       "type": "wokwi-text",
       "id": "t_i_ss34",
-      "top": -462,
-      "left": -360,
-      "attrs": {
-        "text": "SS34"
-      }
-    },
-    {
-      "type": "wokwi-text",
-      "id": "t_i_c12",
-      "top": -300,
-      "left": -520,
-      "attrs": {
-        "text": "470uF"
-      }
-    },
-    {
-      "type": "wokwi-text",
-      "id": "t_i_c12c",
-      "top": -300,
-      "left": -360,
-      "attrs": {
-        "text": "100nF"
-      }
+      "top": -489.6,
+      "left": 134.4,
+      "attrs": { "text": "REVERSE POLARITY: choose rated MOSFET/diode; SS34 (3A) may be undersized" }
     },
     {
       "type": "wokwi-text",
       "id": "t_i_motor",
-      "top": 0,
-      "left": -180,
-      "attrs": {
-        "text": "220R x6"
-      }
+      "top": 28.8,
+      "left": -201.6,
+      "attrs": { "text": "1k  + 10k " }
     },
     {
       "type": "wokwi-text",
       "id": "t_i_echo",
       "top": -870,
       "left": 140,
-      "attrs": {
-        "text": "1k+2k"
-      }
+      "attrs": { "text": "1k+2k" }
     },
     {
       "type": "wokwi-text",
       "id": "t_i_gpio12",
-      "top": 270,
-      "left": -300,
-      "attrs": {
-        "text": "10k GPIO12"
-      }
+      "top": 268.8,
+      "left": -700.8,
+      "attrs": { "text": "10k GPIO12 to GND" }
     },
     {
       "type": "wokwi-text",
       "id": "t_i_servo",
       "top": 230,
       "left": 760,
-      "attrs": {
-        "text": "470uF"
-      }
+      "attrs": { "text": "470uF" }
     },
     {
       "type": "wokwi-text",
       "id": "t_i_ldo",
       "top": -180,
       "left": 700,
-      "attrs": {
-        "text": "AMS1117 3V3"
-      }
+      "attrs": { "text": "CAMERA 5V INPUT" }
     },
     {
       "type": "wokwi-text",
       "id": "t_i_fly",
       "top": -200,
       "left": -340,
-      "attrs": {
-        "text": "1N5819 x4"
-      }
+      "attrs": { "text": "8 diodes if bare L298; verify Istall" }
     },
     {
       "type": "wokwi-text",
       "id": "t_i_sd",
-      "top": -250,
-      "left": -190,
-      "attrs": {
-        "text": "33R SCK"
-      }
+      "top": -201.6,
+      "left": -48,
+      "attrs": { "text": "33R SCK" }
     },
     {
       "type": "wokwi-text",
       "id": "t_i_cam",
       "top": 10,
       "left": 830,
-      "attrs": {
-        "text": "10k x2"
-      }
+      "attrs": { "text": "470R x2; unplug for flash" }
     },
     {
       "type": "wokwi-text",
       "id": "t_i_i2c",
-      "top": 870,
-      "left": -520,
+      "top": 768,
+      "left": -9.6,
+      "attrs": { "text": "4.7k x2" }
+    },
+    {
+      "type": "chip-buck5v",
+      "id": "buck2",
+      "top": -133.38,
+      "left": -465.6,
+      "attrs": { "outputVoltage": "5" }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "servoBuckLabel",
+      "top": 508.8,
+      "left": -1353.6,
+      "attrs": { "text": "SERVO: separate regulated 5.0V buck; share only common GND at BMS P-" }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "flashSafetyLabel",
+      "top": 729.6,
+      "left": 345.6,
+      "attrs": { "text": "USB FLASH: disconnect battery/external 5V and unplug CAM TX/RX from UART0" }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "rainSafeLabel",
+      "top": -460.8,
+      "left": 134.4,
+      "attrs": { "text": "RAIN: AO -> GPIO34; DO -> GPIO35. Power at 3V3; no 5V GPIO." }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "simLimitLabel",
+      "top": 384,
+      "left": -1363.2,
       "attrs": {
-        "text": "4.7k x2"
+        "text": "SIMULATION ONLY: custom fuse/diode/BMS/buck do not model current, voltage drop, cutoff or thermal limits"
       }
-    }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r_m1pd",
+      "top": 51.95,
+      "left": -163.2,
+      "attrs": { "value": "10000" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r_m2pd",
+      "top": 71.15,
+      "left": -163.2,
+      "attrs": { "value": "10000" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r_m3pd",
+      "top": 90.35,
+      "left": -163.2,
+      "attrs": { "value": "10000" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r_m4pd",
+      "top": 109.55,
+      "left": -163.2,
+      "attrs": { "value": "10000" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r_m5pd",
+      "top": 128.75,
+      "left": -163.2,
+      "attrs": { "value": "10000" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r_m6pd",
+      "top": 147.95,
+      "left": -163.2,
+      "attrs": { "value": "10000" }
+    },
+    {
+      "type": "chip-diode",
+      "id": "d_l1",
+      "top": -277.38,
+      "left": 139.2,
+      "attrs": { "value": "SS54*" }
+    },
+    {
+      "type": "chip-diode",
+      "id": "d_l2",
+      "top": -248.58,
+      "left": 139.2,
+      "attrs": { "value": "SS54*" }
+    },
+    {
+      "type": "chip-diode",
+      "id": "d_l3",
+      "top": -219.78,
+      "left": 139.2,
+      "attrs": { "value": "SS54*" }
+    },
+    {
+      "type": "chip-diode",
+      "id": "d_l4",
+      "top": -190.98,
+      "left": 139.2,
+      "attrs": { "value": "SS54*" }
+    },
+    { "type": "chip-dc-motor", "id": "motorA", "top": -334.98, "left": 331.2, "attrs": {} },
+    { "type": "chip-dc-motor", "id": "motorB", "top": -229.38, "left": 321.6, "attrs": {} },
+    {
+      "type": "wokwi-text",
+      "id": "motorSimLabel",
+      "top": 787.2,
+      "left": 336,
+      "attrs": {
+        "text": "DC MOTORS: visual-only placeholders; no rotation, current, stall or back-EMF model"
+      }
+    },
+    { "type": "wokwi-junction", "id": "j_core_gnd", "top": 763.2, "left": -91.2, "attrs": {} },
+    { "type": "wokwi-junction", "id": "j_3v3_sensor", "top": -590.4, "left": 33.6, "attrs": {} },
+    { "type": "wokwi-junction", "id": "j_3v3_feed", "top": 542.4, "left": 72, "attrs": {} },
+    { "type": "wokwi-junction", "id": "j_3v3_main", "top": 753.6, "left": 24, "attrs": {} },
+    { "type": "wokwi-junction", "id": "j1", "top": -244.8, "left": -840, "attrs": {} },
+    { "type": "wokwi-junction", "id": "j2", "top": -139.2, "left": -849.6, "attrs": {} },
+    { "type": "wokwi-junction", "id": "j3", "top": -158.4, "left": -494.4, "attrs": {} },
+    { "type": "wokwi-junction", "id": "j4", "top": -350.4, "left": -436.8, "attrs": {} },
+    { "type": "wokwi-junction", "id": "j5", "top": -148.8, "left": 62.4, "attrs": {} },
+    { "type": "wokwi-junction", "id": "j6", "top": -100.8, "left": -340.8, "attrs": {} },
+    {
+      "type": "wokwi-text",
+      "id": "text1",
+      "top": -115.2,
+      "left": -326.4,
+      "attrs": { "text": "GND" }
+    },
+    { "type": "wokwi-junction", "id": "j7", "top": -331.2, "left": -417.6, "attrs": {} },
+    { "type": "wokwi-junction", "id": "j8", "top": 187.2, "left": -81.6, "attrs": {} },
+    { "type": "wokwi-junction", "id": "j9", "top": 139.2, "left": -81.6, "attrs": {} },
+    { "type": "wokwi-junction", "id": "j10", "top": 100.8, "left": -81.6, "attrs": {} },
+    { "type": "wokwi-junction", "id": "j11", "top": -14.4, "left": -81.6, "attrs": {} },
+    { "type": "wokwi-junction", "id": "j12", "top": -14.4, "left": 196.8, "attrs": {} },
+    { "type": "wokwi-junction", "id": "j13", "top": 110.4, "left": 196.8, "attrs": {} },
+    { "type": "wokwi-junction", "id": "j14", "top": 158.4, "left": 196.8, "attrs": {} },
+    { "type": "wokwi-junction", "id": "j15", "top": 187.2, "left": 196.8, "attrs": {} },
+    { "type": "wokwi-junction", "id": "j16", "top": 196.8, "left": -62.4, "attrs": {} },
+    { "type": "wokwi-junction", "id": "j17", "top": -4.8, "left": -62.4, "attrs": {} },
+    { "type": "wokwi-junction", "id": "j18", "top": -321.6, "left": -91.2, "attrs": {} },
+    { "type": "wokwi-junction", "id": "j19", "top": -609.6, "left": -148.8, "attrs": {} },
+    { "type": "wokwi-junction", "id": "j20", "top": 196.8, "left": -331.2, "attrs": {} },
+    { "type": "wokwi-junction", "id": "j21", "top": 340.8, "left": 196.8, "attrs": {} },
+    { "type": "wokwi-junction", "id": "j22", "top": 331.2, "left": 628.8, "attrs": {} },
+    { "type": "wokwi-junction", "id": "j23", "top": 254.4, "left": 648, "attrs": {} },
+    { "type": "wokwi-junction", "id": "j24", "top": -216, "left": -244.8, "attrs": {} },
+    { "type": "wokwi-junction", "id": "j25", "top": 187.2, "left": -244.8, "attrs": {} },
+    { "type": "wokwi-text", "id": "text2", "top": -297.6, "left": 192, "attrs": { "text": "dl" } },
+    { "type": "wokwi-text", "id": "text3", "top": -163.2, "left": 192, "attrs": { "text": "df" } },
+    { "type": "wokwi-junction", "id": "j26", "top": -177.6, "left": 4.8, "attrs": {} },
+    { "type": "wokwi-junction", "id": "j27", "top": -638.4, "left": 14.4, "attrs": {} },
+    { "type": "wokwi-junction", "id": "j28", "top": 196.8, "left": 158.4, "attrs": {} },
+    { "type": "wokwi-junction", "id": "j29", "top": 139.2, "left": 158.4, "attrs": {} },
+    { "type": "wokwi-junction", "id": "j30", "top": 100.8, "left": 158.4, "attrs": {} },
+    { "type": "wokwi-junction", "id": "j31", "top": 4.8, "left": 158.4, "attrs": {} },
+    { "type": "wokwi-junction", "id": "j32", "top": 4.8, "left": -24, "attrs": {} },
+    { "type": "wokwi-junction", "id": "j33", "top": -417.6, "left": -52.8, "attrs": {} },
+    { "type": "wokwi-junction", "id": "j34", "top": 532.8, "left": -100.8, "attrs": {} },
+    { "type": "wokwi-junction", "id": "j35", "top": 820.8, "left": -52.8, "attrs": {} },
+    { "type": "wokwi-junction", "id": "j36", "top": 830.4, "left": -43.2, "attrs": {} },
+    { "type": "wokwi-junction", "id": "j37", "top": -4.8, "left": 369.6, "attrs": {} }
   ],
   "connections": [
+    [ "cell1:NEG", "bms1:B-", "blue", [ "h-39.2", "v32.62" ] ],
+    [ "j1:J", "cell1:POS", "black", [ "v0" ] ],
+    [ "j1:J", "cell2:NEG", "black", [ "v0" ] ],
+    [ "j1:J", "bms1:B1", "black", [ "v38.4", "h201.6" ] ],
+    [ "j2:J", "cell2:POS", "black", [ "v-48" ] ],
+    [ "j2:J", "cell3:NEG", "black", [ "v0" ] ],
+    [ "j2:J", "bms1:B2", "black", [ "v0", "h192", "v-57.6" ] ],
+    [ "bms1:B+", "cell3:POS", "#8f4814", [ "v67.2", "h-305.39", "v19.2" ] ],
+    [ "charger1:IN+", "adapter1:POS", "green", [ "h-76.8", "v-28.58", "h-134.4" ] ],
+    [ "adapter1:NEG", "charger1:IN-", "green", [ "h3.8", "v29.02", "h211.2" ] ],
+    [ "charger1:B+", "bms1:P+", "#8f4814", [ "v29.02", "h59.41", "v-67.2", "h393.6", "v28.8" ] ],
+    [ "bms1:P-", "charger1:B-", "blue", [ "h21.01", "v-28.8", "h-393.6", "v19.2" ] ],
+    [ "fuse1:1", "bms1:P+", "#8f4814", [ "h-38.4", "v19.2" ] ],
+    [ "fuse1:2", "d1:ANODE", "#8f4814", [ "h-19.2", "v38.4" ] ],
     [
-      "esp:TX0",
-      "$serialMonitor:RX",
-      "",
-      []
-    ],
-    [
-      "esp:RX0",
-      "$serialMonitor:TX",
-      "",
-      []
-    ],
-    [
-      "j1:J",
-      "j2:J",
+      "chip3:12V",
+      "d1:CATHODE",
       "#8f4814",
-      [
-        "v0",
-        "h249.6"
-      ]
+      [ "h30.61", "v-57.6", "h-240", "v38.4", "h-144", "v86.4", "h-182.4", "v28.8" ]
     ],
+    [ "j3:J", "d1:CATHODE", "#8f4814", [ "v0" ] ],
+    [ "buck2:VIN+", "j3:J", "#8f4814", [ "h0" ] ],
+    [ "j3:J", "buck1:VIN+", "#8f4814", [ "v48" ] ],
+    [ "j4:J", "c12e:+", "#8f4814", [ "v9.6", "h38.4" ] ],
+    [ "j4:J", "c12c:1", "#8f4814", [ "v0" ] ],
+    [ "j3:J", "j4:J", "#8f4814", [ "v-192" ] ],
+    [ "j5:J", "d_f1:CATHODE", "#8f4814", [ "v0" ] ],
+    [ "j5:J", "d_f2:CATHODE", "#8f4814", [ "v48" ] ],
+    [ "j5:J", "d_f3:CATHODE", "#8f4814", [ "v86.4" ] ],
+    [ "j5:J", "d_f4:CATHODE", "#8f4814", [ "v124.8" ] ],
+    [ "j6:J", "buck2:GND", "black", [ "v0" ] ],
+    [ "buck1:GND", "j6:J", "black", [ "h0" ] ],
+    [ "j6:J", "buck2:VIN-", "black", [ "v0", "h-134.4", "v-19.2" ] ],
+    [ "j6:J", "buck1:VIN-", "black", [ "v0", "h-134.4", "v28.8" ] ],
+    [ "j7:J", "c12c:2", "black", [ "v-48" ] ],
+    [ "j7:J", "c12e:-", "black", [ "v0" ] ],
+    [ "j6:J", "j7:J", "black", [ "v0", "h9.6", "v-201.6", "h-86.4" ] ],
+    [ "j8:J", "esp:GND.2", "black", [ "h105.6" ] ],
+    [ "j8:J", "j9:J", "black", [ "v0" ] ],
+    [ "j10:J", "j9:J", "black", [ "v0" ] ],
+    [ "j11:J", "j10:J", "black", [ "v0" ] ],
+    [ "j11:J", "j12:J", "black", [ "v0" ] ],
+    [ "j13:J", "j14:J", "black", [ "v28.8" ] ],
+    [ "j15:J", "j14:J", "black", [ "v0" ] ],
+    [ "j15:J", "esp:GND.1", "black", [ "h-66.9" ] ],
+    [ "j12:J", "j13:J", "black", [ "v134.4", "h19.2" ] ],
+    [ "j6:J", "j11:J", "black", [ "v57.6", "h259.2" ] ],
+    [ "j16:J", "esp:VIN", "#8f4814", [ "v0", "h-134.4" ] ],
+    [ "j11:J", "chip3:GND", "black", [ "v-57.6", "h-19.2", "v-268.8", "h144", "v48" ] ],
+    [ "j17:J", "j16:J", "#8f4814", [ "v0" ] ],
+    [ "j18:J", "j17:J", "#8f4814", [ "v172.8", "h19.2", "v144" ] ],
+    [ "j19:J", "ultrasonic2:VCC", "#8f4814", [ "h-172.8" ] ],
+    [ "j19:J", "ultrasonic1:VCC", "#8f4814", [ "h9.6", "v-153.6" ] ],
+    [ "j19:J", "ultrasonic3:VCC", "#8f4814", [ "v0", "h470.4" ] ],
+    [ "j18:J", "j19:J", "#8f4814", [ "v-259.2", "h-57.6" ] ],
+    [ "chip3:OUT1", "motorA:M+", "violet", [ "h40.21", "v-9.6" ] ],
+    [ "motorA:M-", "chip3:OUT2", "green", [ "h-201.6", "v67.2" ] ],
+    [ "chip3:OUT3", "motorB:M+", "gray", [ "h59.41", "v-67.2", "h211.2", "v86.4" ] ],
     [
-      "j3:J",
-      "j4:J",
-      "black",
-      [
-        "v0",
-        "h19.2"
-      ]
-    ],
-    [
-      "j5:J",
-      "j6:J",
-      "red",
-      [
-        "v0",
-        "h297.6"
-      ]
-    ],
-    [
-      "esp:VIN",
-      "j2:J",
-      "#8f4814",
-      [
-        "h0"
-      ]
-    ],
-    [
-      "esp:3V3",
-      "j5:J",
-      "red",
-      [
-        "v0",
-        "h143.7"
-      ]
-    ],
-    [
-      "j4:J",
-      "esp:GND.1",
-      "black",
-      [
-        "v0"
-      ]
-    ],
-    [
-      "j3:J",
-      "esp:GND.2",
-      "black",
-      [
-        "v0"
-      ]
-    ],
-    [
-      "j7:J",
-      "ultrasonic2:GND",
-      "black",
-      [
-        "h-277.2"
-      ]
-    ],
-    [
-      "j8:J",
-      "ultrasonic3:VCC",
-      "red",
-      [
-        "h316.8"
-      ]
-    ],
-    [
-      "j9:J",
-      "ultrasonic1:TRIG",
+      "motorB:M-",
+      "chip3:OUT4",
       "blue",
-      [
-        "v0"
-      ]
+      [ "h-28.8", "v-86.4", "h-192", "v67.2", "h-144", "v-9.6" ]
     ],
-    [
-      "j7:J",
-      "ultrasonic3:GND",
-      "black",
-      [
-        "v0",
-        "h364.8"
-      ]
-    ],
-    [
-      "ultrasonic2:VCC",
-      "j8:J",
-      "red",
-      [
-        "v9.6",
-        "h326.4"
-      ]
-    ],
-    [
-      "ultrasonic2:TRIG",
-      "j9:J",
-      "blue",
-      [
-        "v19.2",
-        "h345.2"
-      ]
-    ],
-    [
-      "ultrasonic3:TRIG",
-      "j9:J",
-      "blue",
-      [
-        "v19.2",
-        "h-298"
-      ]
-    ],
-    [
-      "ultrasonic1:VCC",
-      "j8:J",
-      "red",
-      [
-        "v0"
-      ]
-    ],
-    [
-      "ultrasonic1:GND",
-      "j7:J",
-      "black",
-      [
-        "v0"
-      ]
-    ],
-    [
-      "j7:J",
-      "chip1:GND",
-      "black",
-      [
-        "v9.6",
-        "h-76.8",
-        "v67.2"
-      ]
-    ],
-    [
-      "chip2:GND",
-      "chip1:GND",
-      "black",
-      [
-        "h-19.2",
-        "v-76.8"
-      ]
-    ],
-    [
-      "chip3:GND",
-      "chip2:GND",
-      "black",
-      [
-        "h1.81",
-        "v-19.2",
-        "h-115.2",
-        "v-124.8"
-      ]
-    ],
-    [
-      "chip3:5V",
-      "j1:J",
-      "#8f4814",
-      [
-        "h11.41",
-        "v-48",
-        "h-259.2"
-      ]
-    ],
-    [
-      "chip1:VCC",
-      "j1:J",
-      "#8f4814",
-      [
-        "h0"
-      ]
-    ],
-    [
-      "pot1:VCC",
-      "j5:J",
-      "red",
-      [
-        "v38.4",
-        "h-135.2"
-      ]
-    ],
-    [
-      "pot1:GND",
-      "j3:J",
-      "black",
-      [
-        "v19.2",
-        "h-105.6"
-      ]
-    ],
-    [
-      "dht1:VCC",
-      "j5:J",
-      "red",
-      [
-        "v38.4",
-        "h96"
-      ]
-    ],
-    [
-      "dht1:GND",
-      "pot1:GND",
-      "black",
-      [
-        "v19.2",
-        "h-211.2"
-      ]
-    ],
-    [
-      "sd1:GND",
-      "j4:J",
-      "black",
-      [
-        "h0"
-      ]
-    ],
-    [
-      "sd1:VCC",
-      "j6:J",
-      "red",
-      [
-        "h0"
-      ]
-    ],
-    [
-      "chip2:TX",
-      "esp:RX2",
-      "cyan",
-      [
-        "h11.41",
-        "v566.4"
-      ]
-    ],
-    [
-      "chip2:RX",
-      "esp:TX2",
-      "yellow",
-      [
-        "v0",
-        "h21.01",
-        "v566.4"
-      ]
-    ],
-    [
-      "lcd1:VCC",
-      "dht1:VCC",
-      "red",
-      [
-        "h-5.22",
-        "v-76.7",
-        "h192"
-      ]
-    ],
-    [
-      "lcd1:GND",
-      "pot1:GND",
-      "black",
-      [
-        "h-5.37",
-        "v-211.2",
-        "h38.4"
-      ]
-    ],
-    [
-      "esp:D35",
-      "pot1:SIG",
-      "green",
-      [
-        "h-86.4",
-        "v479.6",
-        "h76.8"
-      ]
-    ],
-    [
-      "esp:D19",
-      "dht1:SDA",
-      "green",
-      [
-        "h105.3",
-        "v431.9",
-        "h-48"
-      ]
-    ],
-    [
-      "esp:D18",
-      "lcd1:SCL",
-      "green",
-      [
-        "h38.1",
-        "v230.4",
-        "h-345.6",
-        "v470.4",
-        "h177.87"
-      ]
-    ],
-    [
-      "esp:D21",
-      "lcd1:SDA",
-      "green",
-      [
-        "h47.7",
-        "v278",
-        "h-345.6",
-        "v422.4",
-        "h178.1"
-      ]
-    ],
-    [
-      "esp:D2",
-      "sd1:DI",
-      "magenta",
-      [
-        "h57.3",
-        "v-250.3"
-      ]
-    ],
-    [
-      "esp:D5",
-      "sd1:CS",
-      "purple",
-      [
-        "h47.7",
-        "v-211.2"
-      ]
-    ],
-    [
-      "esp:VP",
-      "sd1:DO",
-      "green",
-      [
-        "h-9.6",
-        "v-38.7",
-        "h124.8",
-        "v-163.31"
-      ]
-    ],
-    [
-      "chip2:VCC",
-      "j6:J",
-      "red",
-      [
-        "h-9.6",
-        "v-19.2",
-        "h211.2"
-      ]
-    ],
+    [ "buck1:5V", "j20:J", "#8f4814", [ "v0", "h11.41" ] ],
+    [ "j20:J", "j16:J", "#8f4814", [ "v0" ] ],
+    [ "j20:J", "c5e:+", "#8f4814", [ "v0", "h-192", "v67.2" ] ],
+    [ "j20:J", "c5c:1", "#8f4814", [ "v0", "h-192", "v124.8" ] ],
+    [ "buck2:5V", "servo1:V+", "#8f4814", [ "h11.41", "v374.4", "h710.4", "v-48.1" ] ],
+    [ "servo1:GND", "j15:J", "black", [ "h0" ] ],
+    [ "j15:J", "j21:J", "black", [ "v0" ] ],
+    [ "j21:J", "c3v3e:-", "black", [ "v0" ] ],
+    [ "j21:J", "c3v3c:2", "black", [ "v0" ] ],
+    [ "j21:J", "c_dht:2", "black", [ "v0" ] ],
+    [ "j22:J", "c_srve:-", "black", [ "v0" ] ],
+    [ "j21:J", "j22:J", "black", [ "v0" ] ],
+    [ "j22:J", "c_srvc:2", "black", [ "v0" ] ],
+    [ "j23:J", "c_srve:+", "#8f4814", [ "v0" ] ],
+    [ "j23:J", "c_srvc:1", "#8f4814", [ "v0" ] ],
+    [ "servo1:V+", "j23:J", "#8f4814", [ "h-28.8", "v48.1" ] ],
+    [ "j6:J", "bms1:P-", "black", [ "v-48", "h-182.4", "v-57.6" ] ],
+    [ "r_m1pd:2", "j10:J", "black", [ "v0", "h8.4", "v48" ] ],
+    [ "j10:J", "r_m2pd:2", "black", [ "v0", "h-19.2", "v-28.8" ] ],
+    [ "j10:J", "r_m3pd:2", "black", [ "v0", "h-19.2", "v-9.6" ] ],
+    [ "j10:J", "r_m4pd:2", "black", [ "v0", "h-19.2", "v9.6" ] ],
+    [ "j10:J", "r_m5pd:2", "black", [ "v0", "h-19.2", "v28.8" ] ],
+    [ "j10:J", "r_m6pd:2", "black", [ "v0", "h-19.2", "v48" ] ],
+    [ "r_m1:2", "r_m1pd:1", "orange", [ "v0" ] ],
+    [ "r_m2:2", "r_m2pd:1", "gold", [ "v0" ] ],
+    [ "r_m3:2", "r_m3pd:1", "green", [ "v0" ] ],
+    [ "r_m4:2", "r_m4pd:1", "blue", [ "v0" ] ],
+    [ "r_m5:2", "r_m5pd:1", "violet", [ "v0" ] ],
+    [ "r_m6:2", "r_m6pd:1", "gray", [ "v0" ] ],
+    [ "esp:D25", "r_m1:1", "orange", [ "h-115.2", "v-67.2", "h-48", "v0", "h-115.2", "v-9.6" ] ],
+    [ "esp:D26", "r_m2:1", "gold", [ "h-115.2", "v-57.7", "h-163.2", "v-9.6" ] ],
+    [ "esp:D27", "r_m3:1", "green", [ "h-115.2", "v-48.3", "h-163.2", "v-9.6" ] ],
+    [ "esp:D14", "r_m4:1", "blue", [ "h-115.2", "v-38.3", "h-163.2", "v-9.6" ] ],
     [
       "esp:D22",
-      "chip1:DO",
-      "purple",
-      [
-        "h105.3",
-        "v-547.5",
-        "h-220.8",
-        "v-19.2"
-      ]
+      "r_m5:1",
+      "violet",
+      [ "h9.3", "v-38.7", "h-201.6", "v105.6", "h-182.4", "v-9.6" ]
     ],
-    [
-      "esp:D34",
-      "chip1:AO",
-      "limegreen",
-      [
-        "h-105.6",
-        "v-125"
-      ]
-    ],
-    [
-      "chip3:GND",
-      "j4:J",
-      "black",
-      [
-        "h0"
-      ]
-    ],
-    [
-      "servo1:GND",
-      "j4:J",
-      "black",
-      [
-        "h-9.6",
-        "v-211.2"
-      ]
-    ],
-    [
-      "servo1:V+",
-      "j2:J",
-      "#8f4814",
-      [
-        "h-124.8",
-        "v67.3",
-        "h-422.4"
-      ]
-    ],
-    [
-      "servo1:PWM",
-      "esp:D4",
-      "green",
-      [
-        "h-153.6",
-        "v-57.4"
-      ]
-    ],
-    [
-      "chip4:GND",
-      "j4:J",
-      "black",
-      [
-        "h-134.4",
-        "v-86.4"
-      ]
-    ],
-    [
-      "cell1:NEG",
-      "bms1:B-",
-      "black",
-      [
-        "v32.62",
-        "h38.4",
-        "v38.4",
-        "h146.6"
-      ]
-    ],
-    [
-      "cell1:POS",
-      "cell2:NEG",
-      "red",
-      [
-        "h-39.2",
-        "v109.6"
-      ]
-    ],
-    [
-      "cell2:NEG",
-      "bms1:B1",
-      "green",
-      [
-        "v28.62",
-        "h96",
-        "v-9.6",
-        "h66.4",
-        "v-29.02"
-      ]
-    ],
-    [
-      "cell2:POS",
-      "cell3:NEG",
-      "red",
-      [
-        "h-48.8",
-        "v109.6"
-      ]
-    ],
-    [
-      "cell3:NEG",
-      "bms1:B2",
-      "blue",
-      [
-        "h-20",
-        "v-52.18",
-        "h172.8",
-        "v-19.2",
-        "h32.2"
-      ]
-    ],
-    [
-      "cell3:POS",
-      "bms1:B+",
-      "red",
-      [
-        "v-23.38",
-        "h229.6",
-        "v-28.8",
-        "h59.19"
-      ]
-    ],
-    [
-      "bms1:P-",
-      "chip3:GND",
-      "black",
-      [
-        "h96",
-        "v-105.38",
-        "h515"
-      ]
-    ],
-    [
-      "bms1:P-",
-      "buck1:VIN-",
-      "black",
-      [
-        "h67.2",
-        "v230.62",
-        "h-203.19",
-        "v28.8"
-      ]
-    ],
-    [
-      "buck1:5V",
-      "j1:J",
-      "red",
-      [
-        "h96",
-        "v-67.2",
-        "h326.4"
-      ]
-    ],
-    [
-      "buck1:GND",
-      "j3:J",
-      "black",
-      [
-        "h115.2",
-        "v-48",
-        "h384"
-      ]
-    ],
-    [
-      "adapter1:POS",
-      "charger1:IN+ ",
-      "red",
-      [
-        "h38.4"
-      ]
-    ],
-    [
-      "adapter1:NEG",
-      "charger1:IN- ",
-      "black",
-      [
-        "h38.4"
-      ]
-    ],
-    [
-      "charger1:B+",
-      "bms1:P+",
-      "orange",
-      [
-        "h115.2",
-        "v-38.4",
-        "h230.4"
-      ]
-    ],
-    [
-      "charger1:B- ",
-      "bms1:P-",
-      "black",
-      [
-        "h96",
-        "v38.4",
-        "h249.6"
-      ]
-    ],
-    [
-      "esp:D25",
-      "r_m1:1",
-      "green",
-      []
-    ],
-    [
-      "r_m1:2",
-      "chip3:EN A",
-      "green",
-      []
-    ],
-    [
-      "esp:D26",
-      "r_m2:1",
-      "blue",
-      []
-    ],
+    [ "esp:D13", "r_m6:1", "gray", [ "h-115.2", "v-19.4", "h-163.2", "v-9.6" ] ],
+    [ "r_m1:2", "chip3:ENA", "orange", [ "v-28.8", "h56.4", "v-230.4", "h19.2", "v-96" ] ],
     [
       "r_m2:2",
       "chip3:IN1",
-      "blue",
-      []
-    ],
-    [
-      "esp:D27",
-      "r_m3:1",
-      "violet",
-      []
+      "gold",
+      [ "v-19.2", "h8.4", "v-28.8", "h48", "v-230.4", "h19.2", "v-86.4" ]
     ],
     [
       "r_m3:2",
       "chip3:IN2",
-      "violet",
-      []
-    ],
-    [
-      "esp:D14",
-      "r_m4:1",
-      "gray",
-      []
+      "green",
+      [ "v-19.2", "h8.4", "v-48", "h48", "v-230.4", "h19.2", "v-76.8" ]
     ],
     [
       "r_m4:2",
       "chip3:IN3",
-      "gray",
-      []
-    ],
-    [
-      "esp:D12",
-      "r_m5:1",
-      "white",
-      []
+      "blue",
+      [ "v-19.2", "h8.4", "v-67.2", "h48", "v-230.4", "h19.2", "v-57.6" ]
     ],
     [
       "r_m5:2",
       "chip3:IN4",
-      "white",
-      []
-    ],
-    [
-      "esp:D13",
-      "r_m6:1",
-      "purple",
-      []
+      "violet",
+      [ "v-19.2", "h8.4", "v-86.4", "h48", "v-230.4", "h19.2", "v-57.6" ]
     ],
     [
       "r_m6:2",
-      "chip3:EN B",
-      "purple",
-      []
+      "chip3:ENB",
+      "gray",
+      [ "v-19.2", "h8.4", "v-105.6", "h48", "v-230.4", "h19.2", "v-48" ]
     ],
+    [ "j25:J", "j8:J", "black", [ "h163.2" ] ],
+    [ "j25:J", "c5e:-", "black", [ "v0", "h-268.8", "v86.4" ] ],
+    [ "j25:J", "c5c:2", "black", [ "v0", "h-268.8", "v144" ] ],
+    [ "r_gpio12:2", "j25:J", "black", [ "v0.3", "h-48.2" ] ],
+    [ "r_gpio12:1", "esp:D12", "green", [ "v0" ] ],
+    [ "chip3:OUT1", "d_f1:ANODE", "violet", [ "h40.21", "v124.8" ] ],
+    [ "chip3:OUT2", "d_f2:ANODE", "green", [ "h49.81", "v144" ] ],
+    [ "chip3:OUT3", "d_f3:ANODE", "gray", [ "v0", "h59.41", "v163.2" ] ],
+    [ "chip3:OUT4", "d_f4:ANODE", "blue", [ "h-9.6", "v9.6", "h182.4", "v172.8" ] ],
+    [ "j5:J", "chip3:12V", "#8f4814", [ "v0" ] ],
+    [ "chip3:OUT1", "d_l1:CATHODE", "violet", [ "h0" ] ],
+    [ "chip3:OUT2", "d_l2:CATHODE", "green", [ "h88.21", "v19.2" ] ],
+    [ "chip3:OUT3", "d_l3:CATHODE", "gray", [ "v0", "h78.61", "v38.4" ] ],
+    [ "chip3:OUT4", "d_l4:ANODE", "blue", [ "h-9.6", "v9.6", "h182.4", "v48" ] ],
+    [ "j26:J", "d_l1:ANODE", "black", [ "h115.2", "v-86.4" ] ],
+    [ "d_l2:ANODE", "j26:J", "black", [ "h-19.2", "v57.6" ] ],
+    [ "j26:J", "d_l3:ANODE", "black", [ "v0", "h115.2", "v-28.8" ] ],
+    [ "j26:J", "d_l4:CATHODE", "black", [ "v0", "h115.2", "v9.6" ] ],
+    [ "j26:J", "j11:J", "black", [ "v0", "h-86.4" ] ],
+    [ "r_d1a:2", "r_d1b:1", "green", [ "v0" ] ],
+    [ "r_d2a:2", "r_d2b:1", "green", [ "v0" ] ],
+    [ "r_d3a:2", "r_d3b:1", "green", [ "v0" ] ],
+    [ "j_3v3_sensor:J", "r_d1b:2", "black", [ "v-76.8", "h172.8", "v-105.6", "h48", "v-19.2" ] ],
+    [ "r_d3b:2", "j_3v3_sensor:J", "black", [ "h-1.2", "h19.2", "v38.4", "h-537.6" ] ],
+    [ "j_3v3_sensor:J", "r_d2b:2", "black", [ "h-662.4", "v-86.7" ] ],
+    [ "ultrasonic1:ECHO", "r_d1a:1", "green", [ "v19.2", "h95.2" ] ],
+    [ "ultrasonic3:ECHO", "r_d3a:1", "green", [ "v19.2", "h95.2" ] ],
+    [ "ultrasonic2:ECHO", "r_d2a:1", "green", [ "v19.2", "h-183.2", "v-77.1" ] ],
+    [ "j27:J", "ultrasonic1:TRIG", "blue", [ "h9.6", "v-124.8" ] ],
+    [ "j27:J", "ultrasonic3:TRIG", "blue", [ "v0", "h220.8", "v38.4", "h96" ] ],
+    [ "ultrasonic2:TRIG", "j27:J", "blue", [ "v19.2", "h326", "v-38.4" ] ],
+    [ "j27:J", "r_trig:2", "blue", [ "v0" ] ],
     [
       "esp:D15",
       "r_trig:1",
       "blue",
-      []
+      [ "h18.9", "v-153.8", "h-86.4", "v-403.2", "h-134.4", "v-259.95" ]
     ],
-    [
-      "r_trig:2",
-      "j9:J",
-      "blue",
-      []
-    ],
-    [
-      "ultrasonic1:ECHO",
-      "r_d1a:1",
-      "cyan",
-      []
-    ],
-    [
-      "r_d1a:2",
-      "r_d1b:1",
-      "cyan",
-      []
-    ],
+    [ "j12:J", "j14:J", "black", [ "v124.8", "h0", "v0" ] ],
     [
       "r_d1b:1",
       "esp:D32",
-      "cyan",
-      []
+      "yellow",
+      [ "v115.2", "h-268.8", "h-28.8", "v316.8", "h-48", "v364.8", "h105.6", "v105.7" ]
     ],
     [
-      "r_d1b:2",
-      "j3:J",
-      "black",
-      []
-    ],
-    [
-      "ultrasonic2:ECHO",
-      "r_d2a:1",
-      "white",
-      []
-    ],
-    [
-      "r_d2a:2",
-      "r_d2b:1",
-      "white",
-      []
-    ],
-    [
-      "r_d2b:1",
       "esp:D23",
-      "white",
-      []
+      "r_d2b:1",
+      "cyan",
+      [ "h9.3", "v-38.3", "h-240", "h-115.2", "v-9.6", "v-528", "h-336", "v-163.5" ]
     ],
+    [ "esp:VN", "r_d3b:1", "limegreen", [ "h-38.4", "v-67.9", "h201.6", "h307.2", "v-643.2" ] ],
+    [ "j28:J", "esp:3V3", "red", [ "v0" ] ],
+    [ "j29:J", "j28:J", "red", [ "v0" ] ],
+    [ "j29:J", "j30:J", "red", [ "v0" ] ],
+    [ "j30:J", "j31:J", "red", [ "v-96" ] ],
+    [ "j31:J", "j32:J", "red", [ "v0" ] ],
     [
-      "r_d2b:2",
-      "j3:J",
-      "black",
-      []
+      "chip1:AO",
+      "esp:D34",
+      "purple",
+      [ "h-9.6", "v28.8", "h-144", "v508.8", "h134.4", "v48.2" ]
     ],
+    [ "chip1:GND", "j_3v3_sensor:J", "black", [ "h-28.8", "v-67.2", "h76.8" ] ],
     [
-      "ultrasonic3:ECHO",
-      "r_d3a:1",
-      "green",
-      []
+      "esp:D35",
+      "chip1:DO",
+      "limegreen",
+      [ "h-67.2", "v-67.6", "h-86.4", "v0", "h-57.6", "v-259.2" ]
     ],
-    [
-      "r_d3a:2",
-      "r_d3b:1",
-      "green",
-      []
-    ],
-    [
-      "r_d3b:1",
-      "esp:VN",
-      "green",
-      []
-    ],
-    [
-      "r_d3b:2",
-      "j3:J",
-      "black",
-      []
-    ],
-    [
-      "esp:D12",
-      "r_gpio12:1",
-      "black",
-      []
-    ],
-    [
-      "r_gpio12:2",
-      "j3:J",
-      "black",
-      []
-    ],
-    [
-      "dht1:SDA",
-      "r_dhtpu:1",
-      "red",
-      []
-    ],
-    [
-      "r_dhtpu:2",
-      "dht1:VCC",
-      "red",
-      []
-    ],
-    [
-      "lcd1:SDA",
-      "r_i2c1:1",
-      "red",
-      []
-    ],
-    [
-      "r_i2c1:2",
-      "lcd1:VCC",
-      "red",
-      []
-    ],
-    [
-      "lcd1:SCL",
-      "r_i2c2:1",
-      "red",
-      []
-    ],
-    [
-      "r_i2c2:2",
-      "lcd1:VCC",
-      "red",
-      []
-    ],
+    [ "chip1:GND", "c_rain:2", "black", [ "h-9.6", "v-38.4" ] ],
+    [ "chip1:VCC", "c_rain:1", "red", [ "h-19.2", "v-9.6" ] ],
+    [ "chip2:VCC", "c_gps:1", "red", [ "h-19.2", "v-38.4" ] ],
+    [ "chip2:GND", "c_gps:2", "black", [ "h-9.6", "v-38.4" ] ],
+    [ "j33:J", "chip2:VCC", "red", [ "v0" ] ],
+    [ "chip1:VCC", "j33:J", "red", [ "h-38.4" ] ],
+    [ "j32:J", "j33:J", "red", [ "h-9.6", "v9.6", "h-105.6", "v-230.4", "v-134.4", "h86.4" ] ],
+    [ "chip2:TX", "esp:RX2", "violet", [ "h155.41", "v67.2" ] ],
+    [ "chip2:RX", "esp:TX2", "green", [ "v0", "h165.01", "v537.6" ] ],
+    [ "esp:D2", "sd1:DI", "green", [ "h95.7", "v-192.7", "h-192", "v-28.8" ] ],
+    [ "esp:D5", "sd1:CS", "blue", [ "h57.3", "v-153.6", "h-144", "v-9.6" ] ],
+    [ "esp:VP", "sd1:DO", "yellow", [ "h-28.8", "v-29.1", "h9.6", "v-76.8", "h28.8", "v-57.6" ] ],
     [
       "esp:D33",
       "r_sd:1",
+      "orange",
+      [ "h-48", "v-76.8", "h-9.6", "v-67.2", "h-57.6", "v-124.8" ]
+    ],
+    [ "r_sd:2", "sd1:SCK", "orange", [ "v0", "h37.2", "v76.8" ] ],
+    [ "sd1:VCC", "j31:J", "red", [ "h28.8", "v28.94", "h86.4", "v38.4" ] ],
+    [ "sd1:GND", "j26:J", "black", [ "h9.6", "v-86.29" ] ],
+    [ "sd1:GND", "c_sd:2", "black", [ "h9.6", "v-47.89", "h-67.2" ] ],
+    [ "c_sd:1", "sd1:VCC", "red", [ "h-9.6", "v28.8", "h86.4", "v57.46" ] ],
+    [ "j28:J", "j34:J", "red", [ "v153.6", "h-259.2", "v182.4" ] ],
+    [ "dht1:VCC", "j34:J", "red", [ "v19.2" ] ],
+    [ "dht1:SDA", "j_3v3_feed:J", "green", [ "v38.4", "h9.7" ] ],
+    [ "r_dhtpu:1", "j_3v3_feed:J", "green", [ "h8.2", "v-28.5", "h-1.6" ] ],
+    [ "r_dhtpu:2", "dht1:VCC", "red", [ "v-18.9", "h47.8" ] ],
+    [
+      "esp:D19",
+      "j_3v3_feed:J",
       "green",
-      []
+      [ "h28.5", "v134.3", "h-96", "v57.6", "h-67.2", "v240", "h86.4", "v0", "h0", "v0" ]
     ],
-    [
-      "r_sd:2",
-      "sd1:SCK",
-      "green",
-      []
-    ],
-    [
-      "esp:TX0",
-      "r_cam1:1",
-      "green",
-      []
-    ],
-    [
-      "r_cam1:2",
-      "chip4:RX",
-      "green",
-      []
-    ],
-    [
-      "esp:RX0",
-      "r_cam2:1",
-      "green",
-      []
-    ],
-    [
-      "r_cam2:2",
-      "chip4:TX",
-      "green",
-      []
-    ],
-    [
-      "bms1:P+",
-      "fuse1:1",
-      "red",
-      []
-    ],
-    [
-      "fuse1:2",
-      "d1:ANODE",
-      "red",
-      []
-    ],
-    [
-      "d1:CATHODE",
-      "chip3:12V",
-      "red",
-      []
-    ],
-    [
-      "d1:CATHODE",
-      "buck1:VIN+",
-      "red",
-      []
-    ],
-    [
-      "d1:CATHODE",
-      "c12e:+",
-      "red",
-      []
-    ],
-    [
-      "c12e:-",
-      "bms1:P-",
-      "black",
-      []
-    ],
-    [
-      "d1:CATHODE",
-      "c12c:1",
-      "red",
-      []
-    ],
-    [
-      "c12c:2",
-      "bms1:P-",
-      "black",
-      []
-    ],
-    [
-      "d_f1:ANODE",
-      "chip3:OUT1",
-      "blue",
-      []
-    ],
-    [
-      "d_f1:CATHODE",
-      "d1:CATHODE",
-      "red",
-      []
-    ],
-    [
-      "d_f2:ANODE",
-      "chip3:OUT2",
-      "blue",
-      []
-    ],
-    [
-      "d_f2:CATHODE",
-      "d1:CATHODE",
-      "red",
-      []
-    ],
-    [
-      "d_f3:ANODE",
-      "chip3:OUT3",
-      "blue",
-      []
-    ],
-    [
-      "d_f3:CATHODE",
-      "d1:CATHODE",
-      "red",
-      []
-    ],
-    [
-      "d_f4:ANODE",
-      "chip3:OUT4",
-      "blue",
-      []
-    ],
-    [
-      "d_f4:CATHODE",
-      "d1:CATHODE",
-      "red",
-      []
-    ],
-    [
-      "c5e:+",
-      "j2:J",
-      "red",
-      []
-    ],
-    [
-      "c5e:-",
-      "j3:J",
-      "black",
-      []
-    ],
-    [
-      "c5c:1",
-      "j2:J",
-      "red",
-      []
-    ],
-    [
-      "c5c:2",
-      "j3:J",
-      "black",
-      []
-    ],
-    [
-      "c3v3e:+",
-      "j5:J",
-      "red",
-      []
-    ],
-    [
-      "c3v3e:-",
-      "j3:J",
-      "black",
-      []
-    ],
-    [
-      "c3v3c:1",
-      "j5:J",
-      "red",
-      []
-    ],
-    [
-      "c3v3c:2",
-      "j3:J",
-      "black",
-      []
-    ],
-    [
-      "c_srve:+",
-      "servo1:V+",
-      "#8f4814",
-      []
-    ],
-    [
-      "c_srve:-",
-      "servo1:GND",
-      "black",
-      []
-    ],
-    [
-      "c_srvc:1",
-      "servo1:V+",
-      "#8f4814",
-      []
-    ],
-    [
-      "c_srvc:2",
-      "servo1:GND",
-      "black",
-      []
-    ],
-    [
-      "c_u1:1",
-      "ultrasonic1:VCC",
-      "red",
-      []
-    ],
-    [
-      "c_u1:2",
-      "ultrasonic1:GND",
-      "black",
-      []
-    ],
-    [
-      "c_u2:1",
-      "ultrasonic2:VCC",
-      "red",
-      []
-    ],
-    [
-      "c_u2:2",
-      "ultrasonic2:GND",
-      "black",
-      []
-    ],
-    [
-      "c_u3:1",
-      "ultrasonic3:VCC",
-      "red",
-      []
-    ],
-    [
-      "c_u3:2",
-      "ultrasonic3:GND",
-      "black",
-      []
-    ],
-    [
-      "c_lcd:1",
-      "lcd1:VCC",
-      "red",
-      []
-    ],
-    [
-      "c_lcd:2",
-      "lcd1:GND",
-      "black",
-      []
-    ],
-    [
-      "c_sd:1",
-      "sd1:VCC",
-      "red",
-      []
-    ],
-    [
-      "c_sd:2",
-      "sd1:GND",
-      "black",
-      []
-    ],
-    [
-      "c_dht:1",
-      "dht1:VCC",
-      "red",
-      []
-    ],
-    [
-      "c_dht:2",
-      "dht1:GND",
-      "black",
-      []
-    ],
-    [
-      "c_rain:1",
-      "chip1:VCC",
-      "red",
-      []
-    ],
-    [
-      "c_rain:2",
-      "chip1:GND",
-      "black",
-      []
-    ],
-    [
-      "c_gps:1",
-      "chip2:VCC",
-      "red",
-      []
-    ],
-    [
-      "c_gps:2",
-      "chip2:GND",
-      "black",
-      []
-    ],
-    [
-      "c_cam:1",
-      "chip4:VCC",
-      "red",
-      []
-    ],
-    [
-      "c_cam:2",
-      "chip4:GND",
-      "black",
-      []
-    ],
-    [
-      "c_esp:1",
-      "esp:VIN",
-      "red",
-      []
-    ],
-    [
-      "c_esp:2",
-      "esp:GND.1",
-      "black",
-      []
-    ],
-    [
-      "j8:J",
-      "j2:J",
-      "red",
-      []
-    ],
-    [
-      "j2:J",
-      "ldo1:VIN+",
-      "red",
-      []
-    ],
-    [
-      "j3:J",
-      "ldo1:VIN-",
-      "black",
-      []
-    ],
-    [
-      "ldo1:3V3",
-      "chip4:VCC",
-      "red",
-      []
-    ],
-    [
-      "ldo1:GND",
-      "j3:J",
-      "black",
-      []
-    ]
+    [ "dht1:VCC", "c_dht:1", "red", [ "v0" ] ],
+    [ "j21:J", "dht1:GND", "black", [ "v0" ] ],
+    [ "j34:J", "j_core_gnd:J", "red", [ "v0" ] ],
+    [ "j21:J", "j_3v3_main:J", "black", [ "v0" ] ],
+    [ "lcd1:VCC", "j_core_gnd:J", "red", [ "v-89.66", "h-24.42" ] ],
+    [ "lcd1:GND", "j_3v3_main:J", "black", [ "v0" ] ],
+    [ "lcd1:SCL", "j35:J", "magenta", [ "v0" ] ],
+    [ "lcd1:SDA", "j36:J", "violet", [ "v0" ] ],
+    [ "r_i2c2:1", "j36:J", "violet", [ "v19.2", "h-28.8" ] ],
+    [ "j35:J", "r_i2c1:1", "magenta", [ "h28.8", "v-28.8" ] ],
+    [ "r_i2c1:2", "r_i2c2:2", "red", [ "v0" ] ],
+    [ "j_core_gnd:J", "r_i2c1:2", "red", [ "v0", "h134.4" ] ],
+    [ "j_core_gnd:J", "c_lcd:1", "red", [ "v0" ] ],
+    [ "j_3v3_main:J", "c_lcd:2", "black", [ "v-19.2", "h-105.6", "v-19.2" ] ],
+    [ "j37:J", "j17:J", "#8f4814", [ "v0" ] ],
+    [ "j37:J", "chip4:VCC", "#8f4814", [ "v0", "h144", "v67.2" ] ],
+    [ "j13:J", "chip4:GND", "black", [ "v0", "h345.6", "v-48" ] ],
+    [ "chip4:VCC", "c_cam:1", "#8f4814", [ "h-28.8", "v-28.8" ] ],
+    [ "c_cam:2", "chip4:GND", "black", [ "h-19.2", "v38.4" ] ],
+    [ "esp:TX0", "r_cam1:1", "blue", [ "h230.1", "v-39.1" ] ],
+    [ "esp:RX0", "r_cam2:1", "purple", [ "h249.3", "v-29" ] ],
+    [ "r_cam1:2", "chip4:RX", "green", [ "h18", "v38.4" ] ],
+    [ "r_cam2:2", "chip4:TX", "green", [ "h8.4", "v28.8", "h76.8" ] ],
+    [ "esp:D4", "servo1:PWM", "gold", [ "h47.7", "v19.3", "h134.4", "v38.4" ] ],
+    [ "j28:J", "c3v3e:+", "red", [ "v0", "h19.2", "v96" ] ],
+    [ "c3v3e:+", "c3v3c:1", "red", [ "h-26.4", "v46.62" ] ],
+    [ "j16:J", "c_esp:1", "#8f4814", [ "v0" ] ],
+    [ "esp:GND.1", "c_esp:2", "black", [ "h9.3", "v105.5", "h-105.6", "v38.4" ] ],
+    [ "ultrasonic3:GND", "c_u3:2", "black", [ "v0" ] ],
+    [ "ultrasonic3:VCC", "c_u3:1", "#8f4814", [ "v0" ] ],
+    [ "ultrasonic3:GND", "j_3v3_sensor:J", "black", [ "v0" ] ],
+    [ "ultrasonic1:GND", "c_u1:2", "black", [ "v0" ] ],
+    [ "ultrasonic1:VCC", "c_u1:1", "#8f4814", [ "v57.6", "h57.6" ] ],
+    [ "ultrasonic1:GND", "j_3v3_sensor:J", "black", [ "v0" ] ],
+    [ "ultrasonic2:GND", "c_u2:2", "black", [ "v0" ] ],
+    [ "ultrasonic2:VCC", "c_u2:1", "#8f4814", [ "v0" ] ],
+    [ "ultrasonic2:GND", "j_3v3_sensor:J", "black", [ "v0" ] ]
   ],
   "dependencies": {}
 }

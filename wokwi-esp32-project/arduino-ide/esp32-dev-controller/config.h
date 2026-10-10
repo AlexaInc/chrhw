@@ -38,9 +38,9 @@
 // This board talks to the LAN gateway (http://<gateway-ip>:8000 / ws://...) 
 // instead of the hosted server. To use the hosted server instead, delete the
 // next line and uncomment the two below it.
-#define CHRH_FORCE_GATEWAY_MODE 1
-// #define CUSTOM_SERVER_HOST "crophealth.dpdns.org"
-// #define CUSTOM_SERVER_URL  "https://crophealth.dpdns.org"
+// #define CHRH_FORCE_GATEWAY_MODE 1
+ #define CUSTOM_SERVER_HOST "crophealth.dpdns.org"
+ #define CUSTOM_SERVER_URL  "https://crophealth.dpdns.org"
 
 #ifdef __has_include
 #if __has_include("config.local.h")
@@ -77,7 +77,7 @@
 #endif
 // Reported to the server in the boot handshake (device_hello).
 #ifndef FW_VERSION
-#define FW_VERSION "2026-10-06-arc-avoid"
+#define FW_VERSION "2026-10-07-rain-do"
 #endif
 
 // --- Over-the-air (OTA) firmware updates ----------------------------------
@@ -179,16 +179,18 @@
 #define CAMERA_SERVO 4
 #endif
 
-#ifndef RAIN_DIGITAL_PIN
-#define RAIN_DIGITAL_PIN 22
-#endif
+// AO provides continuous wetness; DO is a diagnostic threshold input. GPIO35
+// is input-only and was freed when rover soil sensing was removed. GPIO22 stays
+// assigned to L298N IN4. Keep both real-module outputs within 3.3V-safe limits.
 #ifndef RAIN_ANALOG_PIN
 #define RAIN_ANALOG_PIN 34
 #endif
-#ifndef SOIL_ANALOG_PIN
-#define SOIL_ANALOG_PIN 35
+#ifndef RAIN_DIGITAL_PIN
+#define RAIN_DIGITAL_PIN 35
 #endif
-
+#ifndef RAIN_THRESHOLD_PERCENT
+#define RAIN_THRESHOLD_PERCENT 50
+#endif
 #ifndef ENA_PIN
 #define ENA_PIN 25
 #endif
@@ -202,7 +204,7 @@
 #define IN3_PIN 14
 #endif
 #ifndef IN4_PIN
-#define IN4_PIN 12
+#define IN4_PIN 22
 #endif
 #ifndef ENB_PIN
 #define ENB_PIN 13
